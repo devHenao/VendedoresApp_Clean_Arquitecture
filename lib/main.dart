@@ -16,16 +16,14 @@ import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GoRouter.optionURLReflectsImperativeAPIs = true;
-  usePathUrlStrategy();
+
   await di.configureDependencies();
 
   await FlutterFlowTheme.initialize();
 
   await authManager.initialize();
 
-  final appState = FFAppState(); // Initialize FFAppState
-  await appState.initializePersistedState();
+  final appState = FFAppState(); 
 
   runApp(ChangeNotifierProvider(
     create: (context) => appState,

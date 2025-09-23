@@ -17,106 +17,106 @@ class FFAppState extends ChangeNotifier {
     _instance = FFAppState._internal();
   }
 
-  Future initializePersistedState() async {
-    prefs = await SharedPreferences.getInstance();
-    _safeInit(() {
-      _Nit = prefs.getString('ff_Nit') ?? _Nit;
-    });
-    _safeInit(() {
-      _Email = prefs.getString('ff_Email') ?? _Email;
-    });
-    _safeInit(() {
-      _Remember = prefs.getBool('ff_Remember') ?? _Remember;
-    });
-    _safeInit(() {
-      if (prefs.containsKey('ff_infoSeller')) {
-        try {
-          final serializedData = prefs.getString('ff_infoSeller') ?? '{}';
-          _infoSeller =
-              DataSellerStruct.fromSerializableMap(jsonDecode(serializedData));
-        } catch (e) {
-          print("Can't decode persisted data type. Error: $e.");
-        }
-      }
-    });
-    _safeInit(() {
-      _itemId = prefs.getInt('ff_itemId') ?? _itemId;
-    });
-    _safeInit(() {
-      if (prefs.containsKey('ff_dataCliente')) {
-        try {
-          final serializedData = prefs.getString('ff_dataCliente') ?? '{}';
-          _dataCliente =
-              DataClienteStruct.fromSerializableMap(jsonDecode(serializedData));
-        } catch (e) {
-          print("Can't decode persisted data type. Error: $e.");
-        }
-      }
-    });
-    _safeInit(() {
-      _productList = prefs
-              .getStringList('ff_productList')
-              ?.map((x) {
-                try {
-                  return DataProductStruct.fromSerializableMap(jsonDecode(x));
-                } catch (e) {
-                  print("Can't decode persisted data type. Error: $e.");
-                  return null;
-                }
-              })
-              .withoutNulls
-              .toList() ??
-          _productList;
-    });
-    _safeInit(() {
-      _dataProductList = prefs
-              .getStringList('ff_dataProductList')
-              ?.map((x) {
-                try {
-                  return DataProductStruct.fromSerializableMap(jsonDecode(x));
-                } catch (e) {
-                  print("Can't decode persisted data type. Error: $e.");
-                  return null;
-                }
-              })
-              .withoutNulls
-              .toList() ??
-          _dataProductList;
-    });
-    _safeInit(() {
-      _shoppingCart = prefs
-              .getStringList('ff_shoppingCart')
-              ?.map((x) {
-                try {
-                  return DetailProductStruct.fromSerializableMap(jsonDecode(x));
-                } catch (e) {
-                  print("Can't decode persisted data type. Error: $e.");
-                  return null;
-                }
-              })
-              .withoutNulls
-              .toList() ??
-          _shoppingCart;
-    });
-    _safeInit(() {
-      _password = prefs.getString('ff_password') ?? _password;
-    });
-    _safeInit(() {
-      _store = prefs
-              .getStringList('ff_store')
-              ?.map((x) {
-                try {
-                  return DetailProductStruct.fromSerializableMap(jsonDecode(x));
-                } catch (e) {
-                  print("Can't decode persisted data type. Error: $e.");
-                  return null;
-                }
-              })
-              .withoutNulls
-              .toList() ??
-          _store;
-    });
-  }
+  // Future initializePersistedState() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   _safeInit(() {
+  //     _Nit = prefs.getString('ff_Nit') ?? _Nit;
+  //   });
+  //   _safeInit(() {
+  //     _Email = prefs.getString('ff_Email') ?? _Email;
+  //   });
+  //   _safeInit(() {
+  //     _Remember = prefs.getBool('ff_Remember') ?? _Remember;
+  //   });
+  //   _safeInit(() {
+  //     if (prefs.containsKey('ff_infoSeller')) {
+  //       try {
+  //         final serializedData = prefs.getString('ff_infoSeller') ?? '{}';
+  //         _infoSeller =
+  //             DataSellerStruct.fromSerializableMap(jsonDecode(serializedData));
+  //       } catch (e) {
+  //         print("Can't decode persisted data type. Error: $e.");
+  //       }
+  //     }
+  //   });
+  //   _safeInit(() {
+  //     _itemId = prefs.getInt('ff_itemId') ?? _itemId;
+  //   });
+  //   _safeInit(() {
+  //     if (prefs.containsKey('ff_dataCliente')) {
+  //       try {
+  //         final serializedData = prefs.getString('ff_dataCliente') ?? '{}';
+  //         _dataCliente =
+  //             DataClienteStruct.fromSerializableMap(jsonDecode(serializedData));
+  //       } catch (e) {
+  //         print("Can't decode persisted data type. Error: $e.");
+  //       }
+  //     }
+  //   });
+  //   _safeInit(() {
+  //     _productList = prefs
+  //             .getStringList('ff_productList')
+  //             ?.map((x) {
+  //               try {
+  //                 return DataProductStruct.fromSerializableMap(jsonDecode(x));
+  //               } catch (e) {
+  //                 print("Can't decode persisted data type. Error: $e.");
+  //                 return null;
+  //               }
+  //             })
+  //             .withoutNulls
+  //             .toList() ??
+  //         _productList;
+  //   });
+  //   _safeInit(() {
+  //     _dataProductList = prefs
+  //             .getStringList('ff_dataProductList')
+  //             ?.map((x) {
+  //               try {
+  //                 return DataProductStruct.fromSerializableMap(jsonDecode(x));
+  //               } catch (e) {
+  //                 print("Can't decode persisted data type. Error: $e.");
+  //                 return null;
+  //               }
+  //             })
+  //             .withoutNulls
+  //             .toList() ??
+  //         _dataProductList;
+  //   });
+  //   _safeInit(() {
+  //     _shoppingCart = prefs
+  //             .getStringList('ff_shoppingCart')
+  //             ?.map((x) {
+  //               try {
+  //                 return DetailProductStruct.fromSerializableMap(jsonDecode(x));
+  //               } catch (e) {
+  //                 print("Can't decode persisted data type. Error: $e.");
+  //                 return null;
+  //               }
+  //             })
+  //             .withoutNulls
+  //             .toList() ??
+  //         _shoppingCart;
+  //   });
+  //   _safeInit(() {
+  //     _password = prefs.getString('ff_password') ?? _password;
+  //   });
+  //   _safeInit(() {
+  //     _store = prefs
+  //             .getStringList('ff_store')
+  //             ?.map((x) {
+  //               try {
+  //                 return DetailProductStruct.fromSerializableMap(jsonDecode(x));
+  //               } catch (e) {
+  //                 print("Can't decode persisted data type. Error: $e.");
+  //                 return null;
+  //               }
+  //             })
+  //             .withoutNulls
+  //             .toList() ??
+  //         _store;
+  //   });
+  // }
 
   void update(VoidCallback callback) {
     callback();
