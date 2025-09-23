@@ -9,13 +9,10 @@ import '/backend/schema/structs/index.dart';
 
 import '/auth/custom_auth/custom_auth_user_provider.dart';
 
-import '/index.dart';
 import 'package:app_vendedores/features/auth/presentation/pages/login_page.dart';
 import 'package:app_vendedores/features/cart/presentation/pages/cart_page.dart';
-import '/main.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/lat_lng.dart';
-import '/flutter_flow/place.dart';
+import 'package:app_vendedores/features/clients/presentation/pages/client_page.dart';
+import 'package:app_vendedores/features/products/presentation/pages/product_page.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'serialization_util.dart';
 
@@ -85,13 +82,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? ClientesWidget() : LoginPage(),
+          appStateNotifier.loggedIn ? ClientPage() : LoginPage(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
           builder: (context, _) =>
-              appStateNotifier.loggedIn ? ClientesWidget() : LoginPage(),
+              appStateNotifier.loggedIn ? ClientPage() : LoginPage(),
         ),
         FFRoute(
           name: 'Login',
@@ -108,13 +105,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'Clientes',
           path: '/clientes',
           requireAuth: true,
-          builder: (context, params) => ClientesWidget(),
+          builder: (context, params) => ClientPage(),
         ),
         FFRoute(
           name: 'Productos',
           path: '/productos',
           requireAuth: true,
-          builder: (context, params) => ProductosWidget(),
+          builder: (context, params) => ProductPage(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
