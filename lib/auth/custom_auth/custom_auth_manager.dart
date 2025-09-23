@@ -1,17 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'custom_auth_user_provider.dart';
-
 export 'custom_auth_manager.dart';
 
 const _kAuthTokenKey = '_auth_authentication_token_';
 const _kRefreshTokenKey = '_auth_refresh_token_';
 const _kTokenExpirationKey = '_auth_token_expiration_';
 const _kUidKey = '_auth_uid_';
-const _kUserDataKey = '_auth_user_data_';
 
 class CustomAuthManager {
   // Auth session attributes
@@ -75,7 +71,7 @@ class CustomAuthManager {
     this.authenticationToken = authenticationToken;
     this.refreshToken = refreshToken;
     this.tokenExpiration = tokenExpiration;
-    this.uid = authUid;
+    uid = authUid;
 
     // Update the current user stream.
     final updatedUser = AppVendedoresAuthUser(
