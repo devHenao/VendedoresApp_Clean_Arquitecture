@@ -3,10 +3,6 @@ import 'package:app_vendedores/backend/api_requests/_/api_manager.dart';
 
 import 'package:flutter/foundation.dart';
 
-import 'api_manager.dart';
-
-export 'api_manager.dart';
-
 /// Start Auth Group Code
 
 class AuthGroup {
