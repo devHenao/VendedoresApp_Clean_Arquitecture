@@ -2,6 +2,12 @@ import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
 
 class FFUploadedFile {
+  final String? name;
+  final Uint8List? bytes;
+  final double? height;
+  final double? width;
+  final String? blurHash;
+
   const FFUploadedFile({
     this.name,
     this.bytes,
@@ -9,12 +15,6 @@ class FFUploadedFile {
     this.width,
     this.blurHash,
   });
-
-  final String? name;
-  final Uint8List? bytes;
-  final double? height;
-  final double? width;
-  final String? blurHash;
 
   @override
   String toString() =>
