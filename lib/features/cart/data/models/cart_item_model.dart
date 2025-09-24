@@ -2,22 +2,14 @@ import 'package:app_vendedores/features/cart/domain/entities/cart_item.dart';
 
 class CartItemModel extends CartItem {
   const CartItemModel({
-    required String codigo,
-    required String descripcio,
-    required double precio,
-    required int cantidad,
-    required String bodega,
-    required String codcc,
-    required String codlote,
-  }) : super(
-          codigo: codigo,
-          descripcio: descripcio,
-          precio: precio,
-          cantidad: cantidad,
-          bodega: bodega,
-          codcc: codcc,
-          codlote: codlote,
-        );
+    required super.codigo,
+    required super.descripcio,
+    required super.precio,
+    required super.cantidad,
+    required super.bodega,
+    required super.codcc,
+    required super.codlote,
+  });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
     return CartItemModel(

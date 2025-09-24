@@ -2,34 +2,20 @@ import 'package:app_vendedores/features/clients/domain/entities/client.dart';
 
 class ClientModel extends Client {
   const ClientModel({
-    required String tipoCar,
-    required String codigoCta,
-    required String nit,
-    required String vendedor,
-    required String nombre,
-    required String direccion,
-    required String cdciiu,
-    required String contacto,
-    required String tel1,
-    required String email,
-    required String codprecio,
-    required String nomciud,
-    required String nomdpto,
-  }) : super(
-          tipoCar: tipoCar,
-          codigoCta: codigoCta,
-          nit: nit,
-          vendedor: vendedor,
-          nombre: nombre,
-          direccion: direccion,
-          cdciiu: cdciiu,
-          contacto: contacto,
-          tel1: tel1,
-          email: email,
-          codprecio: codprecio,
-          nomciud: nomciud,
-          nomdpto: nomdpto,
-        );
+    required super.tipoCar,
+    required super.codigoCta,
+    required super.nit,
+    required super.vendedor,
+    required super.nombre,
+    required super.direccion,
+    required super.cdciiu,
+    required super.contacto,
+    required super.tel1,
+    required super.email,
+    required super.codprecio,
+    required super.nomciud,
+    required super.nomdpto,
+  });
 
   factory ClientModel.fromJson(Map<String, dynamic> json) {
     return ClientModel(

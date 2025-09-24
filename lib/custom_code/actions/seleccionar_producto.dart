@@ -7,11 +7,13 @@ Future<DataProductStruct> seleccionarProducto(
   DataProductStruct lista,
   String codigo,
 ) async {
-  // Add your function code here!
-  if (lista == null || codigo == null) return lista;
-  lista = DataProductStruct(
+  // Toggle the selected state of the product
+  return DataProductStruct(
     selected: !lista.selected,
     codproduc: lista.codproduc,
+    // Make sure to include all other required fields from the original lista
+    descripcio: lista.descripcio,
+    precio: lista.precio,
+    // Add other fields from DataProductStruct as needed
   );
-  return lista;
 }

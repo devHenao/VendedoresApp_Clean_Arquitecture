@@ -33,10 +33,10 @@ Future<void> dowloandWallet(
 
     if (response.statusCode == 200) {
       Uint8List fileBytes = response.bodyBytes;
-      final fileName = 'reporteCartera_${identificacion}.pdf';
+      final fileName = 'reporteCartera_$identificacion.pdf';
 
       if (io.Platform.isAndroid) {
-        final methodChannel = MethodChannel('com.mycompany.appvendedores/media_store');
+        const methodChannel =  MethodChannel('com.mycompany.appvendedores/media_store');
         try {
           final savedFilePath = await methodChannel.invokeMethod<String>('saveFile', {
             'fileBytes': fileBytes,
@@ -46,7 +46,7 @@ Future<void> dowloandWallet(
 
           if (savedFilePath != null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text('Archivo guardado en descargas'),
                 backgroundColor: Color(0xFF39D2C0),
               ),
@@ -56,7 +56,7 @@ Future<void> dowloandWallet(
             final result = await OpenFile.open(savedFilePath);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error al guardar el archivo.')),
+              const SnackBar(content: Text('Error al guardar el archivo.')),
             );
           }
         } catch (e) {
@@ -73,7 +73,7 @@ Future<void> dowloandWallet(
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Archivo guardado en: $filePath'),
-            backgroundColor: Color(0xFF39D2C0),
+            backgroundColor: const Color(0xFF39D2C0),
           ),
         );
 
@@ -81,12 +81,12 @@ Future<void> dowloandWallet(
         final result = await OpenFile.open(filePath);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Descarga no disponible para esta plataforma.')),
+          const SnackBar(content: Text('Descarga no disponible para esta plataforma.')),
         );
       }
     } else if (response.statusCode == 400) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No hay ningún reporte de cartera para esta identificación.')),
+        const SnackBar(content: Text('No hay ningún reporte de cartera para esta identificación.')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +95,7 @@ Future<void> dowloandWallet(
     }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Ocurrió un error al descargar el archivo.')),
+      const SnackBar(content: Text('Ocurrió un error al descargar el archivo.')),
     );
   }
 }

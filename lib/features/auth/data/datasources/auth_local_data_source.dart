@@ -9,7 +9,7 @@ abstract class AuthLocalDataSource {
   Future<void> cacheUser(UserModel userToCache);
 }
 
-const CACHED_USER = 'CACHED_USER';
+const cachedUser = 'CACHED_USER';
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final SharedPreferences sharedPreferences;
@@ -18,7 +18,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<UserModel> getLastUser() {
-    final jsonString = sharedPreferences.getString(CACHED_USER);
+    final jsonString = sharedPreferences.getString(cachedUser);
     if (jsonString != null) {
       return Future.value(UserModel.fromJson(json.decode(jsonString)));
     } else {
@@ -29,7 +29,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> cacheUser(UserModel userToCache) {
     return sharedPreferences.setString(
-      CACHED_USER,
+      cachedUser,
       json.encode(userToCache.toJson()),
     );
   }

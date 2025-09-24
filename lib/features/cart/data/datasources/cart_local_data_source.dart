@@ -8,7 +8,7 @@ abstract class CartLocalDataSource {
   Future<void> cacheCartItems(List<CartItemModel> items);
 }
 
-const CACHED_CART_ITEMS = 'CACHED_CART_ITEMS';
+const cachedCartItemsKey = 'CACHED_CART_ITEMS';
 
 class CartLocalDataSourceImpl implements CartLocalDataSource {
   final SharedPreferences sharedPreferences;
@@ -17,7 +17,7 @@ class CartLocalDataSourceImpl implements CartLocalDataSource {
 
   @override
   Future<List<CartItemModel>> getCartItems() {
-    final jsonString = sharedPreferences.getString(CACHED_CART_ITEMS);
+    final jsonString = sharedPreferences.getString(cachedCartItemsKey);
     if (jsonString != null) {
       final List<dynamic> jsonList = json.decode(jsonString);
       return Future.value(
@@ -31,7 +31,7 @@ class CartLocalDataSourceImpl implements CartLocalDataSource {
   @override
   Future<void> cacheCartItems(List<CartItemModel> items) {
     return sharedPreferences.setString(
-      CACHED_CART_ITEMS,
+      cachedCartItemsKey,
       json.encode(items.map((item) => item.toJson()).toList()),
     );
   }

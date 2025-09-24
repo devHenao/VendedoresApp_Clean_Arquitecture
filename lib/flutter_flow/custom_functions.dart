@@ -36,11 +36,6 @@ bool onList(
   List<String> list,
   String element,
 ) {
-// Verifica si el elemento es nulo
-  if (element == null) {
-    return false; // Si es nulo, retorna false directamente
-  }
-
   // Recorre la lista y verifica si el elemento existe
   for (var item in list) {
     if (item == element) {
