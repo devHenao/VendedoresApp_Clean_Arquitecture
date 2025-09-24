@@ -39,7 +39,7 @@ class ClientRepositoryImpl implements ClientRepository {
         return Left(ServerFailure(e.message));
       }
     } else {
-      return Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure('No internet connection'));
     }
   }
 }

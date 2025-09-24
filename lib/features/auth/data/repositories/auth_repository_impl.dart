@@ -31,7 +31,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return Left(ServerFailure(e.message));
       }
     } else {
-      return Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure('No internet connection'));
     }
   }
 
@@ -41,7 +41,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final localUser = await localDataSource.getLastUser();
       return Right(localUser);
     } on CacheException {
-      return Left(CacheFailure('No user found in cache'));
+      return const Left(CacheFailure('No user found in cache'));
     }
   }
 }

@@ -22,7 +22,7 @@ class ProductView extends StatelessWidget {
             },
             decoration: InputDecoration(
               labelText: 'Buscar por nombre o código',
-              suffixIcon: Icon(Icons.search),
+              suffixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),

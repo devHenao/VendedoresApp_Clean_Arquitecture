@@ -14,7 +14,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<void> placeOrder(String token, String nit, List<CartItemModel> items) async {
-    final url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/products/createOrderClient';
+    const url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/products/createOrderClient';
     final headers = {'Authorization': 'Bearer $token'};
     final body = {
       'nit': nit,

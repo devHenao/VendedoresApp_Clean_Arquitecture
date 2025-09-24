@@ -39,7 +39,7 @@ class ProductRepositoryImpl implements ProductRepository {
         return Left(ServerFailure(e.message));
       }
     } else {
-      return Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure('No internet connection'));
     }
   }
 }

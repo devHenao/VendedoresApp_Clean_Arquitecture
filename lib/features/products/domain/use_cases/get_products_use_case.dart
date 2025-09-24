@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/features/products/domain/entities/product.dart';
 import 'package:app_vendedores/features/products/domain/repositories/product_repository.dart';

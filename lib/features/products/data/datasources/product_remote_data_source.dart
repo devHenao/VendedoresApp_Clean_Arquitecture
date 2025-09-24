@@ -14,7 +14,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<List<ProductModel>> getProducts(String token, String codprecio, int pageNumber, int pageSize, String filter) async {
-    final url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/products/postListProductByCodPrecio';
+    const url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/products/postListProductByCodPrecio';
     final headers = {'Authorization': 'Bearer $token'};
     final body = {
       'codprecio': codprecio,

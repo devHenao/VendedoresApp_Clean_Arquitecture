@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:app_vendedores/features/auth/data/models/user_model.dart';
 import 'package:app_vendedores/core/errors/exceptions.dart';

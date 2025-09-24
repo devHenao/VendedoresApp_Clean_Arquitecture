@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '/backend/schema/structs/index.dart';
@@ -14,7 +12,6 @@ import 'package:app_vendedores/features/cart/presentation/pages/cart_page.dart';
 import 'package:app_vendedores/features/clients/presentation/pages/client_page.dart';
 import 'package:app_vendedores/features/products/presentation/pages/product_page.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'serialization_util.dart';
 
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
@@ -82,36 +79,37 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? ClientPage() : LoginPage(),
+          appStateNotifier.loggedIn ? const ClientPage() : const LoginPage(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) =>
-              appStateNotifier.loggedIn ? ClientPage() : LoginPage(),
+          builder: (context, _) => appStateNotifier.loggedIn
+              ? const ClientPage()
+              : const LoginPage(),
         ),
         FFRoute(
           name: 'Login',
           path: '/login',
-          builder: (context, params) => LoginPage(),
+          builder: (context, params) => const LoginPage(),
         ),
         FFRoute(
           name: 'Carrito',
           path: '/carrito',
           requireAuth: true,
-          builder: (context, params) => CartPage(),
+          builder: (context, params) => const CartPage(),
         ),
         FFRoute(
           name: 'Clientes',
           path: '/clientes',
           requireAuth: true,
-          builder: (context, params) => ClientPage(),
+          builder: (context, params) => const ClientPage(),
         ),
         FFRoute(
           name: 'Productos',
           path: '/productos',
           requireAuth: true,
-          builder: (context, params) => ProductPage(),
+          builder: (context, params) => const ProductPage(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
@@ -345,7 +343,8 @@ class TransitionInfo {
   final Duration duration;
   final Alignment? alignment;
 
-  static TransitionInfo appDefault() => TransitionInfo(hasTransition: false);
+  static TransitionInfo appDefault() =>
+      const TransitionInfo(hasTransition: false);
 }
 
 class RootPageContext {

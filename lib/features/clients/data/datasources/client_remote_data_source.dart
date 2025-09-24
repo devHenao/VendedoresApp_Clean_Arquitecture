@@ -14,7 +14,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
 
   @override
   Future<List<ClientModel>> getClients(String token) async {
-    final url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/clients/listClientByVenden';
+    const url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/clients/listClientByVenden';
     final headers = {'Authorization': 'Bearer $token'};
 
     try {
