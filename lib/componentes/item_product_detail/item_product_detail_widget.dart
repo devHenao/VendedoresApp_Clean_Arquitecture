@@ -3,9 +3,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'item_product_detail_model.dart';
 import 'item_product_detail_widgets.dart';
+import 'item_product_detail_controller.dart';
 export 'item_product_detail_model.dart';
 
 class ItemProductDetailWidget extends StatefulWidget {
@@ -31,38 +31,43 @@ class ItemProductDetailWidget extends StatefulWidget {
 
 class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
   late ItemProductDetailModel _model;
-
-  @override
-  void setState(VoidCallback callback) {
-    super.setState(callback);
-    _model.onUpdate();
-  }
+  late ItemProductDetailController _controller;
+  late TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ItemProductDetailModel());
 
-    // On component load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.dataBodega = widget.itemList;
-      _model.contador = widget.pCantidad;
-      safeSetState(() {});
-      safeSetState(() {
-        _model.amountTextController?.text = widget.pCantidad.toString();
-      });
-    });
+    _controller = ItemProductDetailController(
+      item: widget.itemList!,
+      initialQuantity: widget.pCantidad,
+      onQuantityChanged: (qty) async => await widget.callbackCantidad?.call(qty),
+      onSelected: (selected) async => await widget.callbackSeleccionadoBodega?.call(selected),
+      onRemoved: () async => await widget.callbackEliminarBodega?.call(),
+    );
 
-    _model.amountTextController ??= TextEditingController(text: '0');
-    _model.amountFocusNode ??= FocusNode();
+    _textController = TextEditingController();
+    _controller.addListener(_onControllerUpdate);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    _textController.text = _controller.quantity.toString();
+  }
+
+  void _onControllerUpdate() {
+    if (!mounted) return;
+    final controllerValue = _controller.quantity.toString();
+    if (_textController.text != controllerValue) {
+      _textController.text = controllerValue;
+    }
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _model.maybeDispose();
-
+    _controller.removeListener(_onControllerUpdate);
+    _controller.dispose();
+    _textController.dispose();
+    _model.dispose();
     super.dispose();
   }
 
@@ -89,56 +94,19 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                   if (widget.itemList != null)
                     ProductStorageDetails(item: widget.itemList!),
                   ProductStorageControls(
-                    onRemove: () async {
-                      _model.contador = 0.0;
-                      safeSetState(() {});
-                      await widget.callbackSeleccionadoBodega?.call(false);
-                      await widget.callbackCantidad?.call(0.0);
-                      safeSetState(() {
-                        _model.amountTextController?.text = '0';
-                      });
-                      await widget.callbackEliminarBodega?.call();
-                    },
-                    onSubtract: () async {
-                      _model.contador = (_model.contador!) - 1;
-                      safeSetState(() {});
-                      safeSetState(() {
-                        _model.amountTextController?.text = _model.contador!.toString();
-                      });
-                      await widget.callbackCantidad?.call(
-                        double.tryParse(_model.amountTextController.text),
-                      );
-                    },
-                    onAdd: () async {
-                      _model.contador = (_model.contador ?? 0) + 1;
-                      safeSetState(() {
-                        _model.amountTextController?.text = _model.contador!.toString();
-                      });
-                      await widget.callbackCantidad?.call(_model.contador);
-                    },
+                    onRemove: _controller.remove,
+                    onSubtract: _controller.decrement,
+                    onAdd: _controller.increment,
                     onQuantityChanged: (value) => EasyDebounce.debounce(
-                      '_model.amountTextController',
-                      const Duration(milliseconds: 2000),
-                      () async {
-                        _model.contador = valueOrDefault<double>(
-                          _model.amountTextController.text.isEmpty
-                              ? 0.0
-                              : double.tryParse(_model.amountTextController.text),
-                          1.0,
-                        );
-                        safeSetState(() {});
-                        safeSetState(() {
-                          _model.amountTextController?.text = _model.contador!.toString();
-                        });
-                        await widget.callbackCantidad?.call(_model.contador);
-                      },
+                      'detail-quantity-debounce',
+                      const Duration(milliseconds: 800),
+                      () => _controller.updateQuantityFromText(value),
                     ),
-                    textController: _model.amountTextController!,
-                    focusNode: _model.amountFocusNode!,
+                    textController: _textController,
+                    focusNode: _model.amountFocusNode!, // Re-using from old model
                     validator: _model.amountTextControllerValidator.asValidator(context),
-                    isSubtractDisabled: _model.contador! <= 0.0,
-                    isAddDisabled: (widget.itemList?.saldo ?? 0) <= 0 ||
-                        (_model.contador ?? 0) >= (widget.itemList?.saldo ?? 0),
+                    isSubtractDisabled: _controller.isSubtractDisabled,
+                    isAddDisabled: _controller.isAddDisabled,
                   ),
                 ],
               ),

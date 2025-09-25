@@ -99,15 +99,17 @@ class ItemActions extends StatelessWidget {
 class QuantityControls extends StatelessWidget {
   const QuantityControls({
     super.key,
-    required this.item,
-    required this.onQuantityChanged,
+    required this.onIncrement,
+    required this.onDecrement,
+    required this.onQuantityChangedFromText,
     required this.controller,
     required this.focusNode,
     required this.validator,
   });
 
-  final CartItem item;
-  final ValueChanged<int> onQuantityChanged;
+  final VoidCallback onIncrement;
+  final VoidCallback onDecrement;
+  final ValueChanged<String> onQuantityChangedFromText;
   final TextEditingController controller;
   final FocusNode focusNode;
   final FormFieldValidator<String>? validator;
@@ -128,22 +130,14 @@ class QuantityControls extends StatelessWidget {
             color: FlutterFlowTheme.of(context).info,
             size: 15.0,
           ),
-          onPressed: () {
-            final newQuantity = item.cantidad - 1;
-            if (newQuantity > 0) {
-              onQuantityChanged(newQuantity);
-            }
-          },
+          onPressed: onDecrement,
         ),
         SizedBox(
           width: 100.0,
           child: TextFormField(
             controller: controller,
             focusNode: focusNode,
-            onChanged: (value) {
-              final newQuantity = int.tryParse(value) ?? item.cantidad;
-              onQuantityChanged(newQuantity);
-            },
+            onChanged: onQuantityChangedFromText,
             autofocus: false,
             obscureText: false,
             decoration: InputDecoration(
@@ -213,10 +207,7 @@ class QuantityControls extends StatelessWidget {
             color: FlutterFlowTheme.of(context).info,
             size: 15.0,
           ),
-          onPressed: () {
-            final newQuantity = item.cantidad + 1;
-            onQuantityChanged(newQuantity);
-          },
+          onPressed: onIncrement,
         ),
       ].divide(const SizedBox(width: 10.0)),
     );

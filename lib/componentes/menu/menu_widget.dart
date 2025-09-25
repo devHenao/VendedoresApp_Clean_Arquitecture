@@ -1,10 +1,10 @@
-import '/auth/custom_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'menu_model.dart';
 import 'menu_widgets.dart';
+import 'menu_controller.dart' as app;
 export 'menu_model.dart';
 
 class MenuWidget extends StatefulWidget {
@@ -16,17 +16,13 @@ class MenuWidget extends StatefulWidget {
 
 class _MenuWidgetState extends State<MenuWidget> {
   late MenuModel _model;
-
-  @override
-  void setState(VoidCallback callback) {
-    super.setState(callback);
-    _model.onUpdate();
-  }
+  late app.MenuController _controller;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => MenuModel());
+    _controller = app.MenuController(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -34,7 +30,6 @@ class _MenuWidgetState extends State<MenuWidget> {
   @override
   void dispose() {
     _model.maybeDispose();
-
     super.dispose();
   }
 
@@ -92,49 +87,7 @@ class _MenuWidgetState extends State<MenuWidget> {
                     ],
                   ),
                   const MenuItems(),
-                  MenuActions(onSignOut: () {
-                    // Función para navegar al login
-                    void navigateToLogin() {
-                      if (!mounted) return;
-                      Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
-                        '/Login',
-                        (route) => false,
-                      );
-                    }
-
-                    // Iniciar la operación asíncrona
-                    Future(() async {
-                      try {
-                        // Limpiar el estado de la aplicación
-                        FFAppState().resetAppState();
-
-                        // Actualizar la UI si el widget sigue montado
-                        if (mounted) {
-                          setState(() {});
-                        }
-
-                        // Pequeña pausa para asegurar actualizaciones de UI
-                        await Future.delayed(const Duration(milliseconds: 100));
-
-                        // Verificar nuevamente si el widget está montado
-                        if (!mounted) return;
-
-                        // Realizar operaciones de cierre de sesión
-                        await authManager.signOut();
-
-                        // Navegar al login
-                        if (mounted) {
-                          navigateToLogin();
-                        }
-                      } catch (e) {
-                        debugPrint('Error during sign out: $e');
-                        // Navigate to login even if there was an error
-                        if (mounted) {
-                          navigateToLogin();
-                        }
-                      }
-                    });
-                  }),
+                  MenuActions(onSignOut: _controller.signOut),
                 ].divide(const SizedBox(height: 16.0)),
               ),
             ),

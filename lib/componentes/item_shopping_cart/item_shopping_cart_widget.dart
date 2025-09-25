@@ -3,7 +3,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'item_shopping_cart_model.dart';
-import 'item_shopping_cart_widgets.dart'; 
+import 'item_shopping_cart_widgets.dart';
+import 'item_shopping_cart_controller.dart';
 export 'item_shopping_cart_model.dart';
 
 class ItemShoppingCartWidget extends StatefulWidget {
@@ -23,29 +24,45 @@ class ItemShoppingCartWidget extends StatefulWidget {
 }
 
 class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
-  late ItemShoppingCartModel _model;
-
-  @override
-  void setState(VoidCallback callback) {
-    super.setState(callback);
-    _model.onUpdate();
-  }
+  late ItemShoppingCartController _controller;
+  late TextEditingController _textController;
+  late ItemShoppingCartModel _model; // Still needed for validator
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ItemShoppingCartModel());
 
-    _model.amountCartTextController ??= TextEditingController(text: widget.item.cantidad.toString());
-    _model.amountCartFocusNode ??= FocusNode();
+    _controller = ItemShoppingCartController(
+      item: widget.item,
+      onQuantityChanged: widget.onQuantityChanged,
+      onRemove: widget.onRemove,
+    );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    _textController = TextEditingController();
+    _controller.addListener(_onControllerUpdate);
+
+    // Set initial text
+    _textController.text = _controller.quantity.toString();
+  }
+
+  void _onControllerUpdate() {
+    if (!mounted) return;
+
+    final controllerValue = _controller.quantity.toString();
+    if (_textController.text != controllerValue) {
+      _textController.text = controllerValue;
+    }
+
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _model.maybeDispose();
-
+    _controller.removeListener(_onControllerUpdate);
+    _controller.dispose();
+    _textController.dispose();
+    _model.dispose();
     super.dispose();
   }
 
@@ -77,13 +94,14 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ItemActions(onRemove: widget.onRemove),
+                        ItemActions(onRemove: _controller.remove),
                         Expanded(
                           child: QuantityControls(
-                            item: widget.item,
-                            onQuantityChanged: widget.onQuantityChanged,
-                            controller: _model.amountCartTextController!,
-                            focusNode: _model.amountCartFocusNode!,
+                            onIncrement: _controller.increment,
+                            onDecrement: _controller.decrement,
+                            onQuantityChangedFromText: _controller.updateQuantityFromText,
+                            controller: _textController,
+                            focusNode: _model.amountCartFocusNode!, // Re-using from old model
                             validator: _model.amountCartTextControllerValidator.asValidator(context),
                           ),
                         ),
