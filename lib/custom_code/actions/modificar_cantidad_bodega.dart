@@ -9,10 +9,10 @@ Future<List<DetailProductStruct>> modificarCantidadBodega(
   double? countValue,
 ) async {
   // Add your function code here!
-  if (listProductBodegas.length == 0) {
+  if (listProductBodegas.isEmpty) {
     producto.cantidad = countValue;
     listProductBodegas.add(producto);
-    return listProductBodegas ?? [];
+    return listProductBodegas;
   }
   final productold =
       listProductBodegas.firstWhere((p) => p.codigo == producto.codigo);

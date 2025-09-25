@@ -33,14 +33,11 @@ try {
 
     if (response.statusCode == 200) {
       Uint8List fileBytes = response.bodyBytes;
-      final fileName = 'reportePedidosPendientes_${identificacion}.pdf';
-
-      print("Tamaño del archivo: ${fileBytes.length} bytes");
+      final fileName = 'reportePedidosPendientes_$identificacion.pdf';
 
       if (io.Platform.isAndroid) {
-        final methodChannel = MethodChannel('com.mycompany.appvendedores/media_store');
+        const methodChannel = MethodChannel('com.mycompany.appvendedores/media_store');
         try {
-          print("Enviando datos al método nativo...");
           final savedFilePath = await methodChannel.invokeMethod<String>('saveFile', {
             'fileBytes': fileBytes,
             'fileName': fileName,
@@ -48,25 +45,20 @@ try {
           });
 
           if (savedFilePath != null) {
-            print("Archivo guardado en: $savedFilePath");
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text('Archivo guardado en descargas'),
                 backgroundColor: Color(0xFF39D2C0),
               ),
             );
 
             // Abrir el archivo inmediatamente después de guardarlo
-            final result = await OpenFile.open(savedFilePath);
-            print('Resultado de abrir el archivo: $result');
           } else {
-            print("Error: No se pudo guardar el archivo");
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error al guardar el archivo.')),
+              const SnackBar(content: Text('Error al guardar el archivo.')),
             );
           }
         } catch (e) {
-          print("Error en el canal: $e");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error en el canal: $e')),
           );
@@ -80,21 +72,17 @@ try {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Archivo guardado en: $filePath'),
-            backgroundColor: Color(0xFF39D2C0),
+            backgroundColor: const Color(0xFF39D2C0),
           ),
         );
-
-        // Abrir el archivo inmediatamente después de guardarlo
-        final result = await OpenFile.open(filePath);
-        print('Resultado de abrir el archivo: $result');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Descarga no disponible para esta plataforma.')),
+          const SnackBar(content: Text('Descarga no disponible para esta plataforma.')),
         );
       }
     } else if (response.statusCode == 400) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No hay pedidos pendientes para esta identificación.')),
+        const SnackBar(content: Text('No hay pedidos pendientes para esta identificación.')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,9 +90,8 @@ try {
       );
     }
   } catch (e) {
-    print("Error de red o en la solicitud: $e");
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Ocurrió un error al descargar el archivo.')),
+      const SnackBar(content: Text('Ocurrió un error al descargar el archivo.')),
     );
   }
 }

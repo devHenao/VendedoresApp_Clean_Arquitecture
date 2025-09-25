@@ -7,12 +7,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'update_client_model.dart';
 export 'update_client_model.dart';
@@ -67,7 +64,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
         context: context,
         builder: (alertDialogContext) {
           return AlertDialog(
-            title: Text('Error'),
+            title: const Text('Error'),
             content: Text(getJsonField(
               (_model.apiResultCity?.jsonBody ?? ''),
               r'''$.data''',
@@ -75,7 +72,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(alertDialogContext),
-                child: Text('Ok'),
+                child: const Text('Ok'),
               ),
             ],
           );
@@ -123,7 +120,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                 context: context,
                 builder: (alertDialogContext) {
                   return AlertDialog(
-                    title: Text('Error'),
+                    title: const Text('Error'),
                     content: Text(getJsonField(
                       (_model.apiResultDpto?.jsonBody ?? ''),
                       r'''$.data''',
@@ -131,7 +128,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(alertDialogContext),
-                        child: Text('Ok'),
+                        child: const Text('Ok'),
                       ),
                     ],
                   );
@@ -163,7 +160,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                 context: context,
                 builder: (alertDialogContext) {
                   return AlertDialog(
-                    title: Text('Error'),
+                    title: const Text('Error'),
                     content: Text(getJsonField(
                       (_model.apiResultCity?.jsonBody ?? ''),
                       r'''$.data''',
@@ -171,7 +168,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(alertDialogContext),
-                        child: Text('Ok'),
+                        child: const Text('Ok'),
                       ),
                     ],
                   );
@@ -181,24 +178,24 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
           }),
         ]);
         safeSetState(() {
-          _model.txtNitTextController?.text = widget!.dataClients!.nit;
+          _model.txtNitTextController?.text = widget.dataClients!.nit;
         });
         safeSetState(() {
-          _model.txtNombreTextController?.text = widget!.dataClients!.nombre;
+          _model.txtNombreTextController?.text = widget.dataClients!.nombre;
         });
         safeSetState(() {
           _model.txtContactoTextController?.text =
-              widget!.dataClients!.contacto;
+              widget.dataClients!.contacto;
         });
         safeSetState(() {
-          _model.txtTelefonoTextController?.text = widget!.dataClients!.tel1;
+          _model.txtTelefonoTextController?.text = widget.dataClients!.tel1;
         });
         safeSetState(() {
-          _model.txtEmailTextController?.text = widget!.dataClients!.email;
+          _model.txtEmailTextController?.text = widget.dataClients!.email;
         });
         safeSetState(() {
           _model.txtDireccionTextController?.text =
-              widget!.dataClients!.direccion;
+              widget.dataClients!.direccion;
         });
         // Cargar el departamento seleccionado
         if (_model.dpto != null && _model.dpto!.isNotEmpty) {
@@ -223,12 +220,12 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
           context: context,
           builder: (alertDialogContext) {
             return AlertDialog(
-              title: Text('Error'),
-              content: Text('No se pasaron datos del cliente'),
+              title: const Text('Error'),
+              content: const Text('No se pasaron datos del cliente'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(alertDialogContext),
-                  child: Text('Ok'),
+                  child: const Text('Ok'),
                 ),
               ],
             );
@@ -263,7 +260,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
             curve: Curves.easeInOut,
             delay: 0.0.ms,
             duration: 600.0.ms,
-            color: Color(0xFC39D2C0),
+            color: const Color(0xFC39D2C0),
             begin: 0.0,
             end: 1.0,
           ),
@@ -286,24 +283,24 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
     context.watch<FFAppState>();
 
     return Align(
-      alignment: AlignmentDirectional(0.0, 0.0),
+      alignment: const AlignmentDirectional(0.0, 0.0),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxWidth: 570.0,
           ),
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
             borderRadius: BorderRadius.circular(12.0),
             border: Border.all(
-              color: Color(0xFFE0E3E7),
+              color: const Color(0xFFE0E3E7),
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24.0),
             child: SingleChildScrollView(
               primary: false,
               child: Column(
@@ -339,7 +336,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       FlutterFlowTheme.of(context).primaryText,
                                   size: 32.0,
                                 ),
-                              ].divide(SizedBox(width: 5.0)),
+                              ].divide(const SizedBox(width: 5.0)),
                             ),
                           ],
                         ),
@@ -351,8 +348,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                     thickness: 2.0,
                     color: FlutterFlowTheme.of(context).alternate,
                   ),
-                  if (_model.txtNitTextController.text == null ||
-                      _model.txtNitTextController.text == '')
+                  if (_model.txtNitTextController.text.isNotEmpty)
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -372,15 +368,14 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                       ],
                     ),
                   Container(
-                    decoration: BoxDecoration(),
+                    decoration: const BoxDecoration(),
                     child: Form(
                       key: _model.formKey,
                       autovalidateMode: AutovalidateMode.disabled,
                       child: Visibility(
-                        visible: _model.txtNitTextController.text != null &&
-                            _model.txtNitTextController.text != '',
+                        visible: _model.txtNitTextController.text.isNotEmpty,
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 15.0),
                           child: SingleChildScrollView(
                             child: Column(
@@ -388,7 +383,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -411,7 +406,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -517,11 +512,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -544,7 +539,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -652,11 +647,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -679,7 +674,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
@@ -789,11 +784,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -816,7 +811,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
@@ -926,11 +921,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -953,7 +948,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -1015,7 +1010,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                                       builder:
                                                           (alertDialogContext) {
                                                         return AlertDialog(
-                                                          title: Text('Error'),
+                                                          title: const Text('Error'),
                                                           content:
                                                               Text(getJsonField(
                                                             (_model.apiResultNewCity
@@ -1028,7 +1023,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                                               onPressed: () =>
                                                                   Navigator.pop(
                                                                       alertDialogContext),
-                                                              child: Text('Ok'),
+                                                              child: const Text('Ok'),
                                                             ),
                                                           ],
                                                         );
@@ -1061,7 +1056,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                                 borderColor: Colors.transparent,
                                                 borderWidth: 2.0,
                                                 borderRadius: 0.0,
-                                                margin: EdgeInsetsDirectional
+                                                margin: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 0.0, 0.0, 0.0),
                                                 isOverButton: true,
@@ -1083,11 +1078,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -1110,7 +1105,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -1160,7 +1155,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                                 borderColor: Colors.transparent,
                                                 borderWidth: 0.0,
                                                 borderRadius: 0.0,
-                                                margin: EdgeInsetsDirectional
+                                                margin: const EdgeInsetsDirectional
                                                     .fromSTEB(
                                                         0.0, 0.0, 0.0, 0.0),
                                                 isOverButton: true,
@@ -1182,11 +1177,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 20.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -1209,7 +1204,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       Expanded(
                                         child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 10.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
@@ -1319,14 +1314,14 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                                 Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0.0, 0.0, 20.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -1350,7 +1345,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           ),
                                           Expanded(
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
                                                       0.0, 0.0, 0.0, 10.0),
                                               child: Column(
@@ -1462,30 +1457,29 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 10.0)),
+                                        ].divide(const SizedBox(width: 10.0)),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ].divide(SizedBox(height: 15.0)),
+                              ].divide(const SizedBox(height: 15.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  if (_model.txtNitTextController.text != null &&
-                      _model.txtNitTextController.text != '')
+                  if (_model.txtNitTextController.text.isNotEmpty)
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 12.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 12.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Align(
-                            alignment: AlignmentDirectional(0.0, -1.0),
+                            alignment: const   AlignmentDirectional(0.0, -1.0),
                             child: Builder(
                               builder: (context) => FFButtonWidget(
                                 onPressed: () async {
@@ -1528,11 +1522,11 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                           elevation: 0,
                                           insetPadding: EdgeInsets.zero,
                                           backgroundColor: Colors.transparent,
-                                          alignment: AlignmentDirectional(
+                                          alignment: const AlignmentDirectional(
                                                   0.0, 0.0)
                                               .resolve(
                                                   Directionality.of(context)),
-                                          child: OkActualizadoWidget(),
+                                          child: const OkActualizadoWidget(),
                                         );
                                       },
                                     );
@@ -1544,7 +1538,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       context: context,
                                       builder: (alertDialogContext) {
                                         return AlertDialog(
-                                          title: Text('Error'),
+                                          title: const Text('Error'),
                                           content: Text(getJsonField(
                                             (_model.apiResultNewIDataClient
                                                     ?.jsonBody ??
@@ -1555,7 +1549,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                             TextButton(
                                               onPressed: () => Navigator.pop(
                                                   alertDialogContext),
-                                              child: Text('Ok'),
+                                              child: const Text('Ok'),
                                             ),
                                           ],
                                         );
@@ -1566,15 +1560,15 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                   safeSetState(() {});
                                 },
                                 text: 'Actualizar',
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.content_paste,
                                   size: 15.0,
                                 ),
                                 options: FFButtonOptions(
                                   height: 40.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context)
@@ -1591,21 +1585,21 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.0, -1.0),
+                            alignment: const AlignmentDirectional(0.0, -1.0),
                             child: FFButtonWidget(
                               onPressed: () async {
                                 Navigator.pop(context);
                               },
                               text: 'Cerrar',
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.close,
                                 size: 15.0,
                               ),
                               options: FFButtonOptions(
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
                                 color: FlutterFlowTheme.of(context)
                                     .primaryBackground,
@@ -1618,14 +1612,14 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
                                       letterSpacing: 0.0,
                                     ),
                                 elevation: 0.0,
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x4A161C24),
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(width: 20.0)),
+                        ].divide(const SizedBox(width: 20.0)),
                       ),
                     ),
                 ],

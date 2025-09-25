@@ -51,9 +51,6 @@ Future<void> dowloandWallet(
                 backgroundColor: Color(0xFF39D2C0),
               ),
             );
-
-            // Abrir el archivo inmediatamente después de guardarlo
-            final result = await OpenFile.open(savedFilePath);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Error al guardar el archivo.')),
@@ -76,9 +73,6 @@ Future<void> dowloandWallet(
             backgroundColor: const Color(0xFF39D2C0),
           ),
         );
-
-        // Abrir el archivo inmediatamente después de guardarlo
-        final result = await OpenFile.open(filePath);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Descarga no disponible para esta plataforma.')),

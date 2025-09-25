@@ -9,7 +9,7 @@ class AuthGroup {
   static String getBaseUrl({
     String? enviroment = 'prod-appseller-ofima',
   }) =>
-      'https://us-central1-${enviroment}.cloudfunctions.net/appAuthSeller/';
+      'https://us-central1-$enviroment.cloudfunctions.net/appAuthSeller/';
   static Map<String, String> headers = {};
   static LoginSellerCall loginSellerCall = LoginSellerCall();
   static RecoveryPasswordCall recoveryPasswordCall = RecoveryPasswordCall();
@@ -28,9 +28,9 @@ class LoginSellerCall {
 
     final ffApiRequestBody = '''
 {
-  "identification": "${identification}",
-  "email": "${email}",
-  "password": "${password}"
+  "identification": "$identification",
+  "email": "$email",
+  "password": "$password"
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'loginSeller',
@@ -92,7 +92,7 @@ class ClientsGroup {
     String? token = '',
     String? enviroment = 'prod-appseller-ofima',
   }) =>
-      'https://us-central1-${enviroment}.cloudfunctions.net/appSeller/';
+      'https://us-central1-$enviroment.cloudfunctions.net/appSeller/';
   static Map<String, String> headers = {
     'Authorization': 'Bearer [token]',
   };
@@ -116,7 +116,7 @@ class ListClientByVendenCall {
       apiUrl: '${baseUrl}clients/getListClientByVenden',
       callType: ApiCallType.GET,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       returnBody: true,
@@ -141,14 +141,13 @@ class UpdateClientCall {
     );
 
     final data = _serializeJson(dataJson);
-    final ffApiRequestBody = '''
-${data}''';
+    final ffApiRequestBody = ''' $data''';
     return ApiManager.instance.makeApiCall(
       callName: 'updateClient',
       apiUrl: '${baseUrl}clients/updateClientByNit',
       callType: ApiCallType.PUT,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       body: ffApiRequestBody,
@@ -172,7 +171,7 @@ class MaestrasGroup {
     String? token = '',
     String? enviroment = 'prod-appseller-ofima',
   }) =>
-      'https://us-central1-${enviroment}.cloudfunctions.net/appMaster/';
+      'https://us-central1-$enviroment.cloudfunctions.net/appMaster/';
   static Map<String, String> headers = {
     'Authorization': 'Bearer [token]',
   };
@@ -195,7 +194,7 @@ class GetListDeptoCall {
       apiUrl: '${baseUrl}getListDepto',
       callType: ApiCallType.GET,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       returnBody: true,
@@ -228,7 +227,7 @@ class ListCitiesCall {
       apiUrl: '${baseUrl}getListCities',
       callType: ApiCallType.POST,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       body: ffApiRequestBody,
@@ -252,7 +251,7 @@ class ProductsGroup {
     String? token = '',
     String? enviroment = 'prod-appseller-ofima',
   }) =>
-      'https://us-central1-${enviroment}.cloudfunctions.net/appSeller/';
+      'https://us-central1-$enviroment.cloudfunctions.net/appSeller/';
   static Map<String, String> headers = {
     'Authorization': 'Bearer [token]',
   };
@@ -279,8 +278,8 @@ class PostListProductByCodPrecioCall {
 
     final ffApiRequestBody = '''
 {
-  "pageNumber": ${pageNumber},
-  "pageSize": ${pageSize},
+  "pageNumber": $pageNumber,
+  "pageSize": $pageSize,
   "filters": [
     {
       "type": "like",
@@ -301,10 +300,10 @@ class PostListProductByCodPrecioCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'postListProductByCodPrecio',
-      apiUrl: '${baseUrl}products/getListProductByCodPrecio/${codprecio}',
+      apiUrl: '${baseUrl}products/getListProductByCodPrecio/$codprecio',
       callType: ApiCallType.POST,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       body: ffApiRequestBody,
@@ -334,10 +333,10 @@ class GetListStorageByProductCall {
     return ApiManager.instance.makeApiCall(
       callName: 'getListStorageByProduct',
       apiUrl:
-          '${baseUrl}products/getListStorageByProduct/${codprecio}/${codproduc}',
+          '${baseUrl}products/getListStorageByProduct/$codprecio/$codproduc',
       callType: ApiCallType.GET,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       returnBody: true,
@@ -366,14 +365,14 @@ class CreateOrderClientCall {
     final ffApiRequestBody = '''
 {
   "nit": "${escapeStringForJson(nit)}",
-  "listProducts": ${listProducts}
+  "listProducts": $listProducts
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'createOrderClient',
       apiUrl: '${baseUrl}products/createOrderClient',
       callType: ApiCallType.POST,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       params: {},
       body: ffApiRequestBody,

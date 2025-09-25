@@ -377,24 +377,25 @@ class _ProductWidgetState extends State<ProductWidget> {
                                   },
                                 );
                               }
-                              } catch (e) {
-                                if (!mounted) return;
-                                await showDialog(
-                                  context: context,
-                                  builder: (alertDialogContext) {
-                                    return AlertDialog(
-                                      title: const Text('Error'),
-                                      content: Text('Error al verificar el stock: $e'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(alertDialogContext),
-                                          child: const Text('Ok'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
+                            } catch (e) {
+                              if (!mounted) return;
+                              await showDialog(
+                                context: context,
+                                builder: (alertDialogContext) {
+                                  return AlertDialog(
+                                    title: const Text('Error'),
+                                    content: Text('Error al verificar el stock: $e'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(alertDialogContext),
+                                        child: const Text('Ok'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                             },
                             child: Icon(
                               Icons.add_circle_sharp,
