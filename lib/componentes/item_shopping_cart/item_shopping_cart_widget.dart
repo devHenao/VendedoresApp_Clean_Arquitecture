@@ -3,7 +3,6 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'item_shopping_cart_model.dart';
@@ -55,7 +54,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -67,7 +66,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
               borderRadius: BorderRadius.circular(8.0),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
+              padding: const EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +86,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                   ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 2.0)),
+                    ].divide(const SizedBox(width: 2.0)),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -120,7 +119,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 5.0)),
+                              ].divide(const SizedBox(width: 5.0)),
                             ),
                           ],
                         ),
@@ -153,7 +152,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 5.0)),
+                              ].divide(const SizedBox(width: 5.0)),
                             ),
                           ],
                         ),
@@ -191,7 +190,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 5.0)),
+                              ].divide(const SizedBox(width: 5.0)),
                             ),
                           ],
                         ),
@@ -224,7 +223,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                         letterSpacing: 0.0,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 5.0)),
+                              ].divide(const SizedBox(width: 5.0)),
                             ),
                           ],
                         ),
@@ -251,7 +250,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                               letterSpacing: 0.0,
                             ),
                       ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                   if (_model.stockLimit != null)
                     Row(
@@ -274,10 +273,10 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                 letterSpacing: 0.0,
                               ),
                         ),
-                      ].divide(SizedBox(width: 5.0)),
+                      ].divide(const SizedBox(width: 5.0)),
                     ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -292,7 +291,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                               highlightColor: Colors.transparent,
                               onTap: widget.onRemove,
                               child: FaIcon(
-                                FontAwesomeIcons.solidTrashAlt,
+                                FontAwesomeIcons.solidTrashCan,
                                 color: FlutterFlowTheme.of(context).error,
                                 size: 25.0,
                               ),
@@ -328,7 +327,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Container(
+                              SizedBox(
                                 width: 100.0,
                                 child: TextFormField(
                                   controller: _model.amountCartTextController,
@@ -362,7 +361,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                                       borderRadius: BorderRadius.circular(0.0),
                                     ),
                                     focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
+                                      borderSide: const BorderSide(
                                         color: Color(0x00000000),
                                         width: 1.0,
                                       ),
@@ -442,7 +441,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
                       ],
                     ),
                   ),
-                ].divide(SizedBox(height: 10.0)),
+                ].divide(const SizedBox(height: 10.0)),
               ),
             ),
           ),

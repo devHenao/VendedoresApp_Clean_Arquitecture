@@ -2,7 +2,6 @@ import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:ui';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -19,7 +18,7 @@ class ItemProductDetailWidget extends StatefulWidget {
     double? pCantidad,
     this.callbackEliminarBodega,
     required this.callbackSeleccionadoBodega,
-  }) : this.pCantidad = pCantidad ?? 0.0;
+  }) : pCantidad = pCantidad ?? 0.0;
 
   final DetailProductStruct? itemList;
   final Future Function(double? pCantidad)? callbackCantidad;
@@ -48,11 +47,11 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
 
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.dataBodega = widget!.itemList;
-      _model.contador = widget!.pCantidad;
+      _model.dataBodega = widget.itemList;
+      _model.contador = widget.pCantidad;
       safeSetState(() {});
       safeSetState(() {
-        _model.amountTextController?.text = widget!.pCantidad.toString();
+        _model.amountTextController?.text = widget.pCantidad.toString();
       });
     });
 
@@ -79,7 +78,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(5.0, 5.0, 5.0, 5.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(5.0, 5.0, 5.0, 5.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -97,7 +96,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 5.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -114,7 +113,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                   ),
                                   Text(
                                     valueOrDefault<String>(
-                                      widget!.itemList?.bodega,
+                                      widget.itemList?.bodega,
                                       'bodega',
                                     ),
                                     style: FlutterFlowTheme.of(context)
@@ -124,7 +123,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                           letterSpacing: 0.0,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 5.0)),
+                                ].divide(const SizedBox(width: 5.0)),
                               ),
                             ),
                           ],
@@ -135,7 +134,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 5.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -152,7 +151,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                   ),
                                   Text(
                                     valueOrDefault<String>(
-                                      widget!.itemList?.codlote,
+                                      widget.itemList?.codlote,
                                       'lote',
                                     ),
                                     style: FlutterFlowTheme.of(context)
@@ -162,7 +161,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                           letterSpacing: 0.0,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 5.0)),
+                                ].divide(const SizedBox(width: 5.0)),
                               ),
                             ),
                           ],
@@ -178,7 +177,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 5.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -195,7 +194,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                   ),
                                   Text(
                                     valueOrDefault<String>(
-                                      widget!.itemList?.codcc,
+                                      widget.itemList?.codcc,
                                       'codccc',
                                     ),
                                     style: FlutterFlowTheme.of(context)
@@ -205,7 +204,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                           letterSpacing: 0.0,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 5.0)),
+                                ].divide(const SizedBox(width: 5.0)),
                               ),
                             ),
                           ],
@@ -216,7 +215,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 5.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -233,7 +232,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                   ),
                                   Text(
                                     valueOrDefault<String>(
-                                      widget!.itemList?.saldo.toString(),
+                                      widget.itemList?.saldo.toString(),
                                       'saldo',
                                     ),
                                     style: FlutterFlowTheme.of(context)
@@ -243,7 +242,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                           letterSpacing: 0.0,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 5.0)),
+                                ].divide(const SizedBox(width: 5.0)),
                               ),
                             ),
                           ],
@@ -275,7 +274,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                           await widget.callbackEliminarBodega?.call();
                         },
                         child: FaIcon(
-                          FontAwesomeIcons.solidTrashAlt,
+                          FontAwesomeIcons.solidTrashCan,
                           color: FlutterFlowTheme.of(context).error,
                           size: 20.0,
                         ),
@@ -317,21 +316,17 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Container(
+                            SizedBox(
                               width: 100.0,
                               child: TextFormField(
                                 controller: _model.amountTextController,
                                 focusNode: _model.amountFocusNode,
                                 onChanged: (_) => EasyDebounce.debounce(
                                   '_model.amountTextController',
-                                  Duration(milliseconds: 2000),
+                                  const Duration(milliseconds: 2000),
                                   () async {
                                     _model.contador = valueOrDefault<double>(
-                                      _model.amountTextController.text ==
-                                                  null ||
-                                              _model.amountTextController
-                                                      .text ==
-                                                  ''
+                                      _model.amountTextController.text.isEmpty
                                           ? 0.0
                                           : double.tryParse(
                                               _model.amountTextController.text),
@@ -372,8 +367,8 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                                     borderRadius: BorderRadius.circular(0.0),
                                   ),
                                   focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
+                                    borderSide: const BorderSide(
+                                      color:  Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(0.0),
@@ -461,7 +456,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
                 ],
               ),
             ),
-          ].divide(SizedBox(width: 12.0)),
+          ].divide(const SizedBox(width: 12.0)),
         ),
       ),
     );

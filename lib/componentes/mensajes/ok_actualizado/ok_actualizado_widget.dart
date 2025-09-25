@@ -1,6 +1,5 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'ok_actualizado_model.dart';
 export 'ok_actualizado_model.dart';
@@ -39,19 +38,19 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 16.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 16.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Color(0xFFFFF4F4),
+          color: const Color(0xFFFFF4F4),
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
-            color: Color(0xFC39D2C0),
+            color: const Color(0xFC39D2C0),
             width: 1.0,
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(12.0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -65,14 +64,14 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.gpp_good_rounded,
                           color: Color(0xFC39D2C0),
                           size: 30.0,
                         ),
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 5.0, 0.0, 0.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -87,12 +86,12 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                           .headlineMedium
                                           .override(
                                             fontFamily: 'Outfit',
-                                            color: Color(0xFC39D2C0),
+                                            color: const Color(0xFC39D2C0),
                                             fontSize: 18.0,
                                             letterSpacing: 0.0,
                                           ),
                                     ),
-                                  ].divide(SizedBox(width: 5.0)),
+                                  ].divide(const SizedBox(width: 5.0)),
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -110,7 +109,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                             ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(width: 5.0)),
+                                  ].divide(const SizedBox(width: 5.0)),
                                 ),
                               ],
                             ),
@@ -133,7 +132,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                     .bodyMedium
                                     .override(
                                       fontFamily: 'Manrope',
-                                      color: Color(0xFC39D2C0),
+                                      color: const Color(0xFC39D2C0),
                                       fontSize: 18.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -147,7 +146,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                   ],
                 ),
               ),
-            ].divide(SizedBox(width: 12.0)),
+            ].divide(const SizedBox(width: 12.0)),
           ),
         ),
       ),

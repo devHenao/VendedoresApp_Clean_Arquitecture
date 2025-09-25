@@ -3,7 +3,6 @@ import '/componentes/product_detail/product_detail_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:ui';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
@@ -26,9 +25,9 @@ class ProductWidget extends StatefulWidget {
     double? precio,
     double? saldo,
     this.callbackEliminar,
-  })  : this.cantidad = cantidad ?? 0.0,
-        this.precio = precio ?? 0.0,
-        this.saldo = saldo ?? 0.0;
+  })  : cantidad = cantidad ?? 0.0,
+        precio = precio ?? 0.0,
+        saldo = saldo ?? 0.0;
 
   final bool? selecionado;
   final Future Function(bool? state)? callBackSeleccionado;
@@ -106,8 +105,9 @@ class _ProductWidgetState extends State<ProductWidget> {
 
   @override
   void dispose() {
+    _model.amountTextController?.dispose();
+    _model.amountFocusNode?.dispose();
     _model.maybeDispose();
-
     super.dispose();
   }
 
@@ -123,7 +123,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -140,7 +140,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                       Text(
                         valueOrDefault<String>(
                           formatNumber(
-                            widget!.precio,
+                            widget.precio,
                             formatType: FormatType.decimal,
                             decimalType: DecimalType.periodDecimal,
                             currency: '\$',
@@ -157,14 +157,14 @@ class _ProductWidgetState extends State<ProductWidget> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 9.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 9.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Expanded(
                           child: Text(
                             valueOrDefault<String>(
-                              widget!.productItem?.descripcio,
+                              widget.productItem?.descripcio,
                               '-',
                             ).maybeHandleOverflow(
                               maxChars: 75,
@@ -196,7 +196,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ),
                       Text(
                         valueOrDefault<String>(
-                          widget!.productItem?.codproduc,
+                          widget.productItem?.codproduc,
                           '-',
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -204,7 +204,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                               letterSpacing: 0.0,
                             ),
                       ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -219,7 +219,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ),
                       Text(
                         valueOrDefault<String>(
-                          widget!.saldo.toString(),
+                          widget.saldo.toString(),
                           '0',
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -227,9 +227,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                               letterSpacing: 0.0,
                             ),
                       ),
-                    ].divide(SizedBox(width: 5.0)),
+                    ].divide(const SizedBox(width: 5.0)),
                   ),
-                  if (!widget!.selecionado!)
+                  if (widget.selecionado != true)
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -237,9 +237,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                       children: [
                         if (widget.saldo <= 0)
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                             decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context).error.withOpacity(0.9),
+                              color: FlutterFlowTheme.of(context).error.withValues(alpha: 0.9),
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: Text(
@@ -260,14 +260,17 @@ class _ProductWidgetState extends State<ProductWidget> {
                             highlightColor: Colors.transparent,
                             onTap: () async {
                               // 1. Get stock details from API
-                              _model.apiResultDetailProduct =
-                                  await ProductsGroup.getListStorageByProductCall.call(
-                                token: FFAppState().infoSeller.token,
-                                codprecio: FFAppState().dataCliente.codprecio,
-                                codproduc: widget.productItem?.codproduc,
-                              );
+                              try {
+                                _model.apiResultDetailProduct =
+                                    await ProductsGroup.getListStorageByProductCall.call(
+                                  token: FFAppState().infoSeller.token,
+                                  codprecio: FFAppState().dataCliente.codprecio,
+                                  codproduc: widget.productItem?.codproduc,
+                                );
 
-                              if ((_model.apiResultDetailProduct?.succeeded ?? true)) {
+                                if (!mounted) return;
+
+                                if ((_model.apiResultDetailProduct?.succeeded ?? true)) {
                                 // 2. Find the specific saldo for the seller's default bodega
                                 final bodegasJson = getJsonField(
                                   (_model.apiResultDetailProduct?.jsonBody ?? ''),
@@ -289,52 +292,103 @@ class _ProductWidgetState extends State<ProductWidget> {
                                   // Stock is OK, save the stock limit and add to cart
                                   _model.saldoBodegaVendedor = saldoBodegaVendedor;
                                   _model.updatePage(() {});
+                                  
+                                      // Función para mostrar el mensaje de éxito
+                                  void showSuccessMessage() {
+                                    if (!mounted) return;
+                                    final theme = FlutterFlowTheme.of(context);
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (!mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '¡El producto ha sido agregado al carrito!',
+                                            style: TextStyle(
+                                              color: theme.secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(milliseconds: 1500),
+                                          backgroundColor: theme.success,
+                                        ),
+                                      );
+                                    });
+                                  }
+                                  
+                                  // Llamar a los callbacks
                                   await widget.callBackSeleccionado?.call(true);
+                                  if (!mounted) return;
+                                  
                                   await widget.callbackCantidad?.call(1.0);
+                                  if (!mounted) return;
+                                  
                                   _model.contador = 1.0;
                                   _model.updatePage(() {});
+                                  
+                                  // Actualizar UI
                                   safeSetState(() {
                                     _model.amountTextController?.text = _model.contador!.toString();
                                   });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '¡El producto ha sido agregado al carrito!',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                                  
+                                  // Mostrar mensaje de éxito
+                                  showSuccessMessage();
+                                } else if (mounted) {
+                                  // Función para mostrar el mensaje de error
+                                  void showErrorMessage() {
+                                    if (!mounted) return;
+                                    final theme = FlutterFlowTheme.of(context);
+                                    final storageDefault = FFAppState().infoSeller.storageDefault;
+                                    
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (!mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'La bodega $storageDefault no tiene saldo, debes elegir otra bodega desde el detalle',
+                                            style: TextStyle(
+                                              color: theme.secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(milliseconds: 3000),
+                                          backgroundColor: theme.error,
                                         ),
-                                      ),
-                                      duration: Duration(milliseconds: 1500),
-                                      backgroundColor: FlutterFlowTheme.of(context).success,
-                                    ),
-                                  );
-                                } else {
-                                  // No stock, show error message
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'La bodega ${FFAppState().infoSeller.storageDefault} no tiene saldo, debes elegir otra bodega desde el detalle',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context).secondaryBackground,
-                                        ),
-                                      ),
-                                      duration: Duration(milliseconds: 3000),
-                                      backgroundColor: FlutterFlowTheme.of(context).error,
-                                    ),
-                                  );
+                                      );
+                                    });
+                                  }
+                                  
+                                  // Mostrar mensaje de error
+                                  showErrorMessage();
                                 }
                               } else {
                                 // API call failed, show generic error
+                                if (!mounted) return;
                                 await showDialog(
                                   context: context,
                                   builder: (alertDialogContext) {
                                     return AlertDialog(
-                                      title: Text('Error'),
-                                      content: Text('No se pudo verificar el stock del producto.'),
+                                      title: const Text('Error'),
+                                      content: const Text('No se pudo verificar el stock del producto.'),
                                       actions: [
                                         TextButton(
                                           onPressed: () => Navigator.pop(alertDialogContext),
-                                          child: Text('Ok'),
+                                          child: const Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                              } catch (e) {
+                                if (!mounted) return;
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      title: const Text('Error'),
+                                      content: Text('Error al verificar el stock: $e'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(alertDialogContext),
+                                          child: const Text('Ok'),
                                         ),
                                       ],
                                     );
@@ -348,9 +402,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                               size: 40.0,
                             ),
                           ),
-                      ].divide(SizedBox(width: 15.0)),
+                      ].divide(const SizedBox(width: 15.0)),
                     ),
-                  if (widget!.selecionado == true)
+                  if (widget.selecionado == true)
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,7 +413,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 12.0, 0.0),
                               child: InkWell(
                                 splashColor: Colors.transparent,
@@ -379,23 +433,24 @@ class _ProductWidgetState extends State<ProductWidget> {
                                     _model.amountTextController?.text = '1';
                                   });
                                   await widget.callbackEliminar?.call();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Se ha eliminado el producto del carrito',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
+                                  if (mounted) {
+                                    final theme = FlutterFlowTheme.of(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Se ha eliminado el producto del carrito',
+                                          style: TextStyle(
+                                            color: theme.secondaryBackground,
+                                          ),
                                         ),
+                                        duration: const Duration(milliseconds: 1500),
+                                        backgroundColor: theme.error,
                                       ),
-                                      duration: Duration(milliseconds: 1500),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context).error,
-                                    ),
-                                  );
+                                    );
+                                  }
                                 },
                                 child: FaIcon(
-                                  FontAwesomeIcons.solidTrashAlt,
+                                  FontAwesomeIcons.solidTrashCan,
                                   color: FlutterFlowTheme.of(context).error,
                                   size: 24.0,
                                 ),
@@ -443,15 +498,15 @@ class _ProductWidgetState extends State<ProductWidget> {
                             children: [
                               Container(
                                 width: 100.0,
-                                decoration: BoxDecoration(),
-                                child: Container(
+                                decoration: const BoxDecoration(),
+                                child: SizedBox(
                                   width: 100.0,
                                   child: TextFormField(
                                     controller: _model.amountTextController,
                                     focusNode: _model.amountFocusNode,
                                     onChanged: (_) => EasyDebounce.debounce(
                                       '_model.amountTextController',
-                                      Duration(milliseconds: 2000),
+                                      const Duration(milliseconds: 2000),
                                       () async {
                                         final enteredAmount = double.tryParse(_model.amountTextController.text) ?? 0.0;
                                         final maxStock = _model.saldoBodegaVendedor ?? 0.0;
@@ -466,7 +521,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                                   color: FlutterFlowTheme.of(context).secondaryBackground,
                                                 ),
                                               ),
-                                              duration: Duration(milliseconds: 3000),
+                                              duration: const Duration(milliseconds: 3000),
                                               backgroundColor: FlutterFlowTheme.of(context).error,
                                             ),
                                           );
@@ -514,7 +569,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                             BorderRadius.circular(0.0),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00000000),
                                           width: 1.0,
                                         ),
@@ -607,7 +662,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                             color: FlutterFlowTheme.of(context).secondaryBackground,
                                           ),
                                         ),
-                                        duration: Duration(milliseconds: 3000),
+                                        duration: const Duration(milliseconds: 3000),
                                         backgroundColor: FlutterFlowTheme.of(context).error,
                                       ),
                                     );
@@ -619,14 +674,14 @@ class _ProductWidgetState extends State<ProductWidget> {
                         ),
                       ],
                     ),
-                ].divide(SizedBox(height: 5.0)),
+                ].divide(const SizedBox(height: 5.0)),
               ),
             ),
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(0.0, 1.0),
+                  alignment: const AlignmentDirectional(0.0, 1.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -651,13 +706,13 @@ class _ProductWidgetState extends State<ProductWidget> {
                                       elevation: 0,
                                       insetPadding: EdgeInsets.zero,
                                       backgroundColor: Colors.transparent,
-                                      alignment: AlignmentDirectional(0.0, 0.0)
+                                      alignment: const AlignmentDirectional(0.0, 0.0)
                                           .resolve(Directionality.of(context)),
                                       child: ProductDetailWidget(
                                         codprecio:
                                             FFAppState().dataCliente.codprecio,
                                         codproduc:
-                                            widget!.productItem!.codproduc,
+                                            widget.productItem!.codproduc,
                                         cantidad: _model.contador!,
                                       ),
                                     );
@@ -667,7 +722,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                 if (result != null) {
                                   if (result > 0) {
                                     // If the product was not selected before, mark it as selected now.
-                                    if (!widget.selecionado!) {
+                                    if (widget.selecionado != true) {
                                       await widget.callBackSeleccionado?.call(true);
                                     }
 
@@ -697,7 +752,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ),
                       if (functions.onList(
                               FFAppState().store.map((e) => e.codigo).toList(),
-                              widget!.productItem!.codproduc) ==
+                              widget.productItem!.codproduc) ==
                           true)
                         Column(
                           mainAxisSize: MainAxisSize.max,
@@ -710,7 +765,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                 borderRadius: BorderRadius.circular(24.0),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const  EdgeInsetsDirectional.fromSTEB(
                                     5.0, 5.0, 5.0, 5.0),
                                 child: Text(
                                   functions
@@ -719,7 +774,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                               .store
                                               .map((e) => e.cantidad)
                                               .toList(),
-                                          widget!.productItem!.codproduc,
+                                          widget.productItem!.codproduc,
                                           FFAppState()
                                               .store
                                               .map((e) => e.codigo)
@@ -739,7 +794,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                             ),
                           ],
                         ),
-                    ].divide(SizedBox(height: 5.0)),
+                    ].divide(const SizedBox(height: 5.0)),
                   ),
                 ),
               ],
