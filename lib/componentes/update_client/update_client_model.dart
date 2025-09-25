@@ -25,21 +25,19 @@ class UpdateClientModel extends FlutterFlowModel<UpdateClientWidget> {
       listCity.insert(index, item);
   void updateListCityAtIndex(int index, Function(DataCityStruct) updateFn) =>
       listCity[index] = updateFn(listCity[index]);
-
-  String? dpto = 'ANTIOQUIA';
-
   String? codigociiu;
+  String? dpto;
+
+  ApiCallResponse? apiResultDpto;
+  ApiCallResponse? apiResultUpdate;
 
   DataClienteStruct? updateData;
   void updateUpdateDataStruct(Function(DataClienteStruct) updateFn) {
     updateFn(updateData ??= DataClienteStruct());
   }
-
   ///  State fields for stateful widgets in this component.
-
   final formKey = GlobalKey<FormState>();
   // Stores action output result for [Backend Call - API (getListDepto)] action in updateClient widget.
-  ApiCallResponse? apiResultDpto;
   // Stores action output result for [Backend Call - API (ListCities)] action in updateClient widget.
   ApiCallResponse? apiResultCity;
   // State field(s) for txtNit widget.
