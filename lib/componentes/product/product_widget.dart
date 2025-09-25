@@ -2,15 +2,13 @@ import '/backend/schema/structs/index.dart';
 import '/componentes/product_detail/product_detail_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'product_model.dart';
 import 'product_widgets.dart';
+import 'product_controller.dart';
 export 'product_model.dart';
 
 class ProductWidget extends StatefulWidget {
@@ -42,71 +40,58 @@ class ProductWidget extends StatefulWidget {
 }
 
 class _ProductWidgetState extends State<ProductWidget> {
-  late ProductModel _model;
-
-  @override
-  void setState(VoidCallback callback) {
-    super.setState(callback);
-    _model.onUpdate();
-  }
+  late ProductController _controller;
+  late TextEditingController _textController;
+  late ProductModel _model; // Still needed for validator
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ProductModel());
 
-    // On component load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      if (widget.cantidad > 0) {
-        _model.contador = widget.cantidad;
-      } else {
-        // If the product is selected (in cart from other warehouses) but this warehouse has 0, start at 0.
-        // Otherwise, if not selected at all, default to 1 for a new addition.
-        _model.contador = (widget.selecionado ?? false) ? 0.0 : 1.0;
-      }
-      _model.updatePage(() {});
-      safeSetState(() {
-        _model.amountTextController?.text = _model.contador!.toString();
-      });
+    _controller = ProductController(
+      productItem: widget.productItem,
+      initialCantidad: widget.cantidad,
+      isInitiallySelected: widget.selecionado ?? false,
+      infoSeller: FFAppState().infoSeller,
+      dataCliente: FFAppState().dataCliente,
+      onProductSelected: (isSelected) async => await widget.callBackSeleccionado?.call(isSelected),
+      onQuantityUpdated: (quantity) async => await widget.callbackCantidad?.call(quantity),
+      onProductRemoved: () async => await widget.callbackEliminar?.call(),
+    );
 
-      // If product is already selected, fetch its specific stock for validation.
-      if (widget.selecionado ?? false) {
-        _model.apiResultDetailProduct =
-            await ProductsGroup.getListStorageByProductCall.call(
-          token: FFAppState().infoSeller.token,
-          codprecio: FFAppState().dataCliente.codprecio,
-          codproduc: widget.productItem?.codproduc,
-        );
-        if (_model.apiResultDetailProduct?.succeeded ?? true) {
-          final bodegasJson = getJsonField(
-            (_model.apiResultDetailProduct?.jsonBody ?? ''),
-            r'''$.data''',
-            true,
-          );
-          final bodegas = (bodegasJson as List?)
-                  ?.map((e) => DetailProductStruct.maybeFromMap(e)!)
-                  .toList() ??
-              [];
-          _model.saldoBodegaVendedor = functions.getSaldoPorBodega(
-            FFAppState().infoSeller.storageDefault,
-            bodegas,
-          );
-          _model.updatePage(() {});
-        }
-      }
-    });
+    _textController = TextEditingController();
+    _controller.addListener(_onControllerUpdate);
+  }
 
-    _model.amountTextController ??= TextEditingController(text: '1');
-    _model.amountFocusNode ??= FocusNode();
+  void _onControllerUpdate() {
+    if (!mounted) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    final controllerValue = _controller.contador.toString();
+    if (_textController.text != controllerValue) {
+      _textController.text = controllerValue;
+    }
+
+    final message = _controller.uiMessage;
+    if (message != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message.message),
+          backgroundColor: message.isError ? FlutterFlowTheme.of(context).error : FlutterFlowTheme.of(context).success,
+        ),
+      );
+      _controller.clearMessage();
+    }
+
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _model.amountTextController?.dispose();
-    _model.amountFocusNode?.dispose();
-    _model.maybeDispose();
+    _controller.removeListener(_onControllerUpdate);
+    _controller.dispose();
+    _textController.dispose();
+    _model.dispose();
     super.dispose();
   }
 
@@ -141,152 +126,20 @@ class _ProductWidgetState extends State<ProductWidget> {
                   ProductActions(
                     selecionado: widget.selecionado,
                     saldo: widget.saldo,
-                    contador: _model.contador,
-                    saldoBodegaVendedor: _model.saldoBodegaVendedor,
-                    textController: _model.amountTextController!,
-                    focusNode: _model.amountFocusNode!,
+                    contador: _controller.contador,
+                    saldoBodegaVendedor: _controller.saldoBodegaVendedor,
+                    textController: _textController,
+                    focusNode: _model.amountFocusNode!, // Re-using from old model for now
                     validator: _model.amountTextControllerValidator.asValidator(context),
-                    onAdd: () async {
-                      try {
-                        _model.apiResultDetailProduct = await ProductsGroup.getListStorageByProductCall.call(
-                          token: FFAppState().infoSeller.token,
-                          codprecio: FFAppState().dataCliente.codprecio,
-                          codproduc: widget.productItem?.codproduc,
-                        );
-                        if (!mounted) return;
-                        if ((_model.apiResultDetailProduct?.succeeded ?? true)) {
-                          final bodegasJson = getJsonField((_model.apiResultDetailProduct?.jsonBody ?? ''), r'''$.data''', true,);
-                          final bodegas = (bodegasJson as List?)?.map((e) => DetailProductStruct.maybeFromMap(e)!).toList() ?? [];
-                          final saldoBodegaVendedor = functions.getSaldoPorBodega(FFAppState().infoSeller.storageDefault, bodegas,);
-                          if (saldoBodegaVendedor > 0) {
-                            _model.saldoBodegaVendedor = saldoBodegaVendedor;
-                            _model.updatePage(() {});
-                            await widget.callBackSeleccionado?.call(true);
-                            if (!mounted) return;
-                            await widget.callbackCantidad?.call(1.0);
-                            if (!mounted) return;
-                            _model.contador = 1.0;
-                            _model.updatePage(() {});
-                            safeSetState(() {
-                              _model.amountTextController?.text = _model.contador!.toString();
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('¡El producto ha sido agregado al carrito!', style: TextStyle(color: FlutterFlowTheme.of(context).secondaryBackground,),),
-                                duration: const Duration(milliseconds: 1500),
-                                backgroundColor: FlutterFlowTheme.of(context).success,
-                              ),
-                            );
-                          } else if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('La bodega ${FFAppState().infoSeller.storageDefault} no tiene saldo, debes elegir otra bodega desde el detalle', style: TextStyle(color: FlutterFlowTheme.of(context).secondaryBackground,),),
-                                duration: const Duration(milliseconds: 3000),
-                                backgroundColor: FlutterFlowTheme.of(context).error,
-                              ),
-                            );
-                          }
-                        } else {
-                          if (!mounted) return;
-                          await showDialog(
-                            context: context,
-                            builder: (alertDialogContext) {
-                              return AlertDialog(
-                                title: const Text('Error'),
-                                content: const Text('No se pudo verificar el stock del producto.'),
-                                actions: [
-                                  TextButton(onPressed: () => Navigator.pop(alertDialogContext), child: const Text('Ok'),),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      } catch (e) {
-                        if (!mounted) return;
-                        await showDialog(
-                          context: context,
-                          builder: (alertDialogContext) {
-                            return AlertDialog(
-                              title: const Text('Error'),
-                              content: Text('Error al verificar el stock: $e'),
-                              actions: [
-                                TextButton(onPressed: () => Navigator.pop(alertDialogContext), child: const Text('Ok'),),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    },
-                    onRemove: () async {
-                      _model.contador = 0.0;
-                      _model.updatePage(() {});
-                      await widget.callBackSeleccionado?.call(false,);
-                      await widget.callbackCantidad?.call(0.0,);
-                      safeSetState(() {
-                        _model.amountTextController?.text = '1';
-                      });
-                      await widget.callbackEliminar?.call();
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Se ha eliminado el producto del carrito', style: TextStyle(color: FlutterFlowTheme.of(context).secondaryBackground,),),
-                            duration: const Duration(milliseconds: 1500),
-                            backgroundColor: FlutterFlowTheme.of(context).error,
-                          ),
-                        );
-                      }
-                    },
-                    onSubtract: () async {
-                      _model.contador = (_model.contador!) - 1;
-                      _model.updatePage(() {});
-                      safeSetState(() {
-                        _model.amountTextController?.text = _model.contador!.toString();
-                      });
-                      await widget.callbackCantidad?.call(double.tryParse(_model.amountTextController.text),);
-                    },
-                    onIncrement: () async {
-                      if ((_model.contador!) + 1 <= (_model.saldoBodegaVendedor ?? 0)) {
-                        _model.contador = (_model.contador!) + 1;
-                        _model.updatePage(() {});
-                        safeSetState(() {
-                          _model.amountTextController?.text = _model.contador!.toString();
-                        });
-                        await widget.callbackCantidad?.call(double.tryParse(_model.amountTextController.text),);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('No se puede superar el saldo de la bodega ${FFAppState().infoSeller.storageDefault}, debes elegir otra bodega desde el detalle', style: TextStyle(color: FlutterFlowTheme.of(context).secondaryBackground,),),
-                            duration: const Duration(milliseconds: 3000),
-                            backgroundColor: FlutterFlowTheme.of(context).error,
-                          ),
-                        );
-                      }
-                    },
+                    onAdd: _controller.addToCart,
+                    onRemove: _controller.removeFromCart,
+                    onSubtract: _controller.decrement,
+                    onIncrement: _controller.increment,
                     onQuantityChanged: (value) {
                       EasyDebounce.debounce(
-                        '_model.amountTextController',
-                        const Duration(milliseconds: 2000),
-                        () async {
-                          final enteredAmount = double.tryParse(_model.amountTextController.text) ?? 0.0;
-                          final maxStock = _model.saldoBodegaVendedor ?? 0.0;
-                          if (enteredAmount > maxStock) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('No se puede superar el saldo de la bodega ${FFAppState().infoSeller.storageDefault}, debes elegir otra bodega desde el detalle', style: TextStyle(color: FlutterFlowTheme.of(context).secondaryBackground,),),
-                                duration: const Duration(milliseconds: 3000),
-                                backgroundColor: FlutterFlowTheme.of(context).error,
-                              ),
-                            );
-                            _model.contador = maxStock;
-                            safeSetState(() {
-                              _model.amountTextController?.text = maxStock.toString();
-                            });
-                          } else {
-                            _model.contador = enteredAmount > 0 ? enteredAmount : 1.0;
-                          }
-                          _model.updatePage(() {});
-                          await widget.callbackCantidad?.call(_model.contador,);
-                        },
+                        'quantity-debounce',
+                        const Duration(milliseconds: 800),
+                        () => _controller.updateQuantityFromText(value),
                       );
                     },
                   ),
