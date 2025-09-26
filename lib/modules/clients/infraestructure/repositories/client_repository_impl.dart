@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/core/network/network_info.dart';
