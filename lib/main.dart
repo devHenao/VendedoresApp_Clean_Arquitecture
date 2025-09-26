@@ -1,10 +1,16 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'auth/custom_auth/auth_util.dart';
-import 'auth/custom_auth/custom_auth_user_provider.dart';
+
+// Importaciones de Flutter Flow
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
+
+// Importaciones de autenticación
+import 'modules/auth/infrastructure/services/auth_util.dart';
+import 'modules/auth/infrastructure/services/auth_user_provider.dart' show AppVendedoresAuthUser, appVendedoresAuthUserStream;
+
+// Inyección de dependencias
 import 'injection_container.dart' as di;
 
 void main() async {

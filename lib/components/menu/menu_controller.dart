@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/auth/custom_auth/auth_util.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/services/auth_util.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 class MenuController extends ChangeNotifier {

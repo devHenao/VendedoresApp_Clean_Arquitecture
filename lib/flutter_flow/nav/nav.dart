@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '/backend/schema/structs/index.dart';
 
-import '/auth/custom_auth/custom_auth_user_provider.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/services/auth_user_provider.dart' show AppVendedoresAuthUser;
 
 import 'package:app_vendedores/modules/auth/presentation/pages/login_page.dart';
 import 'package:app_vendedores/modules/cart/presentation/pages/cart_page.dart';
