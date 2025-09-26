@@ -7,10 +7,10 @@ import '/backend/schema/structs/index.dart';
 
 import '/auth/custom_auth/custom_auth_user_provider.dart';
 
-import 'package:app_vendedores/features/auth/presentation/pages/login_page.dart';
-import 'package:app_vendedores/features/cart/presentation/pages/cart_page.dart';
-import 'package:app_vendedores/features/clients/presentation/pages/client_page.dart';
-import 'package:app_vendedores/features/products/presentation/pages/product_page.dart';
+import 'package:app_vendedores/modules/auth/presentation/pages/login_page.dart';
+import 'package:app_vendedores/modules/cart/presentation/pages/cart_page.dart';
+import 'package:app_vendedores/modules/clients/presentation/pages/client_page.dart';
+import 'package:app_vendedores/modules/products/presentation/pages/product_page.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 export 'package:go_router/go_router.dart';

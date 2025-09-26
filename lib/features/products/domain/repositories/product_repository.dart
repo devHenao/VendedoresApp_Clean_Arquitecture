@@ -1,7 +1,0 @@
-import 'package:dartz/dartz.dart';
-import 'package:app_vendedores/core/errors/failures.dart';
-import 'package:app_vendedores/features/products/domain/entities/product.dart';
-
-abstract class ProductRepository {
-  Future<Either<Failure, List<Product>>> getProducts(String codprecio, int pageNumber, int pageSize, String filter);
-}

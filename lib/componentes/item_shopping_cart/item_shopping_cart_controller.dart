@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app_vendedores/features/cart/domain/entities/cart_item.dart';
+import 'package:app_vendedores/modules/cart/domain/entities/cart_item.dart';
 
 class ItemShoppingCartController extends ChangeNotifier {
   ItemShoppingCartController({

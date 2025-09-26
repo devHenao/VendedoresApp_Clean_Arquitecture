@@ -1,4 +1,4 @@
-import 'package:app_vendedores/features/cart/domain/entities/cart_item.dart';
+import 'package:app_vendedores/modules/cart/domain/entities/cart_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
