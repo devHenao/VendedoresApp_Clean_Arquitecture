@@ -1,7 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
-
-import 'package:app_vendedores/features/clients/domain/entities/client.dart';
 import 'package:app_vendedores/features/clients/domain/use_cases/client_use_cases.dart';
 import 'client_event.dart';
 import 'client_state.dart';
