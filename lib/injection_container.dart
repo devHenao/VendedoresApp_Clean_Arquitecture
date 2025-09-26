@@ -67,6 +67,7 @@ Future<void> configureDependencies() async {
       networkInfo: getIt(),
     ),
   );
+
   getIt.registerLazySingleton<CartRepository>(
     () => CartRepositoryImpl(
       remoteDataSource: getIt(),
@@ -75,6 +76,7 @@ Future<void> configureDependencies() async {
       authRepository: getIt(),
     ),
   );
+
   getIt.registerLazySingleton<ClientRepository>(
     () => ClientRepositoryImpl(
       remoteDataSource: getIt(),
@@ -82,6 +84,7 @@ Future<void> configureDependencies() async {
       authRepository: getIt(),
     ),
   );
+
   getIt.registerLazySingleton<ProductRepository>(
     () => ProductRepositoryImpl(
       remoteDataSource: getIt(),
@@ -94,18 +97,23 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(dio: getIt()),
   );
+
   getIt.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(sharedPreferences: getIt()),
   );
+
   getIt.registerLazySingleton<CartRemoteDataSource>(
     () => CartRemoteDataSourceImpl(dio: getIt()),
   );
+
   getIt.registerLazySingleton<CartLocalDataSource>(
     () => CartLocalDataSourceImpl(sharedPreferences: getIt()),
   );
+
   getIt.registerLazySingleton<ClientRemoteDataSource>(
     () => ClientRemoteDataSourceImpl(dio: getIt()),
   );
+  
   getIt.registerLazySingleton<ProductRemoteDataSource>(
     () => ProductRemoteDataSourceImpl(dio: getIt()),
   );
