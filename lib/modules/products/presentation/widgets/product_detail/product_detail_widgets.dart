@@ -1,9 +1,9 @@
+import 'package:app_vendedores/modules/products/presentation/widgets/item_product_detail/item_product_detail_widget.dart';
 import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '../item_product_detail/item_product_detail_widget.dart';
 import 'product_detail_model.dart';
 
 class ProductDetailHeader extends StatelessWidget {

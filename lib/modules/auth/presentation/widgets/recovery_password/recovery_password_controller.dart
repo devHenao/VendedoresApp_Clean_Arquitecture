@@ -1,6 +1,6 @@
+import 'package:app_vendedores/components/mensajes/ok_password/ok_password_widget.dart';
 import 'package:flutter/material.dart';
 import '/backend/api_requests/api_calls.dart';
-import '../mensajes/ok_password/ok_password_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 enum UiState { initial, loading, success, error }
@@ -15,7 +15,8 @@ class RecoveryPasswordController extends ChangeNotifier {
   UiState get state => _state;
   String? get errorMessage => _errorMessage;
 
-  Future<void> resetPassword({required String nit, required String email}) async {
+  Future<void> resetPassword(
+      {required String nit, required String email}) async {
     _state = UiState.loading;
     notifyListeners();
 
@@ -29,7 +30,8 @@ class RecoveryPasswordController extends ChangeNotifier {
       await _showSuccessDialog();
     } else {
       _state = UiState.error;
-      _errorMessage = getJsonField(apiResult.jsonBody, r'''$.data''').toString();
+      _errorMessage =
+          getJsonField(apiResult.jsonBody, r'''$.data''').toString();
       await _showErrorDialog();
     }
     _state = UiState.initial;
@@ -44,7 +46,8 @@ class RecoveryPasswordController extends ChangeNotifier {
           elevation: 0,
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(context)),
           child: SizedBox(
             width: MediaQuery.sizeOf(context).width * 0.95,
             child: const OkPasswordWidget(),

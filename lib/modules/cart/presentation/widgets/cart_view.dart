@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app_vendedores/components/item_shopping_cart/item_shopping_cart_widget.dart';
+import 'package:app_vendedores/modules/cart/presentation/widgets/item_shopping_cart/item_shopping_cart_widget.dart';
 import 'package:app_vendedores/modules/cart/presentation/bloc/cart_bloc.dart';
 import 'package:app_vendedores/modules/cart/presentation/bloc/cart_event.dart';
 import 'package:app_vendedores/modules/cart/presentation/bloc/cart_state.dart';
