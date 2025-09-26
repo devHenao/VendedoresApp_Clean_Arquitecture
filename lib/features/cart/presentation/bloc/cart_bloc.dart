@@ -1,11 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:app_vendedores/features/cart/domain/use_cases/add_item_use_case.dart';
-import 'package:app_vendedores/features/cart/domain/use_cases/clear_cart_use_case.dart';
-import 'package:app_vendedores/features/cart/domain/use_cases/get_cart_items_use_case.dart';
-import 'package:app_vendedores/features/cart/domain/use_cases/place_order_use_case.dart';
-import 'package:app_vendedores/features/cart/domain/use_cases/remove_item_use_case.dart';
-import 'package:app_vendedores/features/cart/domain/use_cases/update_item_quantity_use_case.dart';
+import 'package:app_vendedores/features/cart/domain/use_cases/cart_use_cases.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
 
