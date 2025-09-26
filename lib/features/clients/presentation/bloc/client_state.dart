@@ -21,6 +21,33 @@ class ClientLoaded extends ClientState {
   List<Object> get props => [clients];
 }
 
+class ClientUpdated extends ClientState {
+  final Client client;
+
+  const ClientUpdated({required this.client});
+
+  @override
+  List<Object> get props => [client];
+}
+
+class DepartmentsLoaded extends ClientState {
+  final List<Map<String, dynamic>> departments;
+
+  const DepartmentsLoaded({required this.departments});
+
+  @override
+  List<Object> get props => [departments];
+}
+
+class CitiesLoaded extends ClientState {
+  final List<Map<String, dynamic>> cities;
+
+  const CitiesLoaded({required this.cities});
+
+  @override
+  List<Object> get props => [cities];
+}
+
 class ClientError extends ClientState {
   final String message;
 
