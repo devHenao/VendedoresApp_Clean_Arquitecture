@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
-import 'package:app_vendedores/modules/cart/data/models/cart_item_model.dart';
+import 'package:app_vendedores/modules/cart/infrastructure/models/cart_item_model.dart';
 
 abstract class CartRemoteDataSource {
   Future<void> placeOrder(String token, String nit, List<CartItemModel> items);

@@ -4,10 +4,10 @@ import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/core/network/network_info.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
-import 'package:app_vendedores/modules/clients/data/datasources/client_remote_data_source.dart';
+import 'package:app_vendedores/modules/clients/infraestructure/datasources/client_remote_data_source.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/repositories/client_repository.dart';
-import 'package:app_vendedores/modules/clients/data/models/client_model.dart';
+import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
 
 class ClientRepositoryImpl implements ClientRepository {
   final ClientRemoteDataSource remoteDataSource;

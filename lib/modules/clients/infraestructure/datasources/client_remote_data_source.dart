@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
-import 'package:app_vendedores/modules/clients/data/models/client_model.dart';
+import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
 
 abstract class ClientRemoteDataSource {
   Future<List<ClientModel>> getClients(String token);

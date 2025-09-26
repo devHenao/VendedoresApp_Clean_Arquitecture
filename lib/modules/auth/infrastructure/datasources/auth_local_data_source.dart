@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
-import 'package:app_vendedores/modules/auth/data/models/user_model.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/models/user_model.dart';
 
 abstract class AuthLocalDataSource {
   Future<UserModel> getLastUser();

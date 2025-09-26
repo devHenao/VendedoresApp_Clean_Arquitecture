@@ -3,8 +3,8 @@ import 'package:dartz/dartz.dart';
 import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/core/network/network_info.dart';
-import 'package:app_vendedores/modules/auth/data/datasources/auth_local_data_source.dart';
-import 'package:app_vendedores/modules/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/datasources/auth_local_data_source.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/datasources/auth_remote_data_source.dart';
 import 'package:app_vendedores/modules/auth/domain/entities/user.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
 

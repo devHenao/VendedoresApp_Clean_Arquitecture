@@ -3,9 +3,9 @@ import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/core/network/network_info.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
-import 'package:app_vendedores/modules/cart/data/datasources/cart_local_data_source.dart';
-import 'package:app_vendedores/modules/cart/data/datasources/cart_remote_data_source.dart';
-import 'package:app_vendedores/modules/cart/data/models/cart_item_model.dart';
+import 'package:app_vendedores/modules/cart/infrastructure/datasources/cart_local_data_source.dart';
+import 'package:app_vendedores/modules/cart/infrastructure/datasources/cart_remote_data_source.dart';
+import 'package:app_vendedores/modules/cart/infrastructure/models/cart_item_model.dart';
 import 'package:app_vendedores/modules/cart/domain/entities/cart_item.dart';
 import 'package:app_vendedores/modules/cart/domain/repositories/cart_repository.dart';
 

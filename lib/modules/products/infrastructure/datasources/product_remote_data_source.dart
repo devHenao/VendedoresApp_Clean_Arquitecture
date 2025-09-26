@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
-import 'package:app_vendedores/modules/products/data/models/product_model.dart';
+import 'package:app_vendedores/modules/products/infrastructure/models/product_model.dart';
 
 abstract class ProductRemoteDataSource {
   Future<List<ProductModel>> getProducts(String token, String codprecio, int pageNumber, int pageSize, String filter);

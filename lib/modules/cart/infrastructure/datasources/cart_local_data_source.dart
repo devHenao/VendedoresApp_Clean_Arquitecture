@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:app_vendedores/modules/cart/data/models/cart_item_model.dart';
+import 'package:app_vendedores/modules/cart/infrastructure/models/cart_item_model.dart';
 
 abstract class CartLocalDataSource {
   Future<List<CartItemModel>> getCartItems();

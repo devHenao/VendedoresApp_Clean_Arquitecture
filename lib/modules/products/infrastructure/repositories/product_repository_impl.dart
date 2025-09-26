@@ -4,7 +4,7 @@ import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/core/network/network_info.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
-import 'package:app_vendedores/modules/products/data/datasources/product_remote_data_source.dart';
+import 'package:app_vendedores/modules/products/infrastructure/datasources/product_remote_data_source.dart';
 import 'package:app_vendedores/modules/products/domain/entities/product.dart';
 import 'package:app_vendedores/modules/products/domain/repositories/product_repository.dart';
 

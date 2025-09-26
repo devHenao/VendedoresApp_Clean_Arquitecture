@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:app_vendedores/modules/auth/data/models/user_model.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/models/user_model.dart';
 import 'package:app_vendedores/core/errors/exceptions.dart';
 
 abstract class AuthRemoteDataSource {
