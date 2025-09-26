@@ -1,6 +1,6 @@
 import 'package:app_vendedores/backend/api_requests/_/api_manager.dart';
 import '/backend/schema/structs/index.dart';
-import '/componentes/item_product_detail/item_product_detail_widget.dart';
+import '../item_product_detail/item_product_detail_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'product_detail_widget.dart' show ProductDetailWidget;
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/backend/api_requests/api_calls.dart';
-import '/componentes/mensajes/ok_password/ok_password_widget.dart';
+import '../mensajes/ok_password/ok_password_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 enum UiState { initial, loading, success, error }

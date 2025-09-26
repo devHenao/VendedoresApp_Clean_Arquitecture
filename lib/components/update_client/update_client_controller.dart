@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/schema/structs/index.dart';
-import '/componentes/mensajes/ok_actualizado/ok_actualizado_widget.dart';
+import '../mensajes/ok_actualizado/ok_actualizado_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 
