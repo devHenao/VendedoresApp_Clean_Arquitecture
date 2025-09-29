@@ -31,8 +31,16 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     try {
       final response = await dio.get(url, options: options);
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => ClientModel.fromJson(json)).toList();
+        final dynamic data = response.data['data'];
+        List<dynamic> clientList;
+        if (data is List) {
+          clientList = data;
+        } else if (data is Map) {
+          clientList = data.values.toList();
+        } else {
+          throw ServerException('Formato de datos de clientes inesperado');
+        }
+        return clientList.map((json) => ClientModel.fromJson(json as Map<String, dynamic>)).toList();
       } else {
         throw ServerException(response.data['data'] ?? 'Error al obtener los clientes');
       }
@@ -50,8 +58,16 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     try {
       final response = await dio.post(url, data: data, options: options);
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => ClientModel.fromJson(json)).toList();
+        final dynamic data = response.data['data'];
+        List<dynamic> clientList;
+        if (data is List) {
+          clientList = data;
+        } else if (data is Map) {
+          clientList = data.values.toList();
+        } else {
+          throw ServerException('Formato de datos de búsqueda inesperado');
+        }
+        return clientList.map((json) => ClientModel.fromJson(json as Map<String, dynamic>)).toList();
       } else {
         throw ServerException(response.data['message'] ?? 'Error al buscar clientes');
       }
