@@ -7,6 +7,7 @@ import 'package:app_vendedores/modules/auth/infrastructure/datasources/auth_loca
 import 'package:app_vendedores/modules/auth/infrastructure/datasources/auth_remote_data_source.dart';
 import 'package:app_vendedores/modules/auth/domain/entities/user.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
+import 'package:app_vendedores/modules/auth/infrastructure/services/auth_util.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -26,6 +27,10 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.login(identification, email, password);
         localDataSource.cacheUser(remoteUser);
+        await authManager.signIn(
+          authenticationToken: remoteUser.token,
+          uid: remoteUser.email, // O usa otro identificador único si lo prefieres
+        );
         return Right(remoteUser);
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message));

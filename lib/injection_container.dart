@@ -136,7 +136,14 @@ Future<void> configureDependencies() async {
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton(() => sharedPreferences);
-  getIt.registerLazySingleton(() => Dio());
+  getIt.registerLazySingleton(() {
+    final dio = Dio();
+    dio.options.connectTimeout = const Duration(milliseconds: 15000);
+    dio.options.receiveTimeout = const Duration(milliseconds: 15000);
+    dio.options.sendTimeout = const Duration(milliseconds: 15000);
+    dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+    return dio;
+  });
   getIt.registerLazySingleton(() => InternetConnection());
 }
 

@@ -11,10 +11,10 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocProvider(
-        create: (_) => getIt<AuthBloc>(),
-        child: BlocListener<AuthBloc, AuthState>(
+    return BlocProvider(
+      create: (_) => getIt<AuthBloc>(),
+      child: Scaffold(
+        body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
               GoRouter.of(context).goNamed('Clientes');

@@ -13,19 +13,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> login(String identification, String email, String password) async {
-    final response = await dio.post(
-      'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appAuthSeller/loginSeller',
-      data: {
-        'identification': identification,
-        'email': email,
-        'password': password,
-      },
-    );
+    try {
+      final response = await dio.post(
+        'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appAuthSeller/loginSeller',
+        data: {
+          'identification': identification,
+          'email': email,
+          'password': password,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      return UserModel.fromJson(response.data);
-    } else {
-      throw ServerException(response.data['data'] ?? 'Error de servidor');
+      if (response.statusCode == 200 && response.data['success']) {
+        return UserModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException(response.data['data'] ?? 'Error de servidor');
+      }
+    } on DioException catch (e) {
+      throw ServerException(e.message ?? 'Error de red');
+    } catch (e) {
+      throw ServerException('Ocurrió un error inesperado: ${e.toString()}');
     }
   }
 }
