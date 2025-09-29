@@ -36,10 +36,7 @@ dependencies:
   easy_debounce: 2.0.1
   equatable: 2.0.5
   flutter_animate: 4.5.0
-  flutter_barcode_scanner: 
-    git:
-      url: https://github.com/FlutterFlow/flutter_barcode_scanner
-      ref: v2.0.0
+  barcode_scan2: ^4.5.1
   flutter_cache_manager: 3.4.1
   flutter_plugin_android_lifecycle: 2.0.20
   font_awesome_flutter: 10.7.0
