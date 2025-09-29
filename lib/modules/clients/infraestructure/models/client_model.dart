@@ -1,26 +1,28 @@
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'client_model.g.dart';
 
-@JsonSerializable()
+// Usa fieldRename para mapear automáticamente camelCase a snake_case (o lowercase en este caso)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class ClientModel extends Client {
   const ClientModel({
-    required String tipoCar,
-    required String codigoCta,
+    String? tipocar,
+    String? codigocta,
     required String nit,
-    required String vendedor,
+    String? vendedor,
     required String nombre,
     String? direccion,
     String? cdciiu,
     String? contacto,
     String? tel1,
     String? email,
-    required String codprecio,
-    required String nomciud,
-    required String nomdpto,
+    String? codprecio,
+    String? nomciud,
+    String? nomdpto,
   }) : super(
-          tipoCar: tipoCar,
-          codigoCta: codigoCta,
+          tipocar: tipocar,
+          codigocta: codigocta,
           nit: nit,
           vendedor: vendedor,
           nombre: nombre,
@@ -37,11 +39,10 @@ class ClientModel extends Client {
   factory ClientModel.fromJson(Map<String, dynamic> json) =>
       _$ClientModelFromJson(json);
 
-  // Convertir de entidad a modelo
   factory ClientModel.fromEntity(Client entity) {
     return ClientModel(
-      tipoCar: entity.tipoCar,
-      codigoCta: entity.codigoCta,
+      tipocar: entity.tipocar,
+      codigocta: entity.codigocta,
       nit: entity.nit,
       vendedor: entity.vendedor,
       nombre: entity.nombre,
@@ -56,11 +57,10 @@ class ClientModel extends Client {
     );
   }
 
-  // Convertir de modelo a entidad
   Client toEntity() {
     return Client(
-      tipoCar: tipoCar,
-      codigoCta: codigoCta,
+      tipocar: tipocar,
+      codigocta: codigocta,
       nit: nit,
       vendedor: vendedor,
       nombre: nombre,

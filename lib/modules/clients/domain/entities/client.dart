@@ -1,40 +1,40 @@
 import 'package:equatable/equatable.dart';
 
 class Client extends Equatable {
-  final String tipoCar;
-  final String codigoCta;
+  final String? tipocar;
+  final String? codigocta;
   final String nit;
-  final String vendedor;
+  final String? vendedor;
   final String nombre;
   final String? direccion;
   final String? cdciiu;
   final String? contacto;
   final String? tel1;
   final String? email;
-  final String codprecio;
-  final String nomciud;
-  final String nomdpto;
+  final String? codprecio;
+  final String? nomciud;
+  final String? nomdpto;
 
   const Client({
-    required this.tipoCar,
-    required this.codigoCta,
+    this.tipocar,
+    this.codigocta,
     required this.nit,
-    required this.vendedor,
+    this.vendedor,
     required this.nombre,
     this.direccion,
     this.cdciiu,
     this.contacto,
     this.tel1,
     this.email,
-    required this.codprecio,
-    required this.nomciud,
-    required this.nomdpto,
+    this.codprecio,
+    this.nomciud,
+    this.nomdpto,
   });
 
   @override
   List<Object?> get props => [
-        tipoCar,
-        codigoCta,
+        tipocar,
+        codigocta,
         nit,
         vendedor,
         nombre,
