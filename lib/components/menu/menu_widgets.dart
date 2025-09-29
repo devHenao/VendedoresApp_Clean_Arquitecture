@@ -243,7 +243,9 @@ class MenuHeader extends StatelessWidget {
                           ),
                     ),
                     Text(
-                      ffAppState.infoSeller.nameVenden,
+                      ffAppState.infoSeller.nameVenden.isNotEmpty
+                          ? ffAppState.infoSeller.nameVenden
+                          : 'Cargando...',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily: 'Manrope',
                             letterSpacing: 0.0,

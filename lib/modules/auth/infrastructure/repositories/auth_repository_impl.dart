@@ -8,6 +8,8 @@ import 'package:app_vendedores/modules/auth/infrastructure/datasources/auth_remo
 import 'package:app_vendedores/modules/auth/domain/entities/user.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
 import 'package:app_vendedores/modules/auth/infrastructure/services/auth_util.dart';
+import 'package:app_vendedores/app_state.dart';
+import 'package:app_vendedores/backend/schema/structs/data_seller_struct.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -30,6 +32,12 @@ class AuthRepositoryImpl implements AuthRepository {
         await authManager.signIn(
           authenticationToken: remoteUser.token,
           uid: remoteUser.email, // O usa otro identificador único si lo prefieres
+        );
+        // Actualizar el FFAppState con la información del vendedor
+        FFAppState().infoSeller = DataSellerStruct(
+          nameVenden: remoteUser.name,
+          emailVenden: remoteUser.email,
+          // Asegúrate de mapear otros campos si son necesarios
         );
         return Right(remoteUser);
       } on ServerException catch (e) {

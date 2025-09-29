@@ -6,11 +6,11 @@ class Client extends Equatable {
   final String nit;
   final String vendedor;
   final String nombre;
-  final String direccion;
-  final String cdciiu;
-  final String contacto;
-  final String tel1;
-  final String email;
+  final String? direccion;
+  final String? cdciiu;
+  final String? contacto;
+  final String? tel1;
+  final String? email;
   final String codprecio;
   final String nomciud;
   final String nomdpto;
@@ -21,11 +21,11 @@ class Client extends Equatable {
     required this.nit,
     required this.vendedor,
     required this.nombre,
-    required this.direccion,
-    required this.cdciiu,
-    required this.contacto,
-    required this.tel1,
-    required this.email,
+    this.direccion,
+    this.cdciiu,
+    this.contacto,
+    this.tel1,
+    this.email,
     required this.codprecio,
     required this.nomciud,
     required this.nomdpto,
