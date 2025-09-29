@@ -11,5 +11,4 @@ export 'seleccionar_producto.dart' show seleccionarProducto;
 export 'dowloand_wallet.dart' show dowloandWallet;
 export 'download_last_sales.dart' show downloadLastSales;
 export 'download_order.dart' show downloadOrder;
-export 'delete_product.dart' show deleteProduct;
 export 'update_store_quantity.dart' show updateStoreQuantity;
