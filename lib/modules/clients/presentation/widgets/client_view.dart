@@ -10,7 +10,8 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
-import 'package:app_vendedores/shared/date_pickers/date_range_selector.dart';
+import 'package:app_vendedores/shared/datePickers/date_range_selector.dart';
+import 'package:app_vendedores/shared/confirmDialog/confirmation_dialog.dart';
 
 class ClientView extends StatelessWidget {
   const ClientView({super.key});
@@ -247,26 +248,44 @@ class ClientView extends StatelessWidget {
     );
   }
 
-  void _viewClientPending(BuildContext context, Client client) {
+  Future<void> _viewClientPending(BuildContext context, Client client) async {
     final state = context.read<ClientBloc>().state;
-    _downloadFile(
-      context,
-      client,
-      DownloadType.orders,
-      startDate: state.startDate,
-      endDate: state.endDate,
+    final result = await ConfirmationDialog.show(
+      context: context,
+      title: 'Descargar pendientes',
+      content: '¿Desea descargar el reporte de pendientes de ${client.nombre}?',
+      confirmText: 'Descargar',
     );
+    
+    if (result == true) {
+      _downloadFile(
+        context,
+        client,
+        DownloadType.orders,
+        startDate: state.startDate,
+        endDate: state.endDate,
+      );
+    }
   }
 
-  void _viewClientSales(BuildContext context, Client client) {
+  Future<void> _viewClientSales(BuildContext context, Client client) async {
     final state = context.read<ClientBloc>().state;
-    _downloadFile(
-      context,
-      client,
-      DownloadType.sales,
-      startDate: state.startDate,
-      endDate: state.endDate,
+    final result = await ConfirmationDialog.show(
+      context: context,
+      title: 'Descargar ventas',
+      content: '¿Desea descargar el reporte de ventas de ${client.nombre}?',
+      confirmText: 'Descargar',
     );
+    
+    if (result == true) {
+      _downloadFile(
+        context,
+        client,
+        DownloadType.sales,
+        startDate: state.startDate,
+        endDate: state.endDate,
+      );
+    }
   }
 
   void _downloadFile(
@@ -292,47 +311,16 @@ class ClientView extends StatelessWidget {
     String content,
     VoidCallback onConfirm,
   ) async {
-    return showDialog<void>(
+    final result = await ConfirmationDialog.show(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onConfirm();
-              },
-              child: const Text('Descargar'),
-            ),
-          ],
-        );
-      },
+      title: title,
+      content: content,
+      confirmText: 'Descargar',
     );
-  }
-
-  Future<void> _showDateRangeDialog(
-    BuildContext context,
-    String title,
-    Function(DateTime, DateTime) onDateRangeSelected,
-  ) async {
-    final DateTimeRange? dateRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      initialDateRange: DateTimeRange(
-        start: DateTime.now().subtract(const Duration(days: 30)),
-        end: DateTime.now(),
-      ),
-    );
-
-    if (dateRange != null) {
-      onDateRangeSelected(dateRange.start, dateRange.end);
+    
+    if (result == true) {
+      onConfirm();
     }
   }
+
 }
