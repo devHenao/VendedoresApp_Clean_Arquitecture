@@ -25,7 +25,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
 
   @override
   Future<List<ClientModel>> getClients(String token) async {
-    const url = '$baseUrl/clients/listClientByVenden';
+    const url = '$baseUrl/clients/getListClientByVenden';
     final options = Options(headers: _getHeaders(token));
 
     try {
