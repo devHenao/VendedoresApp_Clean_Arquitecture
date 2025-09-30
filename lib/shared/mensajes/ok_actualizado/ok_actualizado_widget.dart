@@ -5,7 +5,16 @@ import 'ok_actualizado_model.dart';
 export 'ok_actualizado_model.dart';
 
 class OkActualizadoWidget extends StatefulWidget {
-  const OkActualizadoWidget({super.key});
+  const OkActualizadoWidget({
+    super.key,
+    required this.mensaje,
+    this.icon = Icons.check_circle_outline,
+    this.iconColor = Colors.green,
+  });
+
+  final String mensaje;
+  final IconData icon;
+  final Color iconColor;
 
   @override
   State<OkActualizadoWidget> createState() => _OkActualizadoWidgetState();

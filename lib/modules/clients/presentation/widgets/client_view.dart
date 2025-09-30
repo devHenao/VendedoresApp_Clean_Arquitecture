@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_state.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
 
 class ClientView extends StatelessWidget {
@@ -12,8 +16,33 @@ class ClientView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<DownloadFileBloc, DownloadFileState>(
+          listenWhen: (previous, current) => previous.status != current.status,
+          listener: (context, state) {
+            if (state.status == DownloadFileStatus.failure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage ?? 'Error al descargar el archivo'),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+            } else if (state.status == DownloadFileStatus.success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Archivo descargado correctamente'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              // Resetear el estado después de mostrar el mensaje
+              context.read<DownloadFileBloc>().add(DownloadFileReset());
+            }
+          },
+        ),
+      ],
+      child: Column(
+        children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: TextField(
@@ -65,7 +94,8 @@ class ClientView extends StatelessWidget {
             },
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -178,23 +208,106 @@ class ClientView extends StatelessWidget {
   }
 
   void _viewClientWallet(BuildContext context, Client client) {
-    // TODO: Implementar lógica para ver cartera del cliente
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Visualizando cartera de ${client.nombre}')),
+    _showDownloadConfirmationDialog(
+      context,
+      'Descargar cartera',
+      '¿Desea descargar el reporte de cartera de ${client.nombre}?',
+      () => _downloadFile(context, client, DownloadType.wallet),
     );
   }
 
   void _viewClientPending(BuildContext context, Client client) {
-    // TODO: Implementar lógica para ver pendientes del cliente
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Visualizando pendientes de ${client.nombre}')),
+    _showDateRangeDialog(
+      context,
+      'Seleccionar rango de fechas para pendientes',
+      (startDate, endDate) => _downloadFile(
+        context,
+        client,
+        DownloadType.orders,
+        startDate: startDate,
+        endDate: endDate,
+      ),
     );
   }
 
   void _viewClientSales(BuildContext context, Client client) {
-    // TODO: Implementar lógica para ver ventas del cliente
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Visualizando ventas de ${client.nombre}')),
+    _showDateRangeDialog(
+      context,
+      'Seleccionar rango de fechas para ventas',
+      (startDate, endDate) => _downloadFile(
+        context,
+        client,
+        DownloadType.sales,
+        startDate: startDate,
+        endDate: endDate,
+      ),
     );
+  }
+
+  void _downloadFile(
+    BuildContext context,
+    Client client,
+    DownloadType type, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    context.read<DownloadFileBloc>().add(
+          DownloadFileRequested(
+            clientId: client.nit,
+            type: type,
+            startDate: startDate,
+            endDate: endDate,
+          ),
+        );
+  }
+
+  Future<void> _showDownloadConfirmationDialog(
+    BuildContext context,
+    String title,
+    String content,
+    VoidCallback onConfirm,
+  ) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirm();
+              },
+              child: const Text('Descargar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDateRangeDialog(
+    BuildContext context,
+    String title,
+    Function(DateTime, DateTime) onDateRangeSelected,
+  ) async {
+    final DateTimeRange? dateRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now().subtract(const Duration(days: 30)),
+        end: DateTime.now(),
+      ),
+    );
+
+    if (dateRange != null) {
+      onDateRangeSelected(dateRange.start, dateRange.end);
+    }
   }
 }

@@ -150,32 +150,33 @@ class UpdateClientController extends ChangeNotifier {
     _showErrorDialog();
   }
 
-  Future<void> _showSuccessDialog() async {
-    await showDialog(
-      context: context,
-      builder: (dialogContext) => const Dialog(
-        elevation: 0,
-        insetPadding: EdgeInsets.zero,
-        backgroundColor: Colors.transparent,
-        child: OkActualizadoWidget(),
-      ),
-    );
+  Future<void> _showErrorDialog() async {
+    if (context.mounted) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text(_errorMessage ?? 'Ocurrió un error inesperado'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
-  Future<void> _showErrorDialog() async {
-    await showDialog(
-      context: context,
-      builder: (alertDialogContext) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(_errorMessage ?? 'Ocurrió un error.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(alertDialogContext),
-            child: const Text('Ok'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _showSuccessDialog() async {
+    if (context.mounted) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => const OkActualizadoWidget(
+          mensaje: 'Cliente actualizado correctamente',
+        ),
+      );
+    }
   }
 
   @override

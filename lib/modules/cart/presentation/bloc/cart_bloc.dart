@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app_vendedores/modules/cart/domain/use_cases/cart_use_cases.dart';
+import 'package:app_vendedores/modules/cart/domain/usecases/cart_use_cases.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
 

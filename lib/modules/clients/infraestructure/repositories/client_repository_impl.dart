@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
@@ -6,8 +8,8 @@ import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.
 import 'package:app_vendedores/modules/clients/infraestructure/datasources/client_remote_data_source.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/repositories/client_repository.dart';
+import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
-import 'package:flutter/foundation.dart';
 
 class ClientRepositoryImpl implements ClientRepository {
   final ClientRemoteDataSource remoteDataSource;
@@ -20,68 +22,91 @@ class ClientRepositoryImpl implements ClientRepository {
     required this.authRepository,
   });
 
-  @override
-  Future<Either<Failure, List<Client>>> getClients() async {
+  // Método auxiliar para manejar llamadas de red con manejo de errores común
+  Future<Either<Failure, T>> _handleNetworkCall<T>(
+    Future<T> Function() call, {
+    bool requiresNetwork = true,
+  }) async {
+    if (requiresNetwork) {
+      final isConnected = await networkInfo.isConnected;
+      if (!isConnected) {
+        return const Left(NetworkFailure());
+      }
+    }
+
     try {
-      final token = await _getToken();
-      debugPrint('Token: $token');
-      final clients = await remoteDataSource.getClients(token);
-      return Right(clients.map((model) => model.toEntity()).toList());
+      final result = await call();
+      return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
+    } on UnauthorizedException {
+      return const Left(UnauthorizedFailure());
+    } on FileDownloadException catch (e) {
+      return Left(FileDownloadFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Error inesperado: $e'));
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
+  // Obtener token de autenticación
+  Future<String> _getToken() async {
+    final user = await authRepository.getCurrentUser();
+    return user.fold(
+      (failure) => throw  UnauthorizedException(),
+      (user) => user.token,
+    );
+  }
+
   @override
-  Future<Either<Failure, List<Client>>> searchClients(String query) async {
-    return _handleNetworkCall<List<Client>>(
+  Future<Either<Failure, List<Client>>> getClients() async {
+    return _handleNetworkCall(
       () async {
         final token = await _getToken();
-              debugPrint('Token🔴🔴: $token');
-        final clients = await remoteDataSource.searchClients(token, query);
+        final clients = await remoteDataSource.getClients(token);
         return clients.map((model) => model.toEntity()).toList();
       },
     );
   }
 
   @override
-  Future<Either<Failure, Client>> getClientByNit(String nit) async {
-    return _handleNetworkCall<Client>(
+  Future<Either<Failure, List<Client>>> searchClients(String query) async {
+    return _handleNetworkCall(
       () async {
         final token = await _getToken();
-        final client = await remoteDataSource.getClientByNit(token, nit);
-        return client.toEntity();
+        final clients = await remoteDataSource.searchClients(token, query);
+        return clients.map((model) => model.toEntity()).toList();
+      },
+    );
+  }
+  @override
+  Future<Either<Failure, Client>> getClientByNit(String nit) async {
+    return _handleNetworkCall(
+      () async {
+        final token = await _getToken();
+        final clientModel = await remoteDataSource.getClientByNit(token, nit);
+        return clientModel.toEntity();
       },
     );
   }
 
   @override
   Future<Either<Failure, Client>> updateClient(Client client) async {
-    return _handleNetworkCall<Client>(
+    return _handleNetworkCall(
       () async {
         final token = await _getToken();
-        final clientModel = ClientModel.fromEntity(client);
-        final updatedClient = await remoteDataSource.updateClient(token, clientModel);
+        final updatedClient = await remoteDataSource.updateClient(
+          token,
+          ClientModel.fromEntity(client),
+        );
         return updatedClient.toEntity();
       },
     );
   }
 
   @override
-  Future<Either<Failure, List<Map<String, dynamic>>>> getDepartments() async {
-    return _handleNetworkCall<List<Map<String, dynamic>>>(
-      () async {
-        final token = await _getToken();
-        return await remoteDataSource.getDepartments(token);
-      },
-    );
-  }
-
-  @override
-  Future<Either<Failure, List<Map<String, dynamic>>>> getCitiesByDepartment(String department) async {
-    return _handleNetworkCall<List<Map<String, dynamic>>>(
+  Future<Either<Failure, List<Map<String, dynamic>>>> getCitiesByDepartment(
+      String department) async {
+    return _handleNetworkCall(
       () async {
         final token = await _getToken();
         return await remoteDataSource.getCitiesByDepartment(token, department);
@@ -89,40 +114,32 @@ class ClientRepositoryImpl implements ClientRepository {
     );
   }
 
-  // Helper method to handle network calls and error handling
-  Future<Either<Failure, T>> _handleNetworkCall<T>(Future<T> Function() call) async {
-    if (!await networkInfo.isConnected) {
-      return const Left(ServerFailure('No hay conexión a internet'));
-    }
-
-    try {
-      final userEither = await authRepository.getCurrentUser();
-      return userEither.fold(
-        (failure) => Left(failure),
-        (_) async {
-          try {
-            final result = await call();
-            return Right(result);
-          } on ServerException catch (e) {
-            return Left(ServerFailure(e.message));
-          } catch (e) {
-            return Left(ServerFailure('Error inesperado: $e'));
-          }
-        },
-      );
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure('Error inesperado: $e'));
-    }
+  @override
+  Future<Either<Failure, String>> downloadFile({
+    required String clientId,
+    required String token,
+    required DownloadType type,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    return _handleNetworkCall(
+      () => remoteDataSource.downloadFile(
+        clientId: clientId,
+        token: token,
+        type: type,
+        startDate: startDate,
+        endDate: endDate,
+      ),
+    );
   }
 
-  // Helper method to get authentication token
-  Future<String> _getToken() async {
-    final userEither = await authRepository.getCurrentUser();
-    return userEither.fold(
-      (failure) => throw ServerException(failure.toString()),
-      (user) => user.token,
+  @override
+  Future<Either<Failure, List<Map<String, dynamic>>>> getDepartments() async {
+    return _handleNetworkCall(
+      () async {
+        final token = await _getToken();
+        return await remoteDataSource.getDepartments(token);
+      },
     );
   }
 }

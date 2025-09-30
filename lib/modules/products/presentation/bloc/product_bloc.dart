@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:app_vendedores/modules/products/domain/use_cases/get_products_use_case.dart';
+import 'package:app_vendedores/modules/products/domain/usecases/get_products_use_case.dart';
 import 'product_event.dart';
 import 'product_state.dart';
 

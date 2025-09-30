@@ -48,6 +48,7 @@ dependencies:
   intl: ^0.20.2
   json_path: 0.7.2
   mime_type: 1.0.0
+  share_plus: ^7.2.1
   open_file: ^3.5.10
   page_transition: 2.1.0
   path_provider: 2.1.4

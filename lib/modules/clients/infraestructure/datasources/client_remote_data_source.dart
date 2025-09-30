@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
+import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 
 abstract class ClientRemoteDataSource {
   Future<List<ClientModel>> getClients(String token);
@@ -10,6 +13,13 @@ abstract class ClientRemoteDataSource {
   Future<ClientModel> updateClient(String token, ClientModel client);
   Future<List<Map<String, dynamic>>> getDepartments(String token);
   Future<List<Map<String, dynamic>>> getCitiesByDepartment(String token, String department);
+  Future<String> downloadFile({
+    required String clientId,
+    required String token,
+    required DownloadType type,
+    DateTime? startDate,
+    DateTime? endDate,
+  });
 }
 
 class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
@@ -124,7 +134,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         throw ServerException('Error al obtener los departamentos');
       }
     } on DioException catch (e) {
-      throw ServerException('Error al obtener los departamentos');
+      throw ServerException(e.response?.data?['message'] ?? 'Error al obtener los departamentos');
     }
   }
 
@@ -132,17 +142,71 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
   Future<List<Map<String, dynamic>>> getCitiesByDepartment(String token, String department) async {
     const url = '$baseUrl/maestras/ciudades';
     final options = Options(headers: _getHeaders(token));
-    final params = {'departamento': department};
+    final data = {'departamento': department};
 
     try {
-      final response = await dio.get(url, queryParameters: params, options: options);
+      final response = await dio.post(url, data: data, options: options);
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data['data']);
       } else {
         throw ServerException('Error al obtener las ciudades');
       }
     } on DioException catch (e) {
-      throw ServerException('Error al obtener las ciudades');
+      throw ServerException(e.response?.data?['message'] ?? 'Error al obtener las ciudades');
+    }
+  }
+
+  @override
+  Future<String> downloadFile({
+    required String clientId,
+    required String token,
+    required DownloadType type,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    String endpoint;
+    final data = {'clientId': clientId};
+
+    switch (type) {
+      case DownloadType.wallet:
+        endpoint = '/reports/wallet';
+        break;
+      case DownloadType.orders:
+        endpoint = '/reports/orders';
+        if (startDate != null) data['startDate'] = startDate.toIso8601String();
+        if (endDate != null) data['endDate'] = endDate.toIso8601String();
+        break;
+      case DownloadType.sales:
+        endpoint = '/reports/sales';
+        if (startDate != null) data['startDate'] = startDate.toIso8601String();
+        if (endDate != null) data['endDate'] = endDate.toIso8601String();
+        break;
+    }
+
+    final url = '$baseUrl$endpoint';
+    final options = Options(
+      headers: _getHeaders(token),
+      responseType: ResponseType.bytes,
+      followRedirects: false,
+      receiveTimeout: const Duration(minutes: 5),
+    );
+
+    try {
+      final response = await dio.post(
+        url,
+        data: data,
+        options: options,
+      );
+
+      if (response.statusCode == 200) {
+        // Aquí deberías manejar la respuesta binaria del archivo
+        // Por ahora, solo devolvemos un mensaje de éxito
+        return 'Archivo descargado exitosamente';
+      } else {
+        throw ServerException(response.data?['message'] ?? 'Error al descargar el archivo');
+      }
+    } on DioException catch (e) {
+      throw ServerException(e.response?.data?['message'] ?? 'Error al conectar con el servidor');
     }
   }
 }

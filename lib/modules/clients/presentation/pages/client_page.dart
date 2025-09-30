@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_view.dart';
 import 'package:app_vendedores/injection_container.dart';
 import 'package:app_vendedores/shared/menu/menu_widgets.dart';
@@ -35,8 +36,15 @@ class ClientPage extends StatelessWidget {
           ],
         ),
       ),
-      body: BlocProvider(
-        create: (_) => getIt<ClientBloc>()..add(LoadClients()),
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => getIt<ClientBloc>()..add(LoadClients()),
+          ),
+          BlocProvider(
+            create: (_) => getIt<DownloadFileBloc>(),
+          ),
+        ],
         child: const ClientView(),
       ),
     );

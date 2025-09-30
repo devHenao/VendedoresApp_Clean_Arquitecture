@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app_vendedores/modules/clients/domain/use_cases/client_use_cases.dart';
+import 'package:app_vendedores/modules/clients/domain/usecases/client_use_cases.dart';
 import 'client_event.dart';
 import 'client_state.dart';
 

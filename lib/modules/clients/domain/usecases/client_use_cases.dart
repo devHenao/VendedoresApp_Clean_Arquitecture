@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/repositories/client_repository.dart';
+import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 
 /// Caso de uso para obtener todos los clientes
 class GetClientsUseCase {
@@ -66,5 +67,28 @@ class GetCitiesByDepartmentUseCase {
 
   Future<Either<Failure, List<Map<String, dynamic>>>> call(String department) async {
     return await repository.getCitiesByDepartment(department);
+  }
+}
+
+/// Caso de uso para descargar un archivo de un cliente
+class DownloadClientFileUseCase {
+  final ClientRepository repository;
+
+  DownloadClientFileUseCase(this.repository);
+
+  Future<Either<Failure, String>> call({
+    required String clientId,
+    required String token,
+    required DownloadType type,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    return await repository.downloadFile(
+      clientId: clientId,
+      token: token,
+      type: type,
+      startDate: startDate,
+      endDate: endDate,
+    );
   }
 }

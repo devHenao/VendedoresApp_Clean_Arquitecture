@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:app_vendedores/modules/auth/domain/use_cases/sign_in_use_case.dart';
+import 'package:app_vendedores/modules/auth/domain/usecases/sign_in_use_case.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 

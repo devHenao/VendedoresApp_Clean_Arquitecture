@@ -8,23 +8,24 @@ import 'modules/auth/infrastructure/datasources/auth_local_data_source.dart';
 import 'modules/auth/infrastructure/datasources/auth_remote_data_source.dart';
 import 'modules/auth/infrastructure/repositories/auth_repository_impl.dart';
 import 'modules/auth/domain/repositories/auth_repository.dart';
-import 'modules/auth/domain/use_cases/sign_in_use_case.dart';
+import 'modules/auth/domain/usecases/sign_in_use_case.dart';
 import 'modules/auth/presentation/bloc/auth_bloc.dart';
 import 'modules/cart/infrastructure/datasources/cart_local_data_source.dart';
 import 'modules/cart/infrastructure/datasources/cart_remote_data_source.dart';
 import 'modules/cart/infrastructure/repositories/cart_repository_impl.dart';
 import 'modules/cart/domain/repositories/cart_repository.dart';
-import 'modules/cart/domain/use_cases/cart_use_cases.dart';
+import 'modules/cart/domain/usecases/cart_use_cases.dart';
 import 'modules/cart/presentation/bloc/cart_bloc.dart';
 import 'modules/clients/infraestructure/datasources/client_remote_data_source.dart';
 import 'modules/clients/infraestructure/repositories/client_repository_impl.dart';
 import 'modules/clients/domain/repositories/client_repository.dart';
-import 'modules/clients/domain/use_cases/client_use_cases.dart';
+import 'modules/clients/domain/usecases/client_use_cases.dart';
 import 'modules/clients/presentation/bloc/client_bloc.dart';
+import 'modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'modules/products/infrastructure/datasources/product_remote_data_source.dart';
 import 'modules/products/infrastructure/repositories/product_repository_impl.dart';
 import 'modules/products/domain/repositories/product_repository.dart';
-import 'modules/products/domain/use_cases/get_products_use_case.dart';
+import 'modules/products/domain/usecases/get_products_use_case.dart';
 import 'modules/products/presentation/bloc/product_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -48,6 +49,12 @@ Future<void> configureDependencies() async {
         getDepartmentsUseCase: getIt(),
         getCitiesByDepartmentUseCase: getIt(),
       ));
+      
+  getIt.registerFactory(() => DownloadFileBloc(
+        downloadClientFile: getIt(),
+        networkInfo: getIt(),
+        authRepository: getIt(),
+      ));
   getIt.registerFactory(() => ProductBloc(
         getProductsUseCase: getIt(),
       ));
@@ -69,6 +76,7 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => UpdateClientUseCase(getIt()));
   getIt.registerLazySingleton(() => GetDepartmentsUseCase(getIt()));
   getIt.registerLazySingleton(() => GetCitiesByDepartmentUseCase(getIt()));
+  getIt.registerLazySingleton(() => DownloadClientFileUseCase(getIt()));
   getIt.registerLazySingleton(() => GetProductsUseCase(getIt()));
 
   // Repositories
