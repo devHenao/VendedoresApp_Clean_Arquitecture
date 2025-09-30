@@ -2,16 +2,12 @@ import 'package:equatable/equatable.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 
 abstract class ClientState extends Equatable {
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final List<Client> originalClients;
-  final bool isFiltered;
+  final DateTime startDate;
+  final DateTime endDate;
 
   const ClientState({
-    this.startDate,
-    this.endDate,
-    required this.originalClients,
-    this.isFiltered = false,
+    required this.startDate,
+    required this.endDate,
   });
        
   static DateTime get firstDayOfMonth => _firstDayOfMonth();
@@ -26,84 +22,53 @@ abstract class ClientState extends Equatable {
     final now = DateTime.now();
     return DateTime(now.year, now.month + 1, 0);
   }
-
-  List<Client> get clients {
-    if (!isFiltered || (startDate == null && endDate == null)) {
-      return originalClients;
-    }
-    // Si no hay fechas de filtrado, devolver todos los clientes
-    if (startDate == null && endDate == null) {
-      return originalClients;
-    }
-    
-    // Filtrar clientes basado en las fechas si están disponibles
-    return originalClients.where((client) {
-      // Como no tenemos una fecha de creación, siempre devolvemos true
-      // para que no se filtre ningún cliente por fecha
-      return true;
-    }).toList();
-  }
+       
+  DateTime getEffectiveStartDate() => startDate;
+  
+  DateTime getEffectiveEndDate() => endDate;
 
   @override
-  List<Object?> get props => [startDate, endDate, originalClients, isFiltered];
+  List<Object> get props => [startDate, endDate];
 }
 
 class ClientInitial extends ClientState {
   ClientInitial() : super(
-    startDate: null,
-    endDate: null,
-    originalClients: const [],
-    isFiltered: false,
+    startDate: ClientState.firstDayOfMonth,
+    endDate: ClientState.lastDayOfMonth,
   );
 }
 
 class ClientLoading extends ClientState {
-  ClientLoading({
-    DateTime? startDate, 
-    DateTime? endDate,
-    List<Client> clients = const [],
-    bool isFiltered = false,
-  }) : super(
-    startDate: startDate,
-    endDate: endDate,
-    originalClients: clients,
-    isFiltered: isFiltered,
+  ClientLoading({DateTime? startDate, DateTime? endDate}) : super(
+    startDate: startDate ?? ClientState.firstDayOfMonth,
+    endDate: endDate ?? ClientState.lastDayOfMonth,
   );
 }
 
 class ClientLoaded extends ClientState {
-  const ClientLoaded({
-    required List<Client> clients,
+  final List<Client> clients;
+
+  ClientLoaded({
+    required this.clients,
     DateTime? startDate,
     DateTime? endDate,
-    bool isFiltered = false,
   }) : super(
-    startDate: startDate,
-    endDate: endDate,
-    originalClients: clients,
-    isFiltered: isFiltered,
+    startDate: startDate ?? ClientState.firstDayOfMonth,
+    endDate: endDate ?? ClientState.lastDayOfMonth,
   );
   
   @override
-  List<Object?> get props => [
-    ...super.props, 
-    startDate, 
-    endDate, 
-    originalClients, 
-    isFiltered
-  ];
+  List<Object> get props => [...super.props, clients];
   
   ClientLoaded copyWith({
     List<Client>? clients,
     DateTime? startDate,
     DateTime? endDate,
-    bool? isFiltered,
   }) {
     return ClientLoaded(
-      clients: clients ?? originalClients,
+      clients: clients ?? this.clients,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      isFiltered: isFiltered ?? this.isFiltered,
     );
   }
 }
@@ -112,28 +77,23 @@ class ClientUpdated extends ClientState {
   final Client client;
 
   ClientUpdated({required this.client}) : super(
-    startDate: null,
-    endDate: null,
-    originalClients: const [],
-    isFiltered: false,
+    startDate: ClientState.firstDayOfMonth,
+    endDate: ClientState.lastDayOfMonth,
   );
-  
   @override
-  List<Object?> get props => [client, ...super.props];
+  List<Object> get props => [client];
 }
 
 class DepartmentsLoaded extends ClientState {
   final List<String> departments;
 
   DepartmentsLoaded({required this.departments}) : super(
-    startDate: null,
-    endDate: null,
-    originalClients: const [],
-    isFiltered: false,
+    startDate: ClientState.firstDayOfMonth,
+    endDate: ClientState.lastDayOfMonth,
   );
 
   @override
-  List<Object?> get props => [departments, ...super.props];
+  List<Object> get props => [departments];
 }
 
 class CitiesLoaded extends ClientState {
@@ -144,25 +104,22 @@ class CitiesLoaded extends ClientState {
     DateTime? startDate,
     DateTime? endDate,
   }) : super(
-    startDate: startDate,
-    endDate: endDate,
-    originalClients: const [],
-    isFiltered: false,
+    startDate: startDate ?? ClientState.firstDayOfMonth,
+    endDate: endDate ?? ClientState.lastDayOfMonth,
   );
 
   @override
-  List<Object?> get props => [cities, ...super.props];
+  List<Object> get props => [cities];
 }
+
 class ClientError extends ClientState {
   final String message;
 
   ClientError({required this.message}) : super(
-    startDate: null,
-    endDate: null,
-    originalClients: const [],
-    isFiltered: false,
+    startDate: ClientState.firstDayOfMonth,
+    endDate: ClientState.lastDayOfMonth,
   );
 
   @override
-  List<Object?> get props => [message, ...super.props];
+  List<Object> get props => [message];
 }

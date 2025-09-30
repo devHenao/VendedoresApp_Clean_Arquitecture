@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/clients/domain/usecases/client_use_cases.dart';
-import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'client_event.dart';
 import 'client_state.dart';
 
@@ -33,121 +32,51 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     if (state is ClientLoaded) {
       final currentState = state as ClientLoaded;
       emit(currentState.copyWith(
-        startDate: event.startDate,
-        endDate: event.endDate,
-        isFiltered: event.startDate != null || event.endDate != null,
-      ));
-    } else if (state is ClientLoading) {
-      final currentState = state as ClientLoading;
-      emit(ClientLoading(
         startDate: event.startDate ?? currentState.startDate,
         endDate: event.endDate ?? currentState.endDate,
-        clients: currentState.originalClients,
-        isFiltered: event.startDate != null || event.endDate != null,
       ));
     } else {
       emit(ClientLoaded(
         clients: const [],
-        startDate: event.startDate,
-        endDate: event.endDate,
-        isFiltered: event.startDate != null || event.endDate != null,
+        startDate: event.startDate ?? state.startDate,
+        endDate: event.endDate ?? state.endDate,
       ));
     }
   }
 
   Future<void> _onSearchClients(SearchClients event, Emitter<ClientState> emit) async {
-    // Mantener los clientes existentes mientras se busca
-    final List<Client> currentClients = state is ClientLoaded 
-        ? (state as ClientLoaded).originalClients 
-        : <Client>[];
-        
-    emit(ClientLoading(
-      startDate: state.startDate,
-      endDate: state.endDate,
-      clients: currentClients,
-      isFiltered: state.isFiltered,
-    ));
-    
+    emit(ClientLoading(startDate: state.startDate, endDate: state.endDate));
     final failureOrClients = await searchClientsUseCase(event.query);
-    
     failureOrClients.fold(
-      (failure) {
-        // Si hay un error en la búsqueda, volver a mostrar los clientes originales
-        if (currentClients.isNotEmpty) {
-          emit(ClientLoaded(
-            clients: currentClients,
-            startDate: state.startDate,
-            endDate: state.endDate,
-            isFiltered: state.isFiltered,
-          ));
-        } else {
-          emit(ClientError(message: failure.toString()));
-        }
-      },
+      (failure) => emit(ClientError(message: failure.toString())),
       (clients) => emit(ClientLoaded(
         clients: clients,
         startDate: state.startDate,
         endDate: state.endDate,
-        isFiltered: state.isFiltered,
       )),
     );
   }
 
   Future<void> _onLoadClients(LoadClients event, Emitter<ClientState> emit) async {
-    // Mantener los clientes existentes mientras se cargan los nuevos
-    final List<Client> currentClients = state is ClientLoaded 
-        ? (state as ClientLoaded).originalClients 
-        : <Client>[];
-        
-    emit(ClientLoading(
-      startDate: state.startDate,
-      endDate: state.endDate,
-      clients: currentClients,
-      isFiltered: state.isFiltered,
-    ));
-    
+    emit(ClientLoading(startDate: state.startDate, endDate: state.endDate));
     final failureOrClients = await getClientsUseCase();
-    
     failureOrClients.fold(
-      (failure) {
-        // En caso de error, mantener los clientes existentes si los hay
-        if (currentClients.isNotEmpty) {
-          emit(ClientLoaded(
-            clients: currentClients,
-            startDate: state.startDate,
-            endDate: state.endDate,
-            isFiltered: state.isFiltered,
-          ));
-        } else {
-          emit(ClientError(message: failure.toString()));
-        }
-      },
+      (failure) => emit(ClientError(message: failure.toString())),
       (clients) => emit(ClientLoaded(
         clients: clients,
-        startDate: state.startDate,
-        endDate: state.endDate,
-        isFiltered: state.isFiltered,
       )),
     );
   }
 
   Future<void> _onGetClientByNit(GetClientByNit event, Emitter<ClientState> emit) async {
-    emit(ClientLoading(
-      startDate: state.startDate,
-      endDate: state.endDate,
-      clients: state.originalClients,
-      isFiltered: state.isFiltered,
-    ));
-    
+    emit(ClientLoading(startDate: state.startDate, endDate: state.endDate));
     final failureOrClient = await getClientByNitUseCase(event.nit);
-    
     failureOrClient.fold(
       (failure) => emit(ClientError(message: failure.toString())),
       (client) => emit(ClientLoaded(
         clients: [client],
         startDate: state.startDate,
         endDate: state.endDate,
-        isFiltered: state.isFiltered,
       )),
     );
   }
@@ -162,15 +91,8 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
   }
 
   Future<void> _onLoadDepartments(LoadDepartments event, Emitter<ClientState> emit) async {
-    emit(ClientLoading(
-      startDate: state.startDate,
-      endDate: state.endDate,
-      clients: state.originalClients,
-      isFiltered: state.isFiltered,
-    ));
-    
+    emit(ClientLoading());
     final failureOrDepartments = await getDepartmentsUseCase();
-    
     failureOrDepartments.fold(
       (failure) => emit(ClientError(message: failure.toString())),
       (departments) => emit(DepartmentsLoaded(departments: departments.cast<String>())),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_Bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
-import 'package:app_vendedores/shared/confirmation_dialog/confirmation_dialog_controller.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_state.dart';
@@ -11,7 +10,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
-import 'package:app_vendedores/shared/date_range_picker/date_range_picker_widget.dart';
+import 'package:app_vendedores/shared/date_pickers/date_range_selector.dart';
 
 class ClientView extends StatelessWidget {
   const ClientView({super.key});
@@ -47,78 +46,87 @@ class ClientView extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Barra de búsqueda
-                TextField(
-                  onChanged: (value) {
-                    context.read<ClientBloc>().add(SearchClients(value));
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por nombre o documento',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+            child: BlocBuilder<ClientBloc, ClientState>(
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Buscador
+                    TextField(
+                      onChanged: (value) {
+                        context.read<ClientBloc>().add(SearchClients(value));
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Buscar cliente',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withAlpha(128),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Selector de rango de fechas
-                BlocBuilder<ClientBloc, ClientState>(
-                  builder: (context, state) {
-                    return DateRangePicker(
-                      initialStartDate: state.startDate,
-                      initialEndDate: state.endDate,
-                      onDateRangeSelected: (startDate, endDate) {
+                    const SizedBox(height: 16.0),
+                    // Selector de rango de fechas
+                    DateRangeSelector(
+                      startDate: state.startDate,
+                      endDate: state.endDate,
+                      onStartDateSelected: (date) {
                         context.read<ClientBloc>().add(UpdateDateRange(
-                          startDate: startDate,
-                          endDate: endDate,
+                          startDate: date,
+                          endDate: state.endDate,
                         ));
                       },
-                    );
-                  },
-                ),
-              ],
+                      onEndDateSelected: (date) {
+                        context.read<ClientBloc>().add(UpdateDateRange(
+                          startDate: state.startDate,
+                          endDate: date,
+                        ));
+                      },
+                      onClearDates: () {
+                        context.read<ClientBloc>().add(const UpdateDateRange(
+                          startDate: null,
+                          endDate: null,
+                        ));
+                      },
+                      title: 'Selecciona el rango de fechas para filtrar los reportes',
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-        Expanded(
-          child: BlocBuilder<ClientBloc, ClientState>(
-            builder: (context, state) {
-              if (state is ClientLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is ClientLoaded) {
-                if (state.clients.isEmpty) {
-                  return _buildEmptyState(context);
+          Expanded(
+            child: BlocBuilder<ClientBloc, ClientState>(
+              builder: (context, state) {
+                if (state is ClientLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is ClientLoaded) {
+                  if (state.clients.isEmpty) {
+                    return _buildEmptyState(context);
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    itemCount: state.clients.length,
+                    itemBuilder: (context, index) {
+                      final client = state.clients[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: ClientCard(
+                          client: client,
+                          onViewDetails: () => _showClientDetails(context, client),
+                          onViewWallet: () => _viewClientWallet(context, client),
+                          onViewPending: () => _viewClientPending(context, client),
+                          onViewSales: () => _viewClientSales(context, client),
+                        ),
+                      );
+                    },
+                  );
+                } else if (state is ClientError) {
+                  return _buildErrorState(context, state.message);
                 }
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  itemCount: state.clients.length,
-                  itemBuilder: (context, index) {
-                    final client = state.clients[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: ClientCard(
-                        client: client,
-                        onViewDetails: () => _showClientDetails(context, client),
-                        onViewWallet: () => _viewClientWallet(context, client),
-                        onViewPending: () => _viewClientPending(context, client),
-                        onViewSales: () => _viewClientSales(context, client),
-                      ),
-                    );
-                  },
-                );
-              } else if (state is ClientError) {
-                return _buildErrorState(context, state.message);
-              }
-              return _buildInitialState(context);
-            },
+                return _buildInitialState(context);
+              },
+            ),
           ),
-        ),
         ],
-      ),
+        ),
     );
   }
 
@@ -240,30 +248,24 @@ class ClientView extends StatelessWidget {
   }
 
   void _viewClientPending(BuildContext context, Client client) {
-    _showDateRangeDialog(
+    final state = context.read<ClientBloc>().state;
+    _downloadFile(
       context,
-      'Seleccionar rango de fechas para pendientes',
-      (startDate, endDate) => _downloadFile(
-        context,
-        client,
-        DownloadType.orders,
-        startDate: startDate,
-        endDate: endDate,
-      ),
+      client,
+      DownloadType.orders,
+      startDate: state.startDate,
+      endDate: state.endDate,
     );
   }
 
   void _viewClientSales(BuildContext context, Client client) {
-    _showDateRangeDialog(
+    final state = context.read<ClientBloc>().state;
+    _downloadFile(
       context,
-      'Seleccionar rango de fechas para ventas',
-      (startDate, endDate) => _downloadFile(
-        context,
-        client,
-        DownloadType.sales,
-        startDate: startDate,
-        endDate: endDate,
-      ),
+      client,
+      DownloadType.sales,
+      startDate: state.startDate,
+      endDate: state.endDate,
     );
   }
 
@@ -273,56 +275,64 @@ class ClientView extends StatelessWidget {
     DownloadType type, {
     DateTime? startDate,
     DateTime? endDate,
-  }) async {
-    final now = DateTime.now();
-    final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
-    
-    // Usar las fechas proporcionadas o los valores por defecto
-    final effectiveStartDate = startDate ?? firstDayOfMonth;
-    final effectiveEndDate = endDate ?? lastDayOfMonth;
-    
-    final dateRangeText = '${effectiveStartDate.day}/${effectiveStartDate.month}/${effectiveStartDate.year} - ${effectiveEndDate.day}/${effectiveEndDate.month}/${effectiveEndDate.year}';
-    
-    final confirmed = await ConfirmationDialogController.showConfirmationDialog(
-      context: context,
-      title: 'Confirmar descarga',
-      message: '¿Desea descargar ${_getDownloadTypeName(type)} para el rango de fechas:\n$dateRangeText?',
-      confirmText: 'Descargar',
-      confirmButtonColor: Theme.of(context).colorScheme.primary,
-    );
-    
-    if (confirmed == true) {
-      if (!context.mounted) return;
-      
-      context.read<DownloadFileBloc>().add(
-            DownloadFileRequested(
-              clientId: client.nit,
-              type: type,
-              startDate: effectiveStartDate,
-              endDate: effectiveEndDate,
-            ),
-          );
-      
-      // Mostrar un mensaje informativo
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Iniciando descarga de ${_getDownloadTypeName(type)}...'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
+  }) {
+    context.read<DownloadFileBloc>().add(
+          DownloadFileRequested(
+            clientId: client.nit,
+            type: type,
+            startDate: startDate,
+            endDate: endDate,
+          ),
+        );
   }
-  
-  String _getDownloadTypeName(DownloadType type) {
-    switch (type) {
-      case DownloadType.wallet:
-        return 'cartera';
-      case DownloadType.orders:
-        return 'pedidos pendientes';
-      case DownloadType.sales:
-        return 'ventas';
+
+  Future<void> _showDownloadConfirmationDialog(
+    BuildContext context,
+    String title,
+    String content,
+    VoidCallback onConfirm,
+  ) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirm();
+              },
+              child: const Text('Descargar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDateRangeDialog(
+    BuildContext context,
+    String title,
+    Function(DateTime, DateTime) onDateRangeSelected,
+  ) async {
+    final DateTimeRange? dateRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now().subtract(const Duration(days: 30)),
+        end: DateTime.now(),
+      ),
+    );
+
+    if (dateRange != null) {
+      onDateRangeSelected(dateRange.start, dateRange.end);
     }
   }
 }
