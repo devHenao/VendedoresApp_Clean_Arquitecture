@@ -7,6 +7,7 @@ import 'package:app_vendedores/modules/clients/infraestructure/datasources/clien
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/repositories/client_repository.dart';
 import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
+import 'package:flutter/foundation.dart';
 
 class ClientRepositoryImpl implements ClientRepository {
   final ClientRemoteDataSource remoteDataSource;
@@ -21,13 +22,16 @@ class ClientRepositoryImpl implements ClientRepository {
 
   @override
   Future<Either<Failure, List<Client>>> getClients() async {
-    return _handleNetworkCall<List<Client>>(
-      () async {
-        final token = await _getToken();
-        final clients = await remoteDataSource.getClients(token);
-        return clients.map((model) => model.toEntity()).toList();
-      },
-    );
+    try {
+      final token = await _getToken();
+      debugPrint('Token: $token');
+      final clients = await remoteDataSource.getClients(token);
+      return Right(clients.map((model) => model.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Error inesperado: $e'));
+    }
   }
 
   @override
@@ -35,6 +39,7 @@ class ClientRepositoryImpl implements ClientRepository {
     return _handleNetworkCall<List<Client>>(
       () async {
         final token = await _getToken();
+              debugPrint('Token🔴🔴: $token');
         final clients = await remoteDataSource.searchClients(token, query);
         return clients.map((model) => model.toEntity()).toList();
       },

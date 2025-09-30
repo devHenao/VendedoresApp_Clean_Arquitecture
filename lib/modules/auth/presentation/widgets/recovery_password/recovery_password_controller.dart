@@ -1,4 +1,4 @@
-import 'package:app_vendedores/components/mensajes/ok_password/ok_password_widget.dart';
+import 'package:app_vendedores/shared/mensajes/ok_password/ok_password_widget.dart';
 import 'package:flutter/material.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';

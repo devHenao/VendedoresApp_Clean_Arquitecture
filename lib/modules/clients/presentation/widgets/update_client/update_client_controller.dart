@@ -1,4 +1,4 @@
-import 'package:app_vendedores/components/mensajes/ok_actualizado/ok_actualizado_widget.dart';
+import 'package:app_vendedores/shared/mensajes/ok_actualizado/ok_actualizado_widget.dart';
 import 'package:flutter/material.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/schema/structs/index.dart';

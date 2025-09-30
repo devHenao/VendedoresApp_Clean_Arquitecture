@@ -50,7 +50,7 @@ class ClientView extends StatelessWidget {
                   },
                 );
               } else if (state is ClientError) {
-                return Center(child: Text(state.message));
+                      return Center(child: Text(state.message));
               }
               return const Center(child: Text('Cargando clientes...'));
             },
