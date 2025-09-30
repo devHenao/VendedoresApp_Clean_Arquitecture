@@ -318,24 +318,14 @@ class ClientView extends StatelessWidget {
     String content,
     VoidCallback onConfirm,
   ) async {
-    // Usar NavigatorState para asegurar que el diálogo se muestre correctamente
-    final navigator = Navigator.of(context);
-    
-    final result = await showDialog<bool>(
+    final result = await ConfirmationDialog.show(
       context: context,
-      barrierDismissible: true, // Permite cerrar tocando fuera del diálogo
-      builder: (BuildContext context) {
-        return ConfirmationDialog(
-          title: title,
-          content: content,
-          confirmText: 'Descargar',
-          cancelText: 'Cancelar',
-          onConfirm: () => navigator.pop(true),
-          onCancel: () => navigator.pop(false),
-        );
-      },
+      title: title,
+      content: content,
+      confirmText: 'Descargar',
+      cancelText: 'Cancelar',
     );
-
+    
     if (result == true) {
       onConfirm();
     }

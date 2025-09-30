@@ -52,10 +52,7 @@ class ConfirmationDialog extends StatelessWidget {
           child: Text(cancelText),
         ),
         TextButton(
-          onPressed: () {
-            onConfirm();
-            Navigator.of(context).pop(true);
-          },
+          onPressed: onConfirm, // No llamamos a pop aquí, ya se maneja en onConfirm
           child: Text(confirmText),
         ),
       ],
