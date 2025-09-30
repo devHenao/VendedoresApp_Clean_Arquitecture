@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-class ConfirmationDialogModel extends ChangeNotifier {
+class ConfirmationDialogModel  {
   final String title;
   final String content;
   final String confirmText;
@@ -18,6 +16,5 @@ class ConfirmationDialogModel extends ChangeNotifier {
   
   void setLoading(bool value) {
     _isLoading = value;
-    notifyListeners();
   }
 }
