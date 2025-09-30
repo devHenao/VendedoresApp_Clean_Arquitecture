@@ -14,6 +14,9 @@ abstract class ClientState extends Equatable {
     this.isFiltered = false,
   });
        
+  static DateTime get firstDayOfMonth => _firstDayOfMonth();
+  static DateTime get lastDayOfMonth => _lastDayOfMonth();
+  
   static DateTime _firstDayOfMonth() {
     final now = DateTime.now();
     return DateTime(now.year, now.month, 1);
@@ -21,11 +24,8 @@ abstract class ClientState extends Equatable {
   
   static DateTime _lastDayOfMonth() {
     final now = DateTime.now();
-    return DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+    return DateTime(now.year, now.month + 1, 0);
   }
-  
-  static DateTime get firstDayOfMonth => _firstDayOfMonth();
-  static DateTime get lastDayOfMonth => _lastDayOfMonth();
 
   List<Client> get clients {
     if (!isFiltered || (startDate == null && endDate == null)) {
@@ -50,10 +50,10 @@ abstract class ClientState extends Equatable {
 
 class ClientInitial extends ClientState {
   ClientInitial() : super(
-    startDate: ClientState._firstDayOfMonth(),
-    endDate: ClientState._lastDayOfMonth(),
+    startDate: null,
+    endDate: null,
     originalClients: const [],
-    isFiltered: true,
+    isFiltered: false,
   );
 }
 
