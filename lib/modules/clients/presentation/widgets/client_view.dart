@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_Bloc.dart';
 
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
+import 'package:app_vendedores/shared/confirmation_dialog/confirmation_dialog_controller.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_state.dart';
@@ -10,7 +11,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
-import 'package:app_vendedores/shared/widgets/date_range_picker.dart';
+import 'package:app_vendedores/shared/date_range_picker/date_range_picker_widget.dart';
 
 class ClientView extends StatelessWidget {
   const ClientView({super.key});
@@ -68,7 +69,7 @@ class ClientView extends StatelessWidget {
                 // Selector de rango de fechas
                 BlocBuilder<ClientBloc, ClientState>(
                   builder: (context, state) {
-                    return DateRangePicker(
+                    return DateRangePickerWidget(
                       initialStartDate: state.startDate,
                       initialEndDate: state.endDate,
                       onDateRangeSelected: (startDate, endDate) {
@@ -230,106 +231,96 @@ class ClientView extends StatelessWidget {
   }
 
   void _viewClientWallet(BuildContext context, Client client) {
-    _showDownloadConfirmationDialog(
+    final state = context.read<ClientBloc>().state;
+    _downloadFile(
       context,
-      'Descargar cartera',
-      '¿Desea descargar el reporte de cartera de ${client.nombre}?',
-      () => _downloadFile(context, client, DownloadType.wallet),
+      client,
+      DownloadType.wallet,
+      startDate: state.startDate,
+      endDate: state.endDate,
     );
   }
 
   void _viewClientPending(BuildContext context, Client client) {
-    _showDateRangeDialog(
+    final state = context.read<ClientBloc>().state;
+    _downloadFile(
       context,
-      'Seleccionar rango de fechas para pendientes',
-      (startDate, endDate) => _downloadFile(
-        context,
-        client,
-        DownloadType.orders,
-        startDate: startDate,
-        endDate: endDate,
-      ),
+      client,
+      DownloadType.orders,
+      startDate: state.startDate,
+      endDate: state.endDate,
     );
   }
 
   void _viewClientSales(BuildContext context, Client client) {
-    _showDateRangeDialog(
+    final state = context.read<ClientBloc>().state;
+    _downloadFile(
       context,
-      'Seleccionar rango de fechas para ventas',
-      (startDate, endDate) => _downloadFile(
-        context,
-        client,
-        DownloadType.sales,
-        startDate: startDate,
-        endDate: endDate,
-      ),
+      client,
+      DownloadType.sales,
+      startDate: state.startDate,
+      endDate: state.endDate,
     );
   }
 
-  void _downloadFile(
+  Future<void> _downloadFile(
     BuildContext context,
     Client client,
     DownloadType type, {
     DateTime? startDate,
     DateTime? endDate,
-  }) {
-    context.read<DownloadFileBloc>().add(
-          DownloadFileRequested(
-            clientId: client.nit,
-            type: type,
-            startDate: startDate,
-            endDate: endDate,
-          ),
-        );
-  }
-
-  Future<void> _showDownloadConfirmationDialog(
-    BuildContext context,
-    String title,
-    String content,
-    VoidCallback onConfirm,
-  ) async {
-    return showDialog<void>(
+  }) async {
+    final now = DateTime.now();
+    final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+    
+    // Usar las fechas proporcionadas o los valores por defecto
+    final effectiveStartDate = startDate ?? firstDayOfMonth;
+    final effectiveEndDate = endDate ?? lastDayOfMonth;
+    
+    final dateRangeText = '${effectiveStartDate.day}/${effectiveStartDate.month}/${effectiveStartDate.year} - ${effectiveEndDate.day}/${effectiveEndDate.month}/${effectiveEndDate.year}';
+    
+    final confirmed = await ConfirmationDialogController.showConfirmationDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onConfirm();
-              },
-              child: const Text('Descargar'),
-            ),
-          ],
-        );
-      },
+      title: 'Confirmar descarga',
+      message: '¿Desea descargar ${_getDownloadTypeName(type)} para el rango de fechas:\n$dateRangeText?',
+      confirmText: 'Descargar',
+      confirmButtonColor: Theme.of(context).colorScheme.primary,
     );
-  }
-
-  Future<void> _showDateRangeDialog(
-    BuildContext context,
-    String title,
-    Function(DateTime, DateTime) onDateRangeSelected,
-  ) async {
-    final DateTimeRange? dateRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      initialDateRange: DateTimeRange(
-        start: DateTime.now().subtract(const Duration(days: 30)),
-        end: DateTime.now(),
-      ),
-    );
-
-    if (dateRange != null) {
-      onDateRangeSelected(dateRange.start, dateRange.end);
+    
+    if (confirmed == true) {
+      if (!context.mounted) return;
+      
+      context.read<DownloadFileBloc>().add(
+            DownloadFileRequested(
+              clientId: client.nit,
+              type: type,
+              startDate: effectiveStartDate,
+              endDate: effectiveEndDate,
+            ),
+          );
+      
+      // Mostrar un mensaje informativo
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Iniciando descarga de ${_getDownloadTypeName(type)}...'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
+  
+  String _getDownloadTypeName(DownloadType type) {
+    switch (type) {
+      case DownloadType.wallet:
+        return 'cartera';
+      case DownloadType.orders:
+        return 'pedidos pendientes';
+      case DownloadType.sales:
+        return 'ventas';
+    }
+  }
+
+
 }
