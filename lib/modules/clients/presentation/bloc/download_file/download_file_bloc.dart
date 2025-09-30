@@ -105,7 +105,7 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
                 emit(state.copyWith(
                   status: DownloadFileStatus.failure,
                   errorMessage: 'No se pudo encontrar el archivo descargado',
-                  failure: FileDownloadFailure('Archivo no encontrado'),
+                  failure: const FileDownloadFailure('Archivo no encontrado'),
                 ));
               }
             },

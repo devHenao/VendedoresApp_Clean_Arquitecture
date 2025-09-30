@@ -47,3 +47,16 @@ class LoadCitiesByDepartment extends ClientEvent {
   @override
   List<Object> get props => [department];
 }
+
+class UpdateDateRange extends ClientEvent {
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  const UpdateDateRange({this.startDate, this.endDate});
+
+  @override
+  List<Object> get props => [
+        if (startDate != null) startDate!,
+        if (endDate != null) endDate!,
+      ];
+}

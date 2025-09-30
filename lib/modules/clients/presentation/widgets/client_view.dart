@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_Bloc.dart';
 
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
@@ -10,6 +10,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
+import 'package:app_vendedores/shared/widgets/date_range_picker.dart';
 
 class ClientView extends StatelessWidget {
   const ClientView({super.key});
@@ -43,24 +44,45 @@ class ClientView extends StatelessWidget {
       ],
       child: Column(
         children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            onChanged: (value) {
-              context.read<ClientBloc>().add(SearchClients(value));
-            },
-            decoration: InputDecoration(
-              labelText: 'Buscar por nombre o documento',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Barra de búsqueda
+                TextField(
+                  onChanged: (value) {
+                    context.read<ClientBloc>().add(SearchClients(value));
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Buscar por nombre o documento',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withAlpha(128),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Selector de rango de fechas
+                BlocBuilder<ClientBloc, ClientState>(
+                  builder: (context, state) {
+                    return DateRangePicker(
+                      initialStartDate: state.startDate,
+                      initialEndDate: state.endDate,
+                      onDateRangeSelected: (startDate, endDate) {
+                        context.read<ClientBloc>().add(UpdateDateRange(
+                          startDate: startDate,
+                          endDate: endDate,
+                        ));
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-        ),
         Expanded(
           child: BlocBuilder<ClientBloc, ClientState>(
             builder: (context, state) {
