@@ -1,3 +1,6 @@
+import 'package:app_vendedores/shared/datePickers/date_range_selector_controller.dart';
+import 'package:app_vendedores/shared/datePickers/date_range_selector_model.dart';
+import 'package:app_vendedores/shared/datePickers/date_range_selector_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,7 +13,6 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
-import 'package:app_vendedores/shared/datePickers/date_range_selector.dart';
 import 'package:app_vendedores/shared/confirmDialog/confirmation_dialog.dart';
 
 class ClientView extends StatelessWidget {
@@ -65,9 +67,15 @@ class ClientView extends StatelessWidget {
                     ),
                     const SizedBox(height: 16.0),
                     // Selector de rango de fechas
-                    DateRangeSelector(
-                      startDate: state.startDate,
-                      endDate: state.endDate,
+                    DateRangeSelectorWidget(
+                      controller: DateRangeSelectorController()
+                        ..updateStartDate(state.startDate)
+                        ..updateEndDate(state.endDate),
+                      model: const DateRangeSelectorModel(
+                        title: 'Selecciona el rango de fechas para filtrar los reportes',
+                        startDateLabel: 'Fecha de inicio',
+                        endDateLabel: 'Fecha de fin',
+                      ),
                       onStartDateSelected: (date) {
                         context.read<ClientBloc>().add(UpdateDateRange(
                           startDate: date,
@@ -86,7 +94,6 @@ class ClientView extends StatelessWidget {
                           endDate: null,
                         ));
                       },
-                      title: 'Selecciona el rango de fechas para filtrar los reportes',
                     ),
                   ],
                 );
@@ -311,13 +318,24 @@ class ClientView extends StatelessWidget {
     String content,
     VoidCallback onConfirm,
   ) async {
-    final result = await ConfirmationDialog.show(
-      context: context,
-      title: title,
-      content: content,
-      confirmText: 'Descargar',
-    );
+    // Usar NavigatorState para asegurar que el diálogo se muestre correctamente
+    final navigator = Navigator.of(context);
     
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true, // Permite cerrar tocando fuera del diálogo
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          title: title,
+          content: content,
+          confirmText: 'Descargar',
+          cancelText: 'Cancelar',
+          onConfirm: () => navigator.pop(true),
+          onCancel: () => navigator.pop(false),
+        );
+      },
+    );
+
     if (result == true) {
       onConfirm();
     }
