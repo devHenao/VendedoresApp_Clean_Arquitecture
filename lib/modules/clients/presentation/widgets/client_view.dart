@@ -60,7 +60,7 @@ class ClientView extends StatelessWidget {
                         context.read<ClientBloc>().add(SearchClients(value));
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Buscar cliente',
+                        labelText: 'Buscar cliente por nombre o documento',
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),

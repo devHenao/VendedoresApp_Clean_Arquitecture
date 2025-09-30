@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'confirmation_dialog_model.dart';
+import 'confirmation_dialog_controller.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String title;
@@ -7,6 +11,7 @@ class ConfirmationDialog extends StatelessWidget {
   final String cancelText;
   final VoidCallback onConfirm;
   final VoidCallback? onCancel;
+  final bool barrierDismissible;
 
   const ConfirmationDialog({
     super.key,
@@ -16,6 +21,7 @@ class ConfirmationDialog extends StatelessWidget {
     this.cancelText = 'Cancelar',
     required this.onConfirm,
     this.onCancel,
+    this.barrierDismissible = true,
   });
 
   static Future<bool?> show({
@@ -24,38 +30,74 @@ class ConfirmationDialog extends StatelessWidget {
     required String content,
     String confirmText = 'Aceptar',
     String cancelText = 'Cancelar',
+    bool barrierDismissible = true,
   }) async {
-    bool? result = await showDialog<bool>(
+    return await showDialog<bool>(
       context: context,
+      barrierDismissible: barrierDismissible,
       builder: (BuildContext context) {
-        return ConfirmationDialog(
+        final model = ConfirmationDialogModel(
           title: title,
           content: content,
           confirmText: confirmText,
           cancelText: cancelText,
-          onConfirm: () => Navigator.of(context).pop(true),
-          onCancel: () => Navigator.of(context).pop(false),
+        );
+        
+        return ChangeNotifierProvider.value(
+          value: model,
+          child: ConfirmationDialog(
+            title: title,
+            content: content,
+            confirmText: confirmText,
+            cancelText: cancelText,
+            onConfirm: () => Navigator.of(context).pop(true),
+            onCancel: () => Navigator.of(context).pop(false),
+            barrierDismissible: barrierDismissible,
+          ),
         );
       },
     );
-    return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(title),
-      content: Text(content),
-      actions: <Widget>[
-        TextButton(
-          onPressed: onCancel ?? () => Navigator.of(context).pop(false),
-          child: Text(cancelText),
+    final model = Provider.of<ConfirmationDialogModel>(context, listen: true);
+    final controller = ConfirmationDialogController(
+      context: context,
+      model: model,
+      onConfirm: onConfirm,
+      onCancel: onCancel,
+    );
+
+    return PopScope(
+      canPop: !model.isLoading,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          controller.cancel();
+        }
+      },
+      child: AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: Text(content),
         ),
-        TextButton(
-          onPressed: onConfirm, // No llamamos a pop aquí, ya se maneja en onConfirm
-          child: Text(confirmText),
-        ),
-      ],
+        actions: [
+          TextButton(
+            onPressed: model.isLoading ? null : controller.cancel,
+            child: Text(cancelText),
+          ),
+          TextButton(
+            onPressed: model.isLoading ? null : controller.confirm,
+            child: model.isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(confirmText),
+          ),
+        ],
+      ),
     );
   }
 }
