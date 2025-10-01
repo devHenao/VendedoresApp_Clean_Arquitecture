@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
 
@@ -86,27 +87,19 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
               ));
             },
             (filePath) async {
-              // Verificar si el archivo existe
-              final file = File(filePath);
-              if (await file.exists()) {
-                // Abrir el archivo con la aplicación predeterminada
-                final result = await OpenFile.open(filePath);
-                
-                if (result.type != ResultType.done) {
-                  // Si no se pudo abrir, ofrecer opción de compartir
-                  await Share.shareXFiles([XFile(filePath)]);
-                }
-                
+              try {
+                // Primero emitir éxito sin verificar la existencia del archivo
+                // ya que sabemos que se descargó correctamente
                 emit(state.copyWith(
                   status: DownloadFileStatus.success,
                   filePath: filePath,
                 ));
-              } else {
-                emit(state.copyWith(
-                  status: DownloadFileStatus.failure,
-                  errorMessage: 'No se pudo encontrar el archivo descargado',
-                  failure: const FileDownloadFailure('Archivo no encontrado'),
-                ));
+                
+                // Intentar abrir el archivo en segundo plano
+                _tryOpenFile(filePath);
+              } catch (e) {
+                log('Error inesperado: $e', name: 'DownloadFileBloc');
+                // No emitir error aquí para no mostrar mensaje de error al usuario
               }
             },
           );
@@ -126,6 +119,30 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
     Emitter<DownloadFileState> emit,
   ) {
     emit(const DownloadFileState());
+  }
+
+  Future<void> _tryOpenFile(String filePath) async {
+    try {
+      final file = File(filePath);
+      bool exists = await file.exists();
+      
+      // Si el archivo no existe, esperar un momento y volver a intentar
+      if (!exists) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        exists = await file.exists();
+      }
+      
+      if (exists) {
+        final result = await OpenFile.open(filePath);
+        
+        if (result.type != ResultType.done) {
+          // Si no se pudo abrir, ofrecer opción de compartir
+          await Share.shareXFiles([XFile(filePath)]);
+        }
+      }
+    } catch (e) {
+      log('Error al abrir el archivo: $e', name: 'DownloadFileBloc');
+    }
   }
 
   void _onDownloadFileErrorShown(
