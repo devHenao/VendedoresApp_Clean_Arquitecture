@@ -1,11 +1,12 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
-
 abstract class ClientRemoteDataSource {
   Future<List<ClientModel>> getClients(String token);
   Future<List<ClientModel>> searchClients(String token, String query);
@@ -164,49 +165,91 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    String endpoint;
-    final data = {'clientId': clientId};
-
-    switch (type) {
-      case DownloadType.wallet:
-        endpoint = '/clients/getWalletClient';
-        break;
-      case DownloadType.orders:
-        endpoint = '/clients/getOrderClient';
-        if (startDate != null) data['startDate'] = startDate.toIso8601String();
-        if (endDate != null) data['endDate'] = endDate.toIso8601String();
-        break;
-      case DownloadType.sales:
-        endpoint = '/clients/getLastSalesClient';
-        if (startDate != null) data['startDate'] = startDate.toIso8601String();
-        if (endDate != null) data['endDate'] = endDate.toIso8601String();
-        break;
-    }
-
-    final url = '$baseUrl$endpoint';
-    final options = Options(
-      headers: _getHeaders(token),
-      responseType: ResponseType.bytes,
-      followRedirects: false,
-      receiveTimeout: const Duration(minutes: 5),
-    );
-
     try {
-      final response = await dio.post(
-        url,
-        data: data,
-        options: options,
+      String endpoint;
+      final params = <String, dynamic>{};
+      
+      switch (type) {
+        case DownloadType.wallet:
+          endpoint = '/clients/getWalletClient';
+          break;
+        case DownloadType.orders:
+          endpoint = '/clients/getOrderClient';
+          if (startDate != null) {
+            params['startDate'] = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+          }
+          if (endDate != null) {
+            params['endDate'] = '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
+          }
+          break;
+        case DownloadType.sales:
+          endpoint = '/clients/getLastSalesClient';
+          if (startDate != null) {
+            params['startDate'] = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+          }
+          if (endDate != null) {
+            params['endDate'] = '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
+          }
+          break;
+      }
+
+      final url = '$baseUrl$endpoint/$clientId';
+      final uri = Uri.parse(url).replace(queryParameters: params.isNotEmpty ? params : null);
+      
+      final response = await dio.get(
+        uri.toString(),
+        options: Options(
+          headers: _getHeaders(token),
+          responseType: ResponseType.bytes,
+          receiveTimeout: const Duration(minutes: 5),
+        ),
       );
+      
+      final bytes = response.data as List<int>;
 
       if (response.statusCode == 200) {
-        // Aquí deberías manejar la respuesta binaria del archivo
-        // Por ahora, solo devolvemos un mensaje de éxito
-        return 'Archivo descargado exitosamente';
+        if (bytes == null || bytes.isEmpty) {
+          throw ServerException('El archivo está vacío');
+        }
+
+        // Generar nombre de archivo basado en el tipo
+        final extension = type == DownloadType.orders ? 'pdf' : 'xlsx';
+        final fileName = '${type.toString().split('.').last}_${DateTime.now().millisecondsSinceEpoch}.$extension';
+        
+        if (Platform.isAndroid) {
+          final methodChannel = const MethodChannel('com.mycompany.appvendedores/media_store');
+          try {
+            final savedFilePath = await methodChannel.invokeMethod<String>('saveFile', {
+              'fileBytes': bytes,
+              'fileName': fileName,
+              'mimeType': type == DownloadType.orders ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+            
+            if (savedFilePath == null) {
+              throw Exception('No se pudo guardar el archivo en el almacenamiento externo');
+            }
+            return savedFilePath;
+          } catch (e) {
+            throw ServerException('Error al guardar el archivo: $e');
+          }
+        } else if (Platform.isIOS) {
+          // Para iOS, guardar en documentos
+          final directory = await getApplicationDocumentsDirectory();
+          final filePath = '${directory.path}/$fileName';
+          await File(filePath).writeAsBytes(bytes);
+          return filePath;
+        } else {
+          throw ServerException('Plataforma no soportada');
+        }
+      } else if (response.statusCode == 400) {
+        throw ServerException('No se encontraron datos para generar el reporte');
       } else {
-        throw ServerException(response.data?['message'] ?? 'Error al descargar el archivo');
+        throw ServerException('Error al descargar el archivo (${response.statusCode})');
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al conectar con el servidor');
+      throw ServerException(e.message ?? 'Error de conexión');
+    } catch (e) {
+      throw ServerException('Error inesperado: $e');
     }
   }
 }
