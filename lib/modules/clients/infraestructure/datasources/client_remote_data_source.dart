@@ -208,9 +208,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       final bytes = response.data as List<int>;
 
       if (response.statusCode == 200) {
-        if (bytes == null || bytes.isEmpty) {
-          throw ServerException('El archivo está vacío');
-        }
 
         // Determinar la extensión basada en el tipo de contenido de la respuesta
         String extension = 'pdf'; // Por defecto PDF

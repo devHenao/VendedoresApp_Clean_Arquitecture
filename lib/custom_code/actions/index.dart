@@ -8,7 +8,4 @@ export 'eliminar_producto_carrito.dart' show eliminarProductoCarrito;
 export 'modificar_cantidad.dart' show modificarCantidad;
 export 'modificar_cantidad_bodega.dart' show modificarCantidadBodega;
 export 'seleccionar_producto.dart' show seleccionarProducto;
-export 'dowloand_wallet.dart' show dowloandWallet;
-export 'download_last_sales.dart' show downloadLastSales;
-export 'download_order.dart' show downloadOrder;
 export 'update_store_quantity.dart' show updateStoreQuantity;
