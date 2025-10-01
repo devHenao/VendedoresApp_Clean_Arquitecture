@@ -169,15 +169,15 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
 
     switch (type) {
       case DownloadType.wallet:
-        endpoint = '/reports/wallet';
+        endpoint = '/clients/getWalletClient';
         break;
       case DownloadType.orders:
-        endpoint = '/reports/orders';
+        endpoint = '/clients/getOrderClient';
         if (startDate != null) data['startDate'] = startDate.toIso8601String();
         if (endDate != null) data['endDate'] = endDate.toIso8601String();
         break;
       case DownloadType.sales:
-        endpoint = '/reports/sales';
+        endpoint = '/clients/getLastSalesClient';
         if (startDate != null) data['startDate'] = startDate.toIso8601String();
         if (endDate != null) data['endDate'] = endDate.toIso8601String();
         break;
