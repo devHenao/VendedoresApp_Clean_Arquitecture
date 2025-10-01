@@ -212,17 +212,27 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
           throw ServerException('El archivo está vacío');
         }
 
-        // Generar nombre de archivo basado en el tipo
-        final extension = type == DownloadType.orders ? 'pdf' : 'xlsx';
+        // Determinar la extensión basada en el tipo de contenido de la respuesta
+        String extension = 'pdf'; // Por defecto PDF
+        final contentType = response.headers.value('content-type')?.toLowerCase() ?? '';
+        
+        if (contentType.contains('excel') || contentType.contains('spreadsheet')) {
+          extension = 'xlsx';
+        }
         final fileName = '${type.toString().split('.').last}_${DateTime.now().millisecondsSinceEpoch}.$extension';
         
         if (Platform.isAndroid) {
           final methodChannel = const MethodChannel('com.mycompany.appvendedores/media_store');
           try {
+            // Determinar el mimeType basado en la extensión
+            final mimeType = extension == 'pdf' 
+                ? 'application/pdf' 
+                : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                
             final savedFilePath = await methodChannel.invokeMethod<String>('saveFile', {
               'fileBytes': bytes,
               'fileName': fileName,
-              'mimeType': type == DownloadType.orders ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              'mimeType': mimeType,
             });
             
             if (savedFilePath == null) {
