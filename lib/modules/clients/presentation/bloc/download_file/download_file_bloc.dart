@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:app_vendedores/modules/clients/domain/usecases/client_use_cases.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_file/open_file.dart';
 import 'package:share_plus/share_plus.dart';
 
