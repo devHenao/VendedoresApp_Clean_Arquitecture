@@ -20,126 +20,169 @@ class ClientView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<DownloadFileBloc, DownloadFileState>(
-          listenWhen: (previous, current) => previous.status != current.status,
-          listener: (context, state) {
-            if (state.status == DownloadFileStatus.failure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage ?? 'Error al descargar el archivo'),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                ),
-              );
-            } else if (state.status == DownloadFileStatus.success) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Archivo descargado correctamente'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              // Resetear el estado después de mostrar el mensaje
-              context.read<DownloadFileBloc>().add(DownloadFileReset());
-            }
-          },
-        ),
-      ],
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: BlocBuilder<ClientBloc, ClientState>(
-              builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+    return BlocBuilder<DownloadFileBloc, DownloadFileState>(
+      builder: (context, downloadState) {
+        return Stack(
+          children: [
+            // Contenido principal
+            Scaffold(
+              body: MultiBlocListener(
+                listeners: [
+                  BlocListener<DownloadFileBloc, DownloadFileState>(
+                    listenWhen: (previous, current) =>
+                        previous.status != current.status,
+                    listener: (context, state) {
+                      if (state.status == DownloadFileStatus.failure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.errorMessage ??
+                                'Error al descargar el archivo'),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
+                          ),
+                        );
+                      } else if (state.status == DownloadFileStatus.success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Archivo descargado correctamente'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        // Resetear el estado después de mostrar el mensaje
+                        context
+                            .read<DownloadFileBloc>()
+                            .add(DownloadFileReset());
+                      }
+                    },
+                  ),
+                ],
+                child: Column(
                   children: [
-                    // Buscador
-                    TextField(
-                      onChanged: (value) {
-                        context.read<ClientBloc>().add(SearchClients(value));
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Buscar cliente por nombre o documento',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: BlocBuilder<ClientBloc, ClientState>(
+                        builder: (context, state) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Buscador
+                              TextField(
+                                onChanged: (value) {
+                                  context
+                                      .read<ClientBloc>()
+                                      .add(SearchClients(value));
+                                },
+                                decoration: const InputDecoration(
+                                  labelText:
+                                      'Buscar cliente por nombre o documento',
+                                  prefixIcon: Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12.0)),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16.0),
+                              // Selector de rango de fechas
+                              DateRangeSelectorWidget(
+                                controller: DateRangeSelectorController()
+                                  ..updateStartDate(state.startDate)
+                                  ..updateEndDate(state.endDate),
+                                model: const DateRangeSelectorModel(
+                                  title:
+                                      'Selecciona el rango de fechas para filtrar los reportes',
+                                ),
+                                onStartDateSelected: (date) {
+                                  context
+                                      .read<ClientBloc>()
+                                      .add(UpdateDateRange(
+                                        startDate: date,
+                                        endDate: state.endDate,
+                                      ));
+                                },
+                                onEndDateSelected: (date) {
+                                  context
+                                      .read<ClientBloc>()
+                                      .add(UpdateDateRange(
+                                        startDate: state.startDate,
+                                        endDate: date,
+                                      ));
+                                },
+                                onClearDates: () {
+                                  final now = DateTime.now();
+                                  final firstDay =
+                                      DateTime(now.year, now.month, 1);
+                                  final lastDay =
+                                      DateTime(now.year, now.month + 1, 0);
+
+                                  context
+                                      .read<ClientBloc>()
+                                      .add(UpdateDateRange(
+                                        startDate: firstDay,
+                                        endDate: lastDay,
+                                      ));
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
-                    const SizedBox(height: 16.0),
-                    // Selector de rango de fechas
-                    DateRangeSelectorWidget(
-                      controller: DateRangeSelectorController()
-                        ..updateStartDate(state.startDate)
-                        ..updateEndDate(state.endDate),
-                      model: const DateRangeSelectorModel(
-                        title: 'Selecciona el rango de fechas para filtrar los reportes',
+                    Expanded(
+                      child: BlocBuilder<ClientBloc, ClientState>(
+                        builder: (context, state) {
+                          if (state is ClientLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (state is ClientLoaded) {
+                            if (state.clients.isEmpty) {
+                              return _buildEmptyState(context);
+                            }
+                            return ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                              itemCount: state.clients.length,
+                              itemBuilder: (context, index) {
+                                final client = state.clients[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: ClientCard(
+                                    client: client,
+                                    onViewDetails: () =>
+                                        _showClientDetails(context, client),
+                                    onViewWallet: () =>
+                                        _viewClientWallet(context, client),
+                                    onViewPending: () =>
+                                        _viewClientPending(context, client),
+                                    onViewSales: () =>
+                                        _viewClientSales(context, client),
+                                  ),
+                                );
+                              },
+                            );
+                          } else if (state is ClientError) {
+                            return _buildErrorState(context, state.message);
+                          }
+                          return _buildInitialState(context);
+                        },
                       ),
-                      onStartDateSelected: (date) {
-                        context.read<ClientBloc>().add(UpdateDateRange(
-                          startDate: date,
-                          endDate: state.endDate,
-                        ));
-                      },
-                      onEndDateSelected: (date) {
-                        context.read<ClientBloc>().add(UpdateDateRange(
-                          startDate: state.startDate,
-                          endDate: date,
-                        ));
-                      },
-                      onClearDates: () {
-                        final now = DateTime.now();
-                        final firstDay = DateTime(now.year, now.month, 1);
-                        final lastDay = DateTime(now.year, now.month + 1, 0);
-                        
-                        // Actualizar el estado del BLoC
-                        context.read<ClientBloc>().add(UpdateDateRange(
-                          startDate: firstDay,
-                          endDate: lastDay,
-                        ));
-                      },
                     ),
                   ],
-                );
-              },
+                ),
+              ),
             ),
-          ),
-          Expanded(
-            child: BlocBuilder<ClientBloc, ClientState>(
-              builder: (context, state) {
-                if (state is ClientLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is ClientLoaded) {
-                  if (state.clients.isEmpty) {
-                    return _buildEmptyState(context);
-                  }
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    itemCount: state.clients.length,
-                    itemBuilder: (context, index) {
-                      final client = state.clients[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: ClientCard(
-                          client: client,
-                          onViewDetails: () => _showClientDetails(context, client),
-                          onViewWallet: () => _viewClientWallet(context, client),
-                          onViewPending: () => _viewClientPending(context, client),
-                          onViewSales: () => _viewClientSales(context, client),
-                        ),
-                      );
-                    },
-                  );
-                } else if (state is ClientError) {
-                  return _buildErrorState(context, state.message);
-                }
-                return _buildInitialState(context);
-              },
-            ),
-          ),
-        ],
-        ),
+
+            // Overlay de carga para descargas
+            if (downloadState.status == DownloadFileStatus.loading)
+              Container(
+                color: Colors.black54,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -151,7 +194,7 @@ class ClientView extends StatelessWidget {
           Icon(
             Icons.search_off_rounded,
             size: 64,
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -214,7 +257,7 @@ class ClientView extends StatelessWidget {
           Icon(
             Icons.search_rounded,
             size: 64,
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -236,9 +279,11 @@ class ClientView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('NIT: ${client.nit}'),
-            if (client.tel1?.isNotEmpty ?? false) Text('Teléfono: ${client.tel1}'),
+            if (client.tel1?.isNotEmpty ?? false)
+              Text('Teléfono: ${client.tel1}'),
             if (client.email != null) Text('Email: ${client.email}'),
-            if (client.direccion != null) Text('Dirección: ${client.direccion}'),
+            if (client.direccion != null)
+              Text('Dirección: ${client.direccion}'),
           ],
         ),
         actions: [
@@ -268,7 +313,7 @@ class ClientView extends StatelessWidget {
       content: '¿Desea descargar el reporte de pendientes de ${client.nombre}?',
       confirmText: 'Descargar',
     );
-    
+
     if (result == true) {
       _downloadFile(
         context,
@@ -288,7 +333,7 @@ class ClientView extends StatelessWidget {
       content: '¿Desea descargar el reporte de ventas de ${client.nombre}?',
       confirmText: 'Descargar',
     );
-    
+
     if (result == true) {
       _downloadFile(
         context,
@@ -330,10 +375,9 @@ class ClientView extends StatelessWidget {
       confirmText: 'Descargar',
       cancelText: 'Cancelar',
     );
-    
+
     if (result == true) {
       onConfirm();
     }
   }
-
 }
