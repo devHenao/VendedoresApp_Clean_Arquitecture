@@ -219,7 +219,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         final fileName = '${type.toString().split('.').last}_${DateTime.now().millisecondsSinceEpoch}.$extension';
         
         if (Platform.isAndroid) {
-          final methodChannel = const MethodChannel('com.mycompany.appvendedores/media_store');
+          const methodChannel =  MethodChannel('com.mycompany.appvendedores/media_store');
           try {
             // Determinar el mimeType basado en la extensión
             final mimeType = extension == 'pdf' 
