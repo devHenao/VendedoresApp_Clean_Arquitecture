@@ -62,7 +62,9 @@ class ClientView extends StatelessWidget {
                       decoration: const InputDecoration(
                         labelText: 'Buscar cliente por nombre o documento',
                         prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16.0),
