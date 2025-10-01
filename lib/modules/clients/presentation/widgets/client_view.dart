@@ -73,8 +73,6 @@ class ClientView extends StatelessWidget {
                         ..updateEndDate(state.endDate),
                       model: const DateRangeSelectorModel(
                         title: 'Selecciona el rango de fechas para filtrar los reportes',
-                        startDateLabel: 'Fecha de inicio',
-                        endDateLabel: 'Fecha de fin',
                       ),
                       onStartDateSelected: (date) {
                         context.read<ClientBloc>().add(UpdateDateRange(
@@ -89,9 +87,14 @@ class ClientView extends StatelessWidget {
                         ));
                       },
                       onClearDates: () {
-                        context.read<ClientBloc>().add(const UpdateDateRange(
-                          startDate: null,
-                          endDate: null,
+                        final now = DateTime.now();
+                        final firstDay = DateTime(now.year, now.month, 1);
+                        final lastDay = DateTime(now.year, now.month + 1, 0);
+                        
+                        // Actualizar el estado del BLoC
+                        context.read<ClientBloc>().add(UpdateDateRange(
+                          startDate: firstDay,
+                          endDate: lastDay,
                         ));
                       },
                     ),
