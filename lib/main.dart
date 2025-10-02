@@ -1,14 +1,15 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
 
 // Importaciones de Flutter Flow
-import '/flutter_flow/flutter_flow_theme.dart';
+import 'core/theme/theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
 // Importaciones de autenticación
 import 'modules/auth/infrastructure/services/auth_util.dart';
-import 'modules/auth/infrastructure/services/auth_user_provider.dart' show AppVendedoresAuthUser, appVendedoresAuthUserStream;
+import 'modules/auth/infrastructure/services/auth_user_provider.dart'
+    show AppVendedoresAuthUser, appVendedoresAuthUserStream;
 
 // Inyección de dependencias
 import 'injection_container.dart' as di;
@@ -22,7 +23,7 @@ void main() async {
 
   await authManager.initialize();
 
-  final appState = FFAppState(); 
+  final appState = FFAppState();
 
   runApp(ChangeNotifierProvider(
     create: (context) => appState,
@@ -81,12 +82,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'AppVendedores',
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en', '')],
+      // localizationsDelegates: const [
+      //   GlobalMaterialLocalizations.delegate,
+      //   GlobalWidgetsLocalizations.delegate,
+      //   GlobalCupertinoLocalizations.delegate,
+      // ],
+      // supportedLocales: const [Locale('en', '')],
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: false,

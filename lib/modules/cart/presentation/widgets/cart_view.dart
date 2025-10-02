@@ -4,7 +4,7 @@ import 'package:app_vendedores/modules/cart/presentation/widgets/item_shopping_c
 import 'package:app_vendedores/modules/cart/presentation/bloc/cart_bloc.dart';
 import 'package:app_vendedores/modules/cart/presentation/bloc/cart_event.dart';
 import 'package:app_vendedores/modules/cart/presentation/bloc/cart_state.dart';
-import 'package:app_vendedores/flutter_flow/flutter_flow_theme.dart';
+import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:app_vendedores/flutter_flow/flutter_flow_widgets.dart';
 
 class CartView extends StatelessWidget {

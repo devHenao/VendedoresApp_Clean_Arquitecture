@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
+import '../../core/theme/theme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 

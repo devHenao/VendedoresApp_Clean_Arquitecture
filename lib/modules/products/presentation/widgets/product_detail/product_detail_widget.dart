@@ -1,4 +1,4 @@
-import '/flutter_flow/flutter_flow_theme.dart';
+import '../../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'product_detail_widgets.dart';
 import 'product_detail_controller.dart';

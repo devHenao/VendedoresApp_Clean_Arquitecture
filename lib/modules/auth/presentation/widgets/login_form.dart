@@ -1,4 +1,4 @@
-import 'package:app_vendedores/flutter_flow/flutter_flow_theme.dart';
+import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
