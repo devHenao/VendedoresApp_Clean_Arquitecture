@@ -19,7 +19,11 @@ class ClientView extends StatelessWidget {
   Widget build(BuildContext context) {
     final clientBloc = context.read<ClientBloc>();
     final downloadFileBloc = context.read<DownloadFileBloc>();
-    final controller = ClientController(context, clientBloc, downloadFileBloc: downloadFileBloc);
+    final controller = ClientController(
+      context, 
+      clientBloc, 
+      downloadFileBloc: downloadFileBloc,
+    );
 
     return BlocListener<DownloadFileBloc, DownloadFileState>(
       listenWhen: (previous, current) => previous.status != current.status,

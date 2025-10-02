@@ -10,9 +10,9 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 class ClientController {
   final BuildContext context;
   final ClientBloc clientBloc;
-  final DownloadFileBloc? downloadFileBloc;
+  final DownloadFileBloc downloadFileBloc;
 
-  ClientController(this.context, this.clientBloc, {this.downloadFileBloc});
+  ClientController(this.context, this.clientBloc, {required this.downloadFileBloc});
 
   void searchClients(String query) {
     clientBloc.add(SearchClients(query));
@@ -39,7 +39,7 @@ class ClientController {
     _showConfirmationDialog(
       title: 'Descargar cartera',
       content: '¿Desea descargar el reporte de cartera de ${client.nombre}?',
-      onConfirm: () => downloadFileBloc?.add(
+      onConfirm: () => downloadFileBloc.add(
         DownloadFileRequested(
           clientId: client.nit,
           type: DownloadType.wallet,
@@ -53,7 +53,7 @@ class ClientController {
     _showConfirmationDialog(
       title: 'Descargar pendientes',
       content: '¿Desea descargar el reporte de pendientes de ${client.nombre}?',
-      onConfirm: () => downloadFileBloc?.add(
+      onConfirm: () => downloadFileBloc.add(
         DownloadFileRequested(
           clientId: client.nit,
           type: DownloadType.orders,
@@ -69,7 +69,7 @@ class ClientController {
     _showConfirmationDialog(
       title: 'Descargar ventas',
       content: '¿Desea descargar el reporte de Ventas de ${client.nombre}?',
-      onConfirm: () => downloadFileBloc?.add(
+      onConfirm: () => downloadFileBloc.add(
         DownloadFileRequested(
           clientId: client.nit,
           type: DownloadType.sales,
