@@ -4,7 +4,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'update_client_widgets.dart';
-import 'update_client_controller.dart';
+import '../../controllers/update_client_controller.dart';
 import 'update_client_model.dart';
 export 'update_client_model.dart';
 

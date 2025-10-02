@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '../../../../../core/theme/theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 
 class UpdateClientHeader extends StatelessWidget {
@@ -29,7 +26,8 @@ class UpdateClientHeader extends StatelessWidget {
               color: GlobalTheme.of(context).primaryText,
               size: 32.0,
             ),
-          ].divide(const SizedBox(width: 5.0)),
+            const SizedBox(height: 16.0),
+          ],
         ),
         Divider(
           height: 24.0,
@@ -49,19 +47,14 @@ class UpdateClientForm extends StatelessWidget {
     required this.nitFocusNode,
     required this.nombreController,
     required this.nombreFocusNode,
-    this.nombreValidator,
     required this.contactoController,
     required this.contactoFocusNode,
-    this.contactoValidator,
     required this.telefonoController,
     required this.telefonoFocusNode,
-    this.telefonoValidator,
     required this.emailController,
     required this.emailFocusNode,
-    this.emailValidator,
     required this.direccionController,
     required this.direccionFocusNode,
-    this.direccionValidator,
     required this.departmentOptions,
     required this.departmentController,
     required this.onDepartmentChanged,
@@ -75,19 +68,14 @@ class UpdateClientForm extends StatelessWidget {
   final FocusNode nitFocusNode;
   final TextEditingController nombreController;
   final FocusNode nombreFocusNode;
-  final FormFieldValidator<String>? nombreValidator;
   final TextEditingController contactoController;
   final FocusNode contactoFocusNode;
-  final FormFieldValidator<String>? contactoValidator;
   final TextEditingController telefonoController;
   final FocusNode telefonoFocusNode;
-  final FormFieldValidator<String>? telefonoValidator;
   final TextEditingController emailController;
   final FocusNode emailFocusNode;
-  final FormFieldValidator<String>? emailValidator;
   final TextEditingController direccionController;
   final FocusNode direccionFocusNode;
-  final FormFieldValidator<String>? direccionValidator;
   final List<String> departmentOptions;
   final FormFieldController<String> departmentController;
   final Function(String?) onDepartmentChanged;
@@ -99,168 +87,142 @@ class UpdateClientForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Form(
       key: formKey,
-      autovalidateMode: AutovalidateMode.disabled,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTextField(
-            context,
+          _buildReadOnlyField(
+            context: context,
             controller: nitController,
-            focusNode: nitFocusNode,
-            label: 'Documento:',
-            readOnly: true,
+            label: 'Documento',
           ),
+          const SizedBox(height: 16),
           _buildTextField(
-            context,
+            context: context,
             controller: nombreController,
             focusNode: nombreFocusNode,
-            label: 'Nombre:',
-            validator: nombreValidator,
+            label: 'Nombre',
+            isRequired: true,
           ),
+          const SizedBox(height: 16),
           _buildTextField(
-            context,
+            context: context,
             controller: contactoController,
             focusNode: contactoFocusNode,
-            label: 'Contacto:',
-            validator: contactoValidator,
+            label: 'Contacto',
           ),
+          const SizedBox(height: 16),
           _buildTextField(
-            context,
+            context: context,
             controller: telefonoController,
             focusNode: telefonoFocusNode,
-            label: 'Teléfono:',
-            validator: telefonoValidator,
+            label: 'Teléfono',
+            keyboardType: TextInputType.phone,
           ),
+          const SizedBox(height: 16),
           _buildTextField(
-            context,
+            context: context,
             controller: emailController,
             focusNode: emailFocusNode,
-            label: 'Email:',
-            validator: emailValidator,
+            label: 'Email',
             keyboardType: TextInputType.emailAddress,
           ),
+          const SizedBox(height: 16),
           _buildTextField(
-            context,
+            context: context,
             controller: direccionController,
             focusNode: direccionFocusNode,
-            label: 'Dirección:',
-            validator: direccionValidator,
+            label: 'Dirección',
+            maxLines: 3,
           ),
+          const SizedBox(height: 16),
           _buildDropdownField(
-            context,
-            label: 'Departamento:',
+            context: context,
+            label: 'Departamento',
             controller: departmentController,
             options: departmentOptions,
             onChanged: onDepartmentChanged,
           ),
+          const SizedBox(height: 16),
           _buildDropdownField(
-            context,
-            label: 'Ciudad:',
+            context: context,
+            label: 'Ciudad',
             controller: cityController,
             options: cityOptions,
             onChanged: onCityChanged,
           ),
-        ].divide(const SizedBox(height: 16)),
+        ],
       ),
     );
   }
 
-  Widget _buildTextField(
-    BuildContext context,
-    {
-      required TextEditingController controller,
-      required FocusNode focusNode,
-      required String label,
-      FormFieldValidator<String>? validator,
-      bool readOnly = false,
-      TextInputType? keyboardType,
-    }
-  ) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(label, style: GlobalTheme.of(context).titleLarge.override(fontFamily: 'Outfit', letterSpacing: 0.0, fontWeight: FontWeight.w600)),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-            child: TextFormField(
-              controller: controller,
-              focusNode: focusNode,
-              readOnly: readOnly,
-              keyboardType: keyboardType,
-              decoration: _inputDecoration(context),
-              style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0, fontWeight: FontWeight.w500),
-              validator: validator,
-            ),
-          ),
+  Widget _buildTextField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String label,
+    FocusNode? focusNode,
+    bool isRequired = false,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      decoration: InputDecoration(
+        labelText: label + (isRequired ? ' *' : ''),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
-      ].divide(const SizedBox(width: 10)),
+      ),
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      validator: isRequired
+          ? (value) => value == null || value.isEmpty ? 'Este campo es requerido' : null
+          : null,
     );
   }
 
-  Widget _buildDropdownField(
-    BuildContext context,
-    {
-      required String label,
-      required FormFieldController<String> controller,
-      required List<String> options,
-      required Function(String?)? onChanged,
-    }
-  ) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Text(label, style: GlobalTheme.of(context).titleLarge.override(fontFamily: 'Outfit', letterSpacing: 0.0, fontWeight: FontWeight.w600)),
-        Expanded(
-          child: FlutterFlowDropDown<String>(
-            controller: controller,
-            options: options,
-            onChanged: onChanged,
-            width: 300,
-            height: 50,
-            textStyle: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0),
-            hintText: 'Seleccione...',
-            icon: Icon(Icons.keyboard_arrow_down_rounded, color: GlobalTheme.of(context).secondaryText, size: 24),
-            fillColor: GlobalTheme.of(context).secondaryBackground,
-            elevation: 2,
-            borderColor: GlobalTheme.of(context).alternate,
-            borderWidth: 2,
-            borderRadius: 8,
-            margin: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 4),
-            hidesUnderline: true,
-            isOverButton: true,
-            isSearchable: false,
-            isMultiSelect: false,
-          ),
+  Widget _buildReadOnlyField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String label,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
-      ].divide(const SizedBox(width: 10)),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+      readOnly: true,
+      enabled: false,
     );
   }
 
-  InputDecoration _inputDecoration(BuildContext context) {
-    return InputDecoration(
-      isDense: true,
-      labelStyle: GlobalTheme.of(context).labelMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0),
-      hintStyle: GlobalTheme.of(context).labelMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0, fontWeight: FontWeight.w500),
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: GlobalTheme.of(context).primaryText, width: 1.0),
-        borderRadius: BorderRadius.circular(0.0),
+  Widget _buildDropdownField({
+    required BuildContext context,
+    required String label,
+    required FormFieldController<String> controller,
+    required List<String> options,
+    required Function(String?)? onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: controller.value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
       ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: GlobalTheme.of(context).primaryText, width: 1.0),
-        borderRadius: BorderRadius.circular(0.0),
-      ),
-      errorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: GlobalTheme.of(context).error, width: 1.0),
-        borderRadius: BorderRadius.circular(0.0),
-      ),
-      focusedErrorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: GlobalTheme.of(context).error, width: 1.0),
-        borderRadius: BorderRadius.circular(0.0),
-      ),
-      filled: true,
-      fillColor: GlobalTheme.of(context).secondaryBackground,
+      items: options.map((option) {
+        return DropdownMenuItem(
+          value: option,
+          child: Text(option),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 }
@@ -280,45 +242,38 @@ class UpdateClientActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (isUpdating)
             const CircularProgressIndicator()
           else
-            FFButtonWidget(
+            ElevatedButton(
               onPressed: onUpdate,
-              text: 'Actualizar',
-              icon: const Icon(Icons.save_alt, size: 15.0),
-              options: FFButtonOptions(
-                height: 40.0,
-                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                color: GlobalTheme.of(context).primary,
-                textStyle: GlobalTheme.of(context).titleSmall.override(fontFamily: 'Manrope', color: Colors.white, letterSpacing: 0.0),
-                elevation: 2.0,
-                borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
-                borderRadius: BorderRadius.circular(14.0),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: const Text('Actualizar Cliente'),
+            ),
+          const SizedBox(width: 20.0),
+          TextButton(
+            onPressed: onClose,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: BorderSide(color: Theme.of(context).primaryColor),
               ),
             ),
-          FFButtonWidget(
-            onPressed: onClose,
-            text: 'Cerrar',
-            icon: const Icon(Icons.close, size: 15.0),
-            options: FFButtonOptions(
-              height: 40.0,
-              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-              color: GlobalTheme.of(context).primaryBackground,
-              textStyle: GlobalTheme.of(context).titleSmall.override(fontFamily: 'Manrope', color: GlobalTheme.of(context).primaryText, letterSpacing: 0.0),
-              elevation: 0.0,
-              borderSide: const BorderSide(color: Color(0x4A161C24)),
-              borderRadius: BorderRadius.circular(14.0),
-            ),
+            child: const Text('Cancelar'),
           ),
-        ].divide(const SizedBox(width: 20.0)),
+        ],
       ),
     );
   }
 }
+
