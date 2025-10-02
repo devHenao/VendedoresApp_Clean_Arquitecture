@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
+import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 
 abstract class ClientEvent extends Equatable {
   const ClientEvent();
@@ -46,6 +47,28 @@ class LoadCitiesByDepartment extends ClientEvent {
 
   @override
   List<Object> get props => [department];
+}
+
+class DownloadClientFile extends ClientEvent {
+  final String clientId;
+  final DownloadType type;
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  const DownloadClientFile({
+    required this.clientId,
+    required this.type,
+    this.startDate,
+    this.endDate,
+  });
+
+  @override
+  List<Object> get props => [
+        clientId,
+        type,
+        if (startDate != null) startDate!,
+        if (endDate != null) endDate!,
+      ];
 }
 
 class UpdateDateRange extends ClientEvent {

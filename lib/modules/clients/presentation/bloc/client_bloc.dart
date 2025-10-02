@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/clients/domain/usecases/client_use_cases.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'client_event.dart';
 import 'client_state.dart';
 
@@ -10,6 +12,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
   final UpdateClientUseCase updateClientUseCase;
   final GetDepartmentsUseCase getDepartmentsUseCase;
   final GetCitiesByDepartmentUseCase getCitiesByDepartmentUseCase;
+  final DownloadFileBloc? downloadFileBloc;
 
   ClientBloc({
     required this.getClientsUseCase,
@@ -18,6 +21,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     required this.updateClientUseCase,
     required this.getDepartmentsUseCase,
     required this.getCitiesByDepartmentUseCase,
+    this.downloadFileBloc,
   }) : super(ClientInitial()) {
     on<LoadClients>(_onLoadClients);
     on<SearchClients>(_onSearchClients);
@@ -26,6 +30,23 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     on<LoadCitiesByDepartment>(_onLoadCitiesByDepartment);
     on<GetClientByNit>(_onGetClientByNit);
     on<UpdateDateRange>(_onUpdateDateRange);
+    on<DownloadClientFile>(_onDownloadClientFile);
+  }
+
+  Future<void> _onDownloadClientFile(
+    DownloadClientFile event,
+    Emitter<ClientState> emit,
+  ) async {
+    if (downloadFileBloc != null) {
+      downloadFileBloc!.add(
+        DownloadFileRequested(
+          clientId: event.clientId,
+          type: event.type,
+          startDate: event.startDate,
+          endDate: event.endDate,
+        ),
+      );
+    }
   }
 
   Future<void> _onUpdateDateRange(UpdateDateRange event, Emitter<ClientState> emit) async {
