@@ -44,7 +44,7 @@ class ProductStorageControls extends StatelessWidget {
           onTap: onRemove,
           child: FaIcon(
             FontAwesomeIcons.solidTrashCan,
-            color: FlutterFlowTheme.of(context).error,
+            color: GlobalTheme.of(context).error,
             size: 20.0,
           ),
         ),
@@ -65,7 +65,7 @@ class ProductStorageControls extends StatelessWidget {
               autofocus: false,
               obscureText: false,
               decoration: _buildInputDecoration(context),
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
@@ -77,7 +77,7 @@ class ProductStorageControls extends StatelessWidget {
                       maxLength}) =>
                   null,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              cursorColor: FlutterFlowTheme.of(context).primaryText,
+              cursorColor: GlobalTheme.of(context).primaryText,
               validator: validator,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9-.]'))
@@ -100,11 +100,11 @@ class ProductStorageControls extends StatelessWidget {
     return FlutterFlowIconButton(
       borderRadius: 15.0,
       buttonSize: 30.0,
-      fillColor: FlutterFlowTheme.of(context).primary,
-      disabledColor: FlutterFlowTheme.of(context).alternate,
+      fillColor: GlobalTheme.of(context).primary,
+      disabledColor: GlobalTheme.of(context).alternate,
       icon: Icon(
         icon,
-        color: FlutterFlowTheme.of(context).info,
+        color: GlobalTheme.of(context).info,
         size: 15.0,
       ),
       onPressed: onPressed,
@@ -114,17 +114,17 @@ class ProductStorageControls extends StatelessWidget {
   InputDecoration _buildInputDecoration(BuildContext context) {
     return InputDecoration(
       isDense: true,
-      labelStyle: FlutterFlowTheme.of(context).labelMedium.override(
+      labelStyle: GlobalTheme.of(context).labelMedium.override(
             fontFamily: 'Manrope',
             letterSpacing: 0.0,
           ),
-      hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
+      hintStyle: GlobalTheme.of(context).labelMedium.override(
             fontFamily: 'Manrope',
             letterSpacing: 0.0,
           ),
       enabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          color: FlutterFlowTheme.of(context).secondaryText,
+          color: GlobalTheme.of(context).secondaryText,
           width: 1.0,
         ),
         borderRadius: BorderRadius.circular(0.0),
@@ -138,20 +138,20 @@ class ProductStorageControls extends StatelessWidget {
       ),
       errorBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          color: FlutterFlowTheme.of(context).error,
+          color: GlobalTheme.of(context).error,
           width: 1.0,
         ),
         borderRadius: BorderRadius.circular(0.0),
       ),
       focusedErrorBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          color: FlutterFlowTheme.of(context).error,
+          color: GlobalTheme.of(context).error,
           width: 1.0,
         ),
         borderRadius: BorderRadius.circular(0.0),
       ),
       filled: true,
-      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+      fillColor: GlobalTheme.of(context).secondaryBackground,
     );
   }
 }
@@ -194,7 +194,7 @@ class ProductStorageDetails extends StatelessWidget {
         children: [
           Text(
             label,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.bold,
@@ -203,7 +203,7 @@ class ProductStorageDetails extends StatelessWidget {
           const SizedBox(width: 5.0),
           Text(
             valueOrDefault<String>(value, defaultValue),
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   letterSpacing: 0.0,
                 ),

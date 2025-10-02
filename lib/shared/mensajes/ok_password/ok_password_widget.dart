@@ -82,7 +82,7 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                                   children: [
                                     Text(
                                       '¡Te enviamos un correo!',
-                                      style: FlutterFlowTheme.of(context)
+                                      style: GlobalTheme.of(context)
                                           .headlineMedium
                                           .override(
                                             fontFamily: 'Outfit',
@@ -99,7 +99,7 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                                     Expanded(
                                       child: Text(
                                         'Hemos enviado un correo para restablecer tu contraseña. Por favor, revisa tu bandeja de entrada.',
-                                        style: FlutterFlowTheme.of(context)
+                                        style: GlobalTheme.of(context)
                                             .bodyMedium
                                             .override(
                                               fontFamily: 'Manrope',
@@ -128,7 +128,7 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                               },
                               child: Text(
                                 'Ok',
-                                style: FlutterFlowTheme.of(context)
+                                style: GlobalTheme.of(context)
                                     .bodyMedium
                                     .override(
                                       fontFamily: 'Manrope',

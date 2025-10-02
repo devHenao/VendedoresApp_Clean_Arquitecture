@@ -15,7 +15,7 @@ class RecoveryPasswordHeader extends StatelessWidget {
       children: [
         Text(
           '¿Has olvidado tu contraseña?',
-          style: FlutterFlowTheme.of(context).headlineMedium.override(
+          style: GlobalTheme.of(context).headlineMedium.override(
                 fontFamily: 'Outfit',
                 letterSpacing: 0.0,
                 fontWeight: FontWeight.w600,
@@ -24,9 +24,9 @@ class RecoveryPasswordHeader extends StatelessWidget {
         Text(
           'Ingrese su dirección de correo electrónico y le enviaremos instrucciones para restablecer su contraseña.',
           textAlign: TextAlign.justify,
-          style: FlutterFlowTheme.of(context).bodyLarge.override(
+          style: GlobalTheme.of(context).bodyLarge.override(
                 fontFamily: 'Manrope',
-                color: FlutterFlowTheme.of(context).secondaryText,
+                color: GlobalTheme.of(context).secondaryText,
                 fontSize: 18.0,
                 letterSpacing: 0.0,
               ),
@@ -74,15 +74,15 @@ class RecoveryPasswordForm extends StatelessWidget {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Ingrese el Nit',
-                labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                labelStyle: GlobalTheme.of(context).bodyMedium.override(
                       fontFamily: 'Manrope',
-                      color: FlutterFlowTheme.of(context).secondaryText,
+                      color: GlobalTheme.of(context).secondaryText,
                       fontSize: 15.0,
                       letterSpacing: 0.0,
                     ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: FlutterFlowTheme.of(context).alternate,
+                    color: GlobalTheme.of(context).alternate,
                     width: 1.0,
                   ),
                   borderRadius: BorderRadius.circular(8.0),
@@ -100,9 +100,9 @@ class RecoveryPasswordForm extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 filled: true,
-                fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                fillColor: GlobalTheme.of(context).primaryBackground,
               ),
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
@@ -115,15 +115,15 @@ class RecoveryPasswordForm extends StatelessWidget {
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Correo electrónico',
-                labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                labelStyle: GlobalTheme.of(context).bodyMedium.override(
                       fontFamily: 'Manrope',
-                      color: FlutterFlowTheme.of(context).secondaryText,
+                      color: GlobalTheme.of(context).secondaryText,
                       fontSize: 15.0,
                       letterSpacing: 0.0,
                     ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: FlutterFlowTheme.of(context).alternate,
+                    color: GlobalTheme.of(context).alternate,
                     width: 1.0,
                   ),
                   borderRadius: BorderRadius.circular(8.0),
@@ -141,9 +141,9 @@ class RecoveryPasswordForm extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 filled: true,
-                fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                fillColor: GlobalTheme.of(context).primaryBackground,
               ),
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
@@ -155,10 +155,10 @@ class RecoveryPasswordForm extends StatelessWidget {
               options: FFButtonOptions(
                 width: double.infinity,
                 height: 50.0,
-                color: FlutterFlowTheme.of(context).primary,
-                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                color: GlobalTheme.of(context).primary,
+                textStyle: GlobalTheme.of(context).titleSmall.override(
                       fontFamily: 'Manrope',
-                      color: FlutterFlowTheme.of(context).info,
+                      color: GlobalTheme.of(context).info,
                       letterSpacing: 0.0,
                     ),
                 elevation: 0.0,
@@ -186,7 +186,7 @@ class RecoveryPasswordFooter extends StatelessWidget {
         children: [
           Text(
             '¿Recuerdas tu contraseña?',
-            style: FlutterFlowTheme.of(context).bodySmall.override(
+            style: GlobalTheme.of(context).bodySmall.override(
                   fontFamily: 'Manrope',
                   fontSize: 14.0,
                   letterSpacing: 0.0,
@@ -200,9 +200,9 @@ class RecoveryPasswordFooter extends StatelessWidget {
             onTap: onGoToLogin,
             child: Text(
               'Iniciar sesión',
-              style: FlutterFlowTheme.of(context).bodySmall.override(
+              style: GlobalTheme.of(context).bodySmall.override(
                     fontFamily: 'Manrope',
-                    color: FlutterFlowTheme.of(context).primary,
+                    color: GlobalTheme.of(context).primary,
                     fontSize: 14.0,
                     letterSpacing: 0.0,
                     decoration: TextDecoration.underline,

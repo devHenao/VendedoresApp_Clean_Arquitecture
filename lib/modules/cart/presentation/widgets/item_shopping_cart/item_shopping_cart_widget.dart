@@ -75,7 +75,7 @@ class _ItemShoppingCartWidgetState extends State<ItemShoppingCartWidget> {
         children: [
           Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: GlobalTheme.of(context).secondaryBackground,
             elevation: 0.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),

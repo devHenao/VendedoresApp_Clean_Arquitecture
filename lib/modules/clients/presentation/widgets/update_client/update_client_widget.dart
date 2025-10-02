@@ -66,7 +66,7 @@ class _UpdateClientWidgetState extends State<UpdateClientWidget>
           height: double.infinity,
           constraints: const BoxConstraints(maxWidth: 570.0),
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: GlobalTheme.of(context).secondaryBackground,
             borderRadius: BorderRadius.circular(12.0),
             border: Border.all(color: const Color(0xFFE0E3E7)),
           ),

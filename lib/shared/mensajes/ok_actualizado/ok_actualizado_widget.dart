@@ -91,7 +91,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                   children: [
                                     Text(
                                       'Actualizado',
-                                      style: FlutterFlowTheme.of(context)
+                                      style: GlobalTheme.of(context)
                                           .headlineMedium
                                           .override(
                                             fontFamily: 'Outfit',
@@ -108,7 +108,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                     Expanded(
                                       child: Text(
                                         'La información fue actualizada correctamente.',
-                                        style: FlutterFlowTheme.of(context)
+                                        style: GlobalTheme.of(context)
                                             .bodyMedium
                                             .override(
                                               fontFamily: 'Manrope',
@@ -137,7 +137,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                               },
                               child: Text(
                                 'Ok',
-                                style: FlutterFlowTheme.of(context)
+                                style: GlobalTheme.of(context)
                                     .bodyMedium
                                     .override(
                                       fontFamily: 'Manrope',

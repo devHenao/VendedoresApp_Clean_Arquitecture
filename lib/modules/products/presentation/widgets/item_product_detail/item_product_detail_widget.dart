@@ -75,7 +75,7 @@ class _ItemProductDetailWidgetState extends State<ItemProductDetailWidget> {
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: FlutterFlowTheme.of(context).secondaryBackground,
+      color: GlobalTheme.of(context).secondaryBackground,
       elevation: 0.5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),

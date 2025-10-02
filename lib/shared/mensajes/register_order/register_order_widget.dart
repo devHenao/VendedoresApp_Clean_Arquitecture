@@ -82,7 +82,7 @@ class _RegisterOrderWidgetState extends State<RegisterOrderWidget> {
                                   children: [
                                     Text(
                                       'Registrado',
-                                      style: FlutterFlowTheme.of(context)
+                                      style: GlobalTheme.of(context)
                                           .headlineMedium
                                           .override(
                                             fontFamily: 'Outfit',
@@ -99,7 +99,7 @@ class _RegisterOrderWidgetState extends State<RegisterOrderWidget> {
                                     Expanded(
                                       child: Text(
                                         '¡Su pedido ha sido registrado con exito!',
-                                        style: FlutterFlowTheme.of(context)
+                                        style: GlobalTheme.of(context)
                                             .bodyMedium
                                             .override(
                                               fontFamily: 'Manrope',
@@ -128,7 +128,7 @@ class _RegisterOrderWidgetState extends State<RegisterOrderWidget> {
                               },
                               child: Text(
                                 'Ok',
-                                style: FlutterFlowTheme.of(context)
+                                style: GlobalTheme.of(context)
                                     .bodyMedium
                                     .override(
                                       fontFamily: 'Manrope',

@@ -100,7 +100,7 @@ class _LoginFormState extends State<LoginForm> {
           alignment: Alignment.center,
           child: Text(
             'Vendedores',
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Work Sans',
                   fontSize: 50.0,
                   letterSpacing: 0.0,
@@ -270,9 +270,9 @@ class _LoginFormState extends State<LoginForm> {
             ),
             Text(
               'Recordarme',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
-                    color: FlutterFlowTheme.of(context).secondaryText,
+                    color: GlobalTheme.of(context).secondaryText,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w600,
                   ),

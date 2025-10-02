@@ -24,9 +24,9 @@ class ProductDetailHeader extends StatelessWidget {
       children: [
         Text(
           'Detalle de producto',
-          style: FlutterFlowTheme.of(context).headlineMedium.override(
+          style: GlobalTheme.of(context).headlineMedium.override(
                 fontFamily: 'Outfit',
-                color: FlutterFlowTheme.of(context).primaryText,
+                color: GlobalTheme.of(context).primaryText,
                 letterSpacing: 0.0,
               ),
         ),
@@ -62,7 +62,7 @@ class ProductDetailHeader extends StatelessWidget {
       children: [
         Text(
           label,
-          style: FlutterFlowTheme.of(context).bodyMedium.override(
+          style: GlobalTheme.of(context).bodyMedium.override(
                 fontFamily: 'Manrope',
                 fontSize: 16.0,
                 letterSpacing: 0.0,
@@ -72,7 +72,7 @@ class ProductDetailHeader extends StatelessWidget {
         const SizedBox(width: 5.0),
         Text(
           value,
-          style: FlutterFlowTheme.of(context).bodyMedium.override(
+          style: GlobalTheme.of(context).bodyMedium.override(
                 fontFamily: 'Manrope',
                 fontSize: 16.0,
                 letterSpacing: 0.0,
@@ -163,10 +163,10 @@ class ProductDetailActions extends StatelessWidget {
               height: 40.0,
               padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
               iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-              color: FlutterFlowTheme.of(context).primaryBackground,
-              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+              color: GlobalTheme.of(context).primaryBackground,
+              textStyle: GlobalTheme.of(context).titleSmall.override(
                     fontFamily: 'Manrope',
-                    color: FlutterFlowTheme.of(context).primaryText,
+                    color: GlobalTheme.of(context).primaryText,
                     letterSpacing: 0.0,
                   ),
               elevation: 0.0,

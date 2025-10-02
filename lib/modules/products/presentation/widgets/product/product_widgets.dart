@@ -20,7 +20,7 @@ class AddButton extends StatelessWidget {
       onTap: onTap,
       child: Icon(
         Icons.add_circle_sharp,
-        color: FlutterFlowTheme.of(context).primary,
+        color: GlobalTheme.of(context).primary,
         size: 40.0,
       ),
     );
@@ -61,7 +61,7 @@ class QuantityControls extends StatelessWidget {
           onTap: onRemove,
           child: FaIcon(
             FontAwesomeIcons.solidTrashCan,
-            color: FlutterFlowTheme.of(context).error,
+            color: GlobalTheme.of(context).error,
             size: 24.0,
           ),
         ),
@@ -87,14 +87,13 @@ class QuantityControls extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildIconButton(BuildContext context, IconData icon, VoidCallback? onPressed) {
     return FlutterFlowIconButton(
       borderRadius: 15.0,
       buttonSize: 30.0,
-      fillColor: FlutterFlowTheme.of(context).primary,
-      disabledColor: FlutterFlowTheme.of(context).alternate,
-      icon: Icon(icon, color: FlutterFlowTheme.of(context).info, size: 15.0),
+      fillColor: GlobalTheme.of(context).primary,
+      disabledColor: GlobalTheme.of(context).alternate,
+      icon: Icon(icon, color: GlobalTheme.of(context).info, size: 15.0),
       onPressed: onPressed,
     );
   }
@@ -103,7 +102,7 @@ class QuantityControls extends StatelessWidget {
     return InputDecoration(
       isDense: true,
       enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: FlutterFlowTheme.of(context).secondaryText, width: 1.0),
+        borderSide: BorderSide(color: GlobalTheme.of(context).secondaryText, width: 1.0),
         borderRadius: BorderRadius.circular(0.0),
       ),
       // ... otras decoraciones ...
@@ -163,12 +162,12 @@ class ProductActions extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).error.withAlpha(230),
+            color: GlobalTheme.of(context).error.withAlpha(230),
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Text(
             'Sin Stock',
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -211,7 +210,7 @@ class ProductInfo extends StatelessWidget {
             ),
             '-',
           ),
-          style: FlutterFlowTheme.of(context).bodyMedium.override(
+          style: GlobalTheme.of(context).bodyMedium.override(
                 fontFamily: 'Manrope',
                 fontSize: 20.0,
                 letterSpacing: 0.0,
@@ -229,7 +228,7 @@ class ProductInfo extends StatelessWidget {
               replacement: '…',
             ),
             maxLines: 2,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w800,
@@ -241,7 +240,7 @@ class ProductInfo extends StatelessWidget {
           children: [
             Text(
               'Código:',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.bold,
@@ -252,7 +251,7 @@ class ProductInfo extends StatelessWidget {
                 productItem?.codproduc,
                 '-',
               ),
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
@@ -264,7 +263,7 @@ class ProductInfo extends StatelessWidget {
           children: [
             Text(
               'Saldo:',
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.bold,
@@ -275,7 +274,7 @@ class ProductInfo extends StatelessWidget {
                 saldo.toString(),
                 '0',
               ),
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
+              style: GlobalTheme.of(context).bodyMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),

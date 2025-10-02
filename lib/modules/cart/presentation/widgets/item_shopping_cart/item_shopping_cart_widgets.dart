@@ -23,7 +23,7 @@ class ProductHeader extends StatelessWidget {
       children: [
         Text(
           item.descripcio,
-          style: FlutterFlowTheme.of(context).bodyMedium.override(
+          style: GlobalTheme.of(context).bodyMedium.override(
                 fontFamily: 'Manrope',
                 fontSize: 20.0,
                 letterSpacing: 0.0,
@@ -49,7 +49,7 @@ class ProductHeader extends StatelessWidget {
         children: [
           Text(
             label,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   fontSize: 14.0,
                   letterSpacing: 0.0,
@@ -59,7 +59,7 @@ class ProductHeader extends StatelessWidget {
           const SizedBox(width: 5.0),
           Text(
             value,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   fontSize: 14.0,
                   letterSpacing: 0.0,
@@ -89,7 +89,7 @@ class ItemActions extends StatelessWidget {
       onTap: onRemove,
       child: FaIcon(
         FontAwesomeIcons.solidTrashCan,
-        color: FlutterFlowTheme.of(context).error,
+        color: GlobalTheme.of(context).error,
         size: 25.0,
       ),
     );
@@ -123,11 +123,11 @@ class QuantityControls extends StatelessWidget {
         FlutterFlowIconButton(
           borderRadius: 15.0,
           buttonSize: 30.0,
-          fillColor: FlutterFlowTheme.of(context).primary,
-          disabledColor: FlutterFlowTheme.of(context).alternate,
+          fillColor: GlobalTheme.of(context).primary,
+          disabledColor: GlobalTheme.of(context).alternate,
           icon: Icon(
             Icons.remove_rounded,
-            color: FlutterFlowTheme.of(context).info,
+            color: GlobalTheme.of(context).info,
             size: 15.0,
           ),
           onPressed: onDecrement,
@@ -142,17 +142,17 @@ class QuantityControls extends StatelessWidget {
             obscureText: false,
             decoration: InputDecoration(
               isDense: true,
-              labelStyle: FlutterFlowTheme.of(context).labelMedium.override(
+              labelStyle: GlobalTheme.of(context).labelMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
-              hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
+              hintStyle: GlobalTheme.of(context).labelMedium.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: FlutterFlowTheme.of(context).secondaryText,
+                  color: GlobalTheme.of(context).secondaryText,
                   width: 1.0,
                 ),
                 borderRadius: BorderRadius.circular(0.0),
@@ -166,22 +166,22 @@ class QuantityControls extends StatelessWidget {
               ),
               errorBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: FlutterFlowTheme.of(context).error,
+                  color: GlobalTheme.of(context).error,
                   width: 1.0,
                 ),
                 borderRadius: BorderRadius.circular(0.0),
               ),
               focusedErrorBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: FlutterFlowTheme.of(context).error,
+                  color: GlobalTheme.of(context).error,
                   width: 1.0,
                 ),
                 borderRadius: BorderRadius.circular(0.0),
               ),
               filled: true,
-              fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+              fillColor: GlobalTheme.of(context).secondaryBackground,
             ),
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   letterSpacing: 0.0,
                 ),
@@ -191,7 +191,7 @@ class QuantityControls extends StatelessWidget {
                     {required currentLength, required isFocused, maxLength}) =>
                 null,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            cursorColor: FlutterFlowTheme.of(context).primaryText,
+            cursorColor: GlobalTheme.of(context).primaryText,
             validator: validator,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[0-9-.]'))
@@ -201,10 +201,10 @@ class QuantityControls extends StatelessWidget {
         FlutterFlowIconButton(
           borderRadius: 15.0,
           buttonSize: 30.0,
-          fillColor: FlutterFlowTheme.of(context).primary,
+          fillColor: GlobalTheme.of(context).primary,
           icon: Icon(
             Icons.add_rounded,
-            color: FlutterFlowTheme.of(context).info,
+            color: GlobalTheme.of(context).info,
             size: 15.0,
           ),
           onPressed: onIncrement,
@@ -265,7 +265,7 @@ class ProductDetails extends StatelessWidget {
         children: [
           Text(
             label,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   fontSize: 14.0,
                   letterSpacing: 0.0,
@@ -275,7 +275,7 @@ class ProductDetails extends StatelessWidget {
           const SizedBox(width: 5.0),
           Text(
             value,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   fontSize: 14.0,
                   letterSpacing: 0.0,

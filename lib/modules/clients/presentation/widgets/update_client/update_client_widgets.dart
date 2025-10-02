@@ -18,15 +18,15 @@ class UpdateClientHeader extends StatelessWidget {
           children: [
             Text(
               'Actualizar cliente',
-              style: FlutterFlowTheme.of(context).headlineMedium.override(
+              style: GlobalTheme.of(context).headlineMedium.override(
                     fontFamily: 'Outfit',
-                    color: FlutterFlowTheme.of(context).primaryText,
+                    color: GlobalTheme.of(context).primaryText,
                     letterSpacing: 0.0,
                   ),
             ),
             Icon(
               Icons.edit_square,
-              color: FlutterFlowTheme.of(context).primaryText,
+              color: GlobalTheme.of(context).primaryText,
               size: 32.0,
             ),
           ].divide(const SizedBox(width: 5.0)),
@@ -34,7 +34,7 @@ class UpdateClientHeader extends StatelessWidget {
         Divider(
           height: 24.0,
           thickness: 2.0,
-          color: FlutterFlowTheme.of(context).alternate,
+          color: GlobalTheme.of(context).alternate,
         ),
       ],
     );
@@ -180,7 +180,7 @@ class UpdateClientForm extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: FlutterFlowTheme.of(context).titleLarge.override(fontFamily: 'Outfit', letterSpacing: 0.0, fontWeight: FontWeight.w600)),
+        Text(label, style: GlobalTheme.of(context).titleLarge.override(fontFamily: 'Outfit', letterSpacing: 0.0, fontWeight: FontWeight.w600)),
         Expanded(
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
@@ -190,7 +190,7 @@ class UpdateClientForm extends StatelessWidget {
               readOnly: readOnly,
               keyboardType: keyboardType,
               decoration: _inputDecoration(context),
-              style: FlutterFlowTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0, fontWeight: FontWeight.w500),
+              style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0, fontWeight: FontWeight.w500),
               validator: validator,
             ),
           ),
@@ -211,7 +211,7 @@ class UpdateClientForm extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Text(label, style: FlutterFlowTheme.of(context).titleLarge.override(fontFamily: 'Outfit', letterSpacing: 0.0, fontWeight: FontWeight.w600)),
+        Text(label, style: GlobalTheme.of(context).titleLarge.override(fontFamily: 'Outfit', letterSpacing: 0.0, fontWeight: FontWeight.w600)),
         Expanded(
           child: FlutterFlowDropDown<String>(
             controller: controller,
@@ -219,12 +219,12 @@ class UpdateClientForm extends StatelessWidget {
             onChanged: onChanged,
             width: 300,
             height: 50,
-            textStyle: FlutterFlowTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0),
+            textStyle: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0),
             hintText: 'Seleccione...',
-            icon: Icon(Icons.keyboard_arrow_down_rounded, color: FlutterFlowTheme.of(context).secondaryText, size: 24),
-            fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+            icon: Icon(Icons.keyboard_arrow_down_rounded, color: GlobalTheme.of(context).secondaryText, size: 24),
+            fillColor: GlobalTheme.of(context).secondaryBackground,
             elevation: 2,
-            borderColor: FlutterFlowTheme.of(context).alternate,
+            borderColor: GlobalTheme.of(context).alternate,
             borderWidth: 2,
             borderRadius: 8,
             margin: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 4),
@@ -241,26 +241,26 @@ class UpdateClientForm extends StatelessWidget {
   InputDecoration _inputDecoration(BuildContext context) {
     return InputDecoration(
       isDense: true,
-      labelStyle: FlutterFlowTheme.of(context).labelMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0),
-      hintStyle: FlutterFlowTheme.of(context).labelMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0, fontWeight: FontWeight.w500),
+      labelStyle: GlobalTheme.of(context).labelMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0),
+      hintStyle: GlobalTheme.of(context).labelMedium.override(fontFamily: 'Manrope', letterSpacing: 0.0, fontWeight: FontWeight.w500),
       enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: FlutterFlowTheme.of(context).primaryText, width: 1.0),
+        borderSide: BorderSide(color: GlobalTheme.of(context).primaryText, width: 1.0),
         borderRadius: BorderRadius.circular(0.0),
       ),
       focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: FlutterFlowTheme.of(context).primaryText, width: 1.0),
+        borderSide: BorderSide(color: GlobalTheme.of(context).primaryText, width: 1.0),
         borderRadius: BorderRadius.circular(0.0),
       ),
       errorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
+        borderSide: BorderSide(color: GlobalTheme.of(context).error, width: 1.0),
         borderRadius: BorderRadius.circular(0.0),
       ),
       focusedErrorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 1.0),
+        borderSide: BorderSide(color: GlobalTheme.of(context).error, width: 1.0),
         borderRadius: BorderRadius.circular(0.0),
       ),
       filled: true,
-      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+      fillColor: GlobalTheme.of(context).secondaryBackground,
     );
   }
 }
@@ -296,8 +296,8 @@ class UpdateClientActions extends StatelessWidget {
               options: FFButtonOptions(
                 height: 40.0,
                 padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                color: FlutterFlowTheme.of(context).primary,
-                textStyle: FlutterFlowTheme.of(context).titleSmall.override(fontFamily: 'Manrope', color: Colors.white, letterSpacing: 0.0),
+                color: GlobalTheme.of(context).primary,
+                textStyle: GlobalTheme.of(context).titleSmall.override(fontFamily: 'Manrope', color: Colors.white, letterSpacing: 0.0),
                 elevation: 2.0,
                 borderSide: const BorderSide(color: Colors.transparent, width: 1.0),
                 borderRadius: BorderRadius.circular(14.0),
@@ -310,8 +310,8 @@ class UpdateClientActions extends StatelessWidget {
             options: FFButtonOptions(
               height: 40.0,
               padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-              color: FlutterFlowTheme.of(context).primaryBackground,
-              textStyle: FlutterFlowTheme.of(context).titleSmall.override(fontFamily: 'Manrope', color: FlutterFlowTheme.of(context).primaryText, letterSpacing: 0.0),
+              color: GlobalTheme.of(context).primaryBackground,
+              textStyle: GlobalTheme.of(context).titleSmall.override(fontFamily: 'Manrope', color: GlobalTheme.of(context).primaryText, letterSpacing: 0.0),
               elevation: 0.0,
               borderSide: const BorderSide(color: Color(0x4A161C24)),
               borderRadius: BorderRadius.circular(14.0),

@@ -43,7 +43,7 @@ class _MenuWidgetState extends State<MenuWidget> {
           width: 300.0,
           height: MediaQuery.sizeOf(context).height * 1.0,
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: GlobalTheme.of(context).secondaryBackground,
           ),
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16.0, 20.0, 16.0, 20.0),
@@ -66,7 +66,7 @@ class _MenuWidgetState extends State<MenuWidget> {
                         },
                         child: Icon(
                           Icons.arrow_back,
-                          color: FlutterFlowTheme.of(context).primaryText,
+                          color: GlobalTheme.of(context).primaryText,
                           size: 24.0,
                         ),
                       ),
@@ -75,12 +75,12 @@ class _MenuWidgetState extends State<MenuWidget> {
                             16.0, 0.0, 16.0, 0.0),
                         child: Text(
                           'Menu',
-                          style: FlutterFlowTheme.of(context)
+                          style: GlobalTheme.of(context)
                               .headlineSmall
                               .override(
                                 fontFamily: 'Outfit',
-                                color: FlutterFlowTheme.of(context).primary,
-                                letterSpacing: 0.0,
+                                color: GlobalTheme.of(context).primary,
+                                  letterSpacing: 0.0,
                               ),
                         ),
                       ),

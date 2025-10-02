@@ -51,8 +51,8 @@ class CartView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Mi carrito', style: FlutterFlowTheme.of(context).headlineMedium),
-                    Text('Total: \$${state.total.toStringAsFixed(2)}', style: FlutterFlowTheme.of(context).titleMedium),
+                    Text('Mi carrito', style: GlobalTheme.of(context).headlineMedium),
+                    Text('Total: \$${state.total.toStringAsFixed(2)}', style: GlobalTheme.of(context).titleMedium),
                   ],
                 ),
               ),
@@ -93,8 +93,8 @@ class CartView extends StatelessWidget {
                       },
                       text: 'Realizar pedido',
                       options: FFButtonOptions(
-                        color: FlutterFlowTheme.of(context).primary,
-                        textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                        color: GlobalTheme.of(context).primary,
+                        textStyle: GlobalTheme.of(context).titleSmall.override(
                               fontFamily: 'Manrope',
                               color: Colors.white,
                             ),
@@ -106,8 +106,8 @@ class CartView extends StatelessWidget {
                       },
                       text: 'Cancelar pedido',
                       options: FFButtonOptions(
-                        color: FlutterFlowTheme.of(context).error,
-                        textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                        color: GlobalTheme.of(context).error,
+                        textStyle: GlobalTheme.of(context).titleSmall.override(
                               fontFamily: 'Manrope',
                               color: Colors.white,
                             ),

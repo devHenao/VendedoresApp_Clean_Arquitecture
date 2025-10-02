@@ -77,7 +77,7 @@ class _ProductWidgetState extends State<ProductWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message.message),
-          backgroundColor: message.isError ? FlutterFlowTheme.of(context).error : FlutterFlowTheme.of(context).success,
+          backgroundColor: message.isError ? GlobalTheme.of(context).error : GlobalTheme.of(context).success,
         ),
       );
       _controller.clearMessage();
@@ -101,7 +101,7 @@ class _ProductWidgetState extends State<ProductWidget> {
 
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: FlutterFlowTheme.of(context).secondaryBackground,
+      color: GlobalTheme.of(context).secondaryBackground,
       elevation: 2.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -212,7 +212,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                               },
                               child: Icon(
                                 Icons.list,
-                                color: FlutterFlowTheme.of(context).primary,
+                                color: GlobalTheme.of(context).primary,
                                 size: 30.0,
                               ),
                             ),
@@ -228,7 +228,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                           children: [
                             Card(
                               clipBehavior: Clip.antiAliasWithSaveLayer,
-                              color: FlutterFlowTheme.of(context).primary,
+                              color: GlobalTheme.of(context).primary,
                               elevation: 2.0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24.0),
@@ -249,12 +249,12 @@ class _ProductWidgetState extends State<ProductWidget> {
                                               .map((e) => e.codigo)
                                               .toList())
                                       .toString(),
-                                  style: FlutterFlowTheme.of(context)
+                                  style: GlobalTheme.of(context)
                                       .bodyMedium
                                       .override(
                                         fontFamily: 'Manrope',
                                         color:
-                                            FlutterFlowTheme.of(context).info,
+                                            GlobalTheme.of(context).info,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.bold,
                                       ),

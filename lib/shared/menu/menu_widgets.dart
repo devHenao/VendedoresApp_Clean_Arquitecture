@@ -88,13 +88,13 @@ class MenuItems extends StatelessWidget {
           children: [
             FaIcon(
               icon,
-              color: FlutterFlowTheme.of(context).primary,
+              color: GlobalTheme.of(context).primary,
               size: 24.0,
             ),
             const SizedBox(width: 20.0),
             Text(
               text,
-              style: FlutterFlowTheme.of(context).bodyLarge.override(
+              style: GlobalTheme.of(context).bodyLarge.override(
                     fontFamily: 'Manrope',
                     letterSpacing: 0.0,
                   ),
@@ -126,15 +126,15 @@ class MenuActions extends StatelessWidget {
           children: [
             Icon(
               Icons.logout_rounded,
-              color: FlutterFlowTheme.of(context).error,
+              color: GlobalTheme.of(context).error,
               size: 24.0,
             ),
             const SizedBox(width: 12.0),
             Text(
               'Salir',
-              style: FlutterFlowTheme.of(context).bodyLarge.override(
+              style: GlobalTheme.of(context).bodyLarge.override(
                     fontFamily: 'Manrope',
-                    color: FlutterFlowTheme.of(context).error,
+                    color: GlobalTheme.of(context).error,
                     letterSpacing: 0.0,
                   ),
             ),
@@ -158,9 +158,9 @@ class MenuFooter extends StatelessWidget {
         children: [
           Text(
             'Copyright  2024 © by Ofima S.A.S',
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
-                  color: FlutterFlowTheme.of(context).secondaryText,
+                  color: GlobalTheme.of(context).secondaryText,
                   fontSize: 12.0,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
@@ -168,9 +168,9 @@ class MenuFooter extends StatelessWidget {
           ),
           Text(
             'v.1.0.0.0',
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
+            style: GlobalTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
-                  color: FlutterFlowTheme.of(context).secondaryText,
+                  color: GlobalTheme.of(context).secondaryText,
                   fontSize: 12.0,
                   letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
@@ -199,7 +199,7 @@ class MenuHeader extends StatelessWidget {
             width: 120.0,
             height: 120.0,
             decoration: BoxDecoration(
-              color: FlutterFlowTheme.of(context).accent2,
+              color: GlobalTheme.of(context).accent2,
               borderRadius: BorderRadius.circular(60.0),
             ),
             child: ClipRRect(
@@ -215,7 +215,7 @@ class MenuHeader extends StatelessWidget {
         ),
         Card(
           clipBehavior: Clip.antiAliasWithSaveLayer,
-          color: FlutterFlowTheme.of(context).secondaryBackground,
+          color: GlobalTheme.of(context).secondaryBackground,
           elevation: 2.0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -227,7 +227,7 @@ class MenuHeader extends StatelessWidget {
               children: [
                 Icon(
                   Icons.person,
-                  color: FlutterFlowTheme.of(context).primary,
+                  color: GlobalTheme.of(context).primary,
                   size: 24.0,
                 ),
                 Column(
@@ -236,7 +236,7 @@ class MenuHeader extends StatelessWidget {
                   children: [
                     Text(
                       'Vendedor:',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      style: GlobalTheme.of(context).bodyMedium.override(
                             fontFamily: 'Manrope',
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.bold,
@@ -246,7 +246,7 @@ class MenuHeader extends StatelessWidget {
                       ffAppState.infoSeller.nameVenden.isNotEmpty
                           ? ffAppState.infoSeller.nameVenden
                           : 'Cargando...',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      style: GlobalTheme.of(context).bodyMedium.override(
                             fontFamily: 'Manrope',
                             letterSpacing: 0.0,
                           ),

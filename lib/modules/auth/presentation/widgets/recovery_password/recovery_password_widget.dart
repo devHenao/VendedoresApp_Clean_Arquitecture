@@ -46,7 +46,7 @@ class _RecoveryPasswordWidgetState extends State<RecoveryPasswordWidget> {
         width: MediaQuery.sizeOf(context).width * 0.9,
         height: 460.0,
         decoration: BoxDecoration(
-          color: FlutterFlowTheme.of(context).secondaryBackground,
+          color: GlobalTheme.of(context).secondaryBackground,
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Padding(

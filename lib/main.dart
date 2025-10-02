@@ -19,7 +19,7 @@ void main() async {
 
   await di.configureDependencies();
 
-  await FlutterFlowTheme.initialize();
+  await GlobalTheme.initialize();
 
   await authManager.initialize();
 
@@ -41,7 +41,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = FlutterFlowTheme.themeMode;
+  ThemeMode _themeMode = GlobalTheme.themeMode;
 
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
 
   void setThemeMode(ThemeMode mode) => safeSetState(() {
         _themeMode = mode;
-        FlutterFlowTheme.saveThemeMode(mode);
+        GlobalTheme.saveThemeMode(mode);
       });
 
   @override
