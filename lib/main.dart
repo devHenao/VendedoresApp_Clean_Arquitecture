@@ -1,6 +1,5 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_localizations/flutter_localizations.dart';
 
 // Importaciones de Flutter Flow
 import 'core/theme/theme.dart';
@@ -18,9 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await di.configureDependencies();
-
   await GlobalTheme.initialize();
-
   await authManager.initialize();
 
   final appState = FFAppState();
@@ -67,10 +64,10 @@ class _MyAppState extends State<MyApp> {
         _appStateNotifier.update(user);
       });
 
-    Future.delayed(
-      const Duration(milliseconds: 1000),
-      () => _appStateNotifier.stopShowingSplashImage(),
-    );
+    // Ocultar el splash screen cuando se complete la autenticación
+    userStream.first.then((_) {
+      _appStateNotifier.stopShowingSplashImage();
+    });
   }
 
   void setThemeMode(ThemeMode mode) => safeSetState(() {
@@ -82,12 +79,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'AppVendedores',
-      // localizationsDelegates: const [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   GlobalCupertinoLocalizations.delegate,
-      // ],
-      // supportedLocales: const [Locale('en', '')],
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: false,
