@@ -39,9 +39,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = GlobalTheme.themeMode;
-
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
+  late Stream<AppVendedoresAuthUser> userStream;
+
   String getRoute([RouteMatch? routeMatch]) {
     final RouteMatch lastMatch =
         routeMatch ?? _router.routerDelegate.currentConfiguration.last;
@@ -50,8 +51,6 @@ class _MyAppState extends State<MyApp> {
         : _router.routerDelegate.currentConfiguration;
     return matchList.uri.toString();
   }
-
-  late Stream<AppVendedoresAuthUser> userStream;
 
   @override
   void initState() {
@@ -64,7 +63,6 @@ class _MyAppState extends State<MyApp> {
         _appStateNotifier.update(user);
       });
 
-    // Ocultar el splash screen cuando se complete la autenticación
     userStream.first.then((_) {
       _appStateNotifier.stopShowingSplashImage();
     });

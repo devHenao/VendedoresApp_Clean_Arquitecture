@@ -111,36 +111,82 @@ class MenuActions extends StatelessWidget {
 
   final VoidCallback onSignOut;
 
+  void _toggleTheme(BuildContext context) {
+    final currentTheme = Theme.of(context).brightness;
+    final newTheme = currentTheme == Brightness.dark 
+        ? ThemeMode.light 
+        : ThemeMode.dark;
+    setDarkModeSetting(context, newTheme);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      splashColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onTap: onSignOut,
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Icon(
-              Icons.logout_rounded,
-              color: GlobalTheme.of(context).error,
-              size: 24.0,
+    return Column(
+      children: [
+        // Botón de cambio de tema
+        InkWell(
+          splashColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: () => _toggleTheme(context),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Icon(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  color: GlobalTheme.of(context).primaryText,
+                  size: 24.0,
+                ),
+                const SizedBox(width: 12.0),
+                Text(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? 'Modo Claro'
+                      : 'Modo Oscuro',
+                  style: GlobalTheme.of(context).bodyLarge.override(
+                        fontFamily: 'Manrope',
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12.0),
-            Text(
-              'Salir',
-              style: GlobalTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Manrope',
-                    color: GlobalTheme.of(context).error,
-                    letterSpacing: 0.0,
-                  ),
-            ),
-          ],
+          ),
         ),
-      ),
+        // Botón de salir
+        InkWell(
+          splashColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: onSignOut,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Icon(
+                  Icons.logout_rounded,
+                  color: GlobalTheme.of(context).error,
+                  size: 24.0,
+                ),
+                const SizedBox(width: 12.0),
+                Text(
+                  'Salir',
+                  style: GlobalTheme.of(context).bodyLarge.override(
+                        fontFamily: 'Manrope',
+                        color: GlobalTheme.of(context).error,
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
