@@ -1,4 +1,4 @@
-import '/backend/api_requests/_/api_manager.dart';
+import '../../../../../core/backend/api_requests/_/api_manager.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'product_widget.dart' show ProductWidget;

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/backend/schema/structs/index.dart';
+import '../../core/backend/schema/structs/index.dart';
 
 import 'package:app_vendedores/modules/auth/infrastructure/services/auth_user_provider.dart' show AppVendedoresAuthUser;
 

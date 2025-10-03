@@ -9,7 +9,7 @@ import 'package:app_vendedores/modules/auth/domain/entities/user.dart';
 import 'package:app_vendedores/modules/auth/domain/repositories/auth_repository.dart';
 import 'package:app_vendedores/modules/auth/infrastructure/services/auth_util.dart';
 import 'package:app_vendedores/app_state.dart';
-import 'package:app_vendedores/backend/schema/structs/data_seller_struct.dart';
+import 'package:app_vendedores/core/backend/schema/structs/data_seller_struct.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;

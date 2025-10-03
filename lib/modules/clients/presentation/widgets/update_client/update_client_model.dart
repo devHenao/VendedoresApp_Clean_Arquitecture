@@ -1,5 +1,5 @@
-import 'package:app_vendedores/backend/api_requests/_/api_manager.dart';
-import '/backend/schema/structs/index.dart';
+import 'package:app_vendedores/core/backend/api_requests/_/api_manager.dart';
+import '../../../../../core/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 import 'update_client_widget.dart' show UpdateClientWidget;

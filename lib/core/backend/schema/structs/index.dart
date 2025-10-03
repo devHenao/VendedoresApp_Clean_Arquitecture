@@ -1,4 +1,4 @@
-export '/backend/schema/util/schema_util.dart';
+export '../util/schema_util.dart';
 
 export 'detail_product_struct.dart';
 export 'data_city_struct.dart';

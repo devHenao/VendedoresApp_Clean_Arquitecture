@@ -1,7 +1,7 @@
 import 'package:app_vendedores/shared/mensajes/ok_actualizado/ok_actualizado_widget.dart';
 import 'package:flutter/material.dart';
-import '/backend/api_requests/api_calls.dart';
-import '/backend/schema/structs/index.dart';
+import '../../../../core/backend/api_requests/api_calls.dart';
+import '../../../../core/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 

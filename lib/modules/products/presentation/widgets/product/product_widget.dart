@@ -1,4 +1,4 @@
-import '/backend/schema/structs/index.dart';
+import '../../../../../core/backend/schema/structs/index.dart';
 import 'package:app_vendedores/modules/products/presentation/widgets/product_detail/product_detail_widget.dart';
 import '../../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';

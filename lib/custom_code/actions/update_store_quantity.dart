@@ -1,4 +1,4 @@
-import '/backend/schema/structs/index.dart';
+import '../../core/backend/schema/structs/index.dart';
 
 Future<List<DetailProductStruct>> updateStoreQuantity(
   List<DetailProductStruct> shoppingCart,

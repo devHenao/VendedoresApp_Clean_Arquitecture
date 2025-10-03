@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:app_vendedores/backend/api_requests/_/api_manager.dart';
+import 'package:app_vendedores/core/backend/api_requests/_/api_manager.dart';
 
 import 'package:flutter/foundation.dart';
 

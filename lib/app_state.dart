@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/backend/schema/structs/index.dart';
+import 'core/backend/schema/structs/index.dart';
 
 class FFAppState extends ChangeNotifier {
   // Singleton pattern

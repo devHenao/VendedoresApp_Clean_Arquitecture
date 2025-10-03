@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/backend/schema/structs/index.dart';
+import '../../../../../core/backend/schema/structs/index.dart';
 import '../../../../../core/theme/theme.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
