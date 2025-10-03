@@ -146,104 +146,116 @@ class _LoginFormState extends State<LoginForm> {
   // Campo NIT/ID
   Widget _buildNitField() {
     final theme = Theme.of(context);
-    return TextFormField(
-      controller: _identificationController,
-      decoration: InputDecoration(
-        labelText: 'Ingrese el Nit...',
-        border: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: Colors.grey[600]!),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      child: TextFormField(
+        controller: _identificationController,
+        style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
+        decoration: InputDecoration(
+          hintText: 'NIT/ID',
+          hintStyle: GoogleFonts.roboto(color: Colors.grey[600]),
+          prefixIcon: const Icon(Icons.numbers, color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: Colors.grey[500]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: Colors.grey[500]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: Colors.grey[600]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: _contentPadding,
+        validator: (value) => value?.isEmpty ?? true ? 'Por favor ingrese su NIT/ID' : null,
       ),
-      style: GoogleFonts.roboto(fontSize: 16),
-      validator: (value) =>
-          value?.isEmpty ?? true ? 'Por favor ingrese su NIT/ID' : null,
     );
   }
 
   // Campo Email
   Widget _buildEmailField() {
     final theme = Theme.of(context);
-    return TextFormField(
-      controller: _emailController,
-      decoration: InputDecoration(
-        labelText: 'Ingrese su email aquí...',
-        border: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: Colors.grey[600]!),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      child: TextFormField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
+        decoration: InputDecoration(
+          hintText: 'Correo electrónico',
+          hintStyle: GoogleFonts.roboto(color: Colors.grey[600]),
+          prefixIcon: const Icon(Icons.email, color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: Colors.grey[500]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: Colors.grey[500]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: Colors.grey[600]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: _contentPadding,
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Por favor ingrese su email';
+          if (!value.contains('@')) return 'Ingrese un email válido';
+          return null;
+        },
       ),
-      keyboardType: TextInputType.emailAddress,
-      style: GoogleFonts.roboto(fontSize: 16),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Por favor ingrese su email';
-        if (!value.contains('@')) return 'Ingrese un email válido';
-        return null;
-      },
     );
   }
 
   // Campo Contraseña
   Widget _buildPasswordField() {
     final theme = Theme.of(context);
-    return TextFormField(
-      controller: _passwordController,
-      decoration: InputDecoration(
-        labelText: 'Ingrese su contraseña aquí...',
-        border: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: Colors.grey[600]!),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: Colors.grey[600]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: _borderRadius,
-          borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: _contentPadding,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _obscurePassword ? Icons.visibility : Icons.visibility_off,
-            color: Colors.grey,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      child: TextFormField(
+        controller: _passwordController,
+        obscureText: _obscurePassword,
+        style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
+        decoration: InputDecoration(
+          hintText: 'Contraseña',
+          hintStyle: GoogleFonts.roboto(color: Colors.grey[600]),
+          prefixIcon: const Icon(Icons.lock, color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: Colors.grey[500]!),
           ),
-          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: Colors.grey[500]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: _borderRadius,
+            borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+              color: Colors.grey,
+            ),
+            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+          ),
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Por favor ingrese su contraseña';
+          if (value.length < 4) return 'La contraseña debe tener al menos 4 caracteres';
+          return null;
+        },
       ),
-      obscureText: _obscurePassword,
-      style: GoogleFonts.roboto(fontSize: 16),
-      validator: (value) {
-        if (value == null || value.isEmpty)
-          return 'Por favor ingrese su contraseña';
-        if (value.length < 4)
-          return 'La contraseña debe tener al menos 4 caracteres';
-        return null;
-      },
     );
   }
 
