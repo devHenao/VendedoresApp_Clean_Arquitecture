@@ -152,8 +152,8 @@ class _LoginFormState extends State<LoginForm> {
         controller: _identificationController,
         style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
         decoration: InputDecoration(
-          hintText: 'NIT/ID',
-          hintStyle: GoogleFonts.roboto(color: Colors.grey[600]),
+          labelText: 'NIT/ID',
+          labelStyle: GoogleFonts.roboto(color: Colors.grey[600]),
           prefixIcon: const Icon(Icons.numbers, color: Colors.grey),
           border: OutlineInputBorder(
             borderRadius: _borderRadius,
@@ -186,8 +186,8 @@ class _LoginFormState extends State<LoginForm> {
         keyboardType: TextInputType.emailAddress,
         style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
         decoration: InputDecoration(
-          hintText: 'Correo electrónico',
-          hintStyle: GoogleFonts.roboto(color: Colors.grey[600]),
+          labelText: 'Correo electrónico',
+          labelStyle: GoogleFonts.roboto(color: Colors.grey[600]),
           prefixIcon: const Icon(Icons.email, color: Colors.grey),
           border: OutlineInputBorder(
             borderRadius: _borderRadius,
@@ -224,8 +224,8 @@ class _LoginFormState extends State<LoginForm> {
         obscureText: _obscurePassword,
         style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
         decoration: InputDecoration(
-          hintText: 'Contraseña',
-          hintStyle: GoogleFonts.roboto(color: Colors.grey[600]),
+          labelText: 'Contraseña',
+          labelStyle: GoogleFonts.roboto(color: Colors.grey[600]),
           prefixIcon: const Icon(Icons.lock, color: Colors.grey),
           border: OutlineInputBorder(
             borderRadius: _borderRadius,
