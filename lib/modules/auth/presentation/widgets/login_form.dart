@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_state.dart';
-import 'package:app_vendedores/modules/auth/presentation/widgets/recovery_password/recovery_password_widget.dart';
+import 'package:app_vendedores/modules/recovery_password/recovery_password_widget.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
