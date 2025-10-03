@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_state.dart';
-import 'package:app_vendedores/modules/recovery_password/recovery_password_widget.dart';
+import 'package:app_vendedores/modules/recovery_password/presentation/pages/recovery_password_dialog.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -322,7 +322,7 @@ class _LoginFormState extends State<LoginForm> {
                 return const Dialog(
                   backgroundColor: Colors.transparent,
                   insetPadding: EdgeInsets.all(20),
-                  child: RecoveryPasswordWidget(),
+                  child: RecoveryPasswordDialog(),
                 );
               },
             );
