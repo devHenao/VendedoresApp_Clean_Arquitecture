@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '../../utils/validators.dart';
+import '../../../../core/validations/validators.dart';
 
 class RecoveryPasswordForm extends StatefulWidget {
   const RecoveryPasswordForm({
