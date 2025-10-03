@@ -6,27 +6,28 @@ class RecoveryPasswordHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = GlobalTheme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '¿Has olvidado tu contraseña?',
-          style: GlobalTheme.of(context).headlineMedium.override(
-                fontFamily: 'Outfit',
-                letterSpacing: 0.0,
-                fontWeight: FontWeight.w600,
-              ),
+          style: theme.headlineMedium.copyWith(
+            fontFamily: 'Outfit',
+            fontWeight: FontWeight.w600,
+            color: theme.primaryText,
+          ),
         ),
+        const SizedBox(height: 8),
         Text(
-          'Ingrese su dirección de correo electrónico y le enviaremos instrucciones para restablecer su contraseña.',
-          textAlign: TextAlign.justify,
-          style: GlobalTheme.of(context).bodyLarge.override(
-                fontFamily: 'Manrope',
-                color: GlobalTheme.of(context).secondaryText,
-                fontSize: 18.0,
-                letterSpacing: 0.0,
-              ),
+          'Ingrese su NIT y dirección de correo electrónico para restablecer su contraseña.',
+          style: theme.bodyLarge.copyWith(
+            fontFamily: 'Manrope',
+            color: theme.secondaryText,
+          ),
         ),
+        const SizedBox(height: 15),
       ],
     );
   }
