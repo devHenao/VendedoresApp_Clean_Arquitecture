@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/flutter_flow_util.dart';
 
 class RecoveryPasswordForm extends StatelessWidget {
   const RecoveryPasswordForm({
@@ -31,110 +30,118 @@ class RecoveryPasswordForm extends StatelessWidget {
     return Form(
       key: formKey,
       autovalidateMode: AutovalidateMode.disabled,
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: nitController,
-              focusNode: nitFocusNode,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                labelText: 'Ingrese el Nit',
-                labelStyle: GlobalTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Manrope',
-                      color: GlobalTheme.of(context).secondaryText,
-                      fontSize: 15.0,
-                      letterSpacing: 0.0,
-                    ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: GlobalTheme.of(context).alternate,
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                filled: true,
-                fillColor: GlobalTheme.of(context).primaryBackground,
-              ),
-              style: GlobalTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Manrope',
-                    letterSpacing: 0.0,
-                  ),
-              validator: nitValidator,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9-]'))],
-            ),
-            TextFormField(
-              controller: emailController,
-              focusNode: emailFocusNode,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Correo electrónico',
-                labelStyle: GlobalTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Manrope',
-                      color: GlobalTheme.of(context).secondaryText,
-                      fontSize: 15.0,
-                      letterSpacing: 0.0,
-                    ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: GlobalTheme.of(context).alternate,
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x00000000), width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                filled: true,
-                fillColor: GlobalTheme.of(context).primaryBackground,
-              ),
-              style: GlobalTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Manrope',
-                    letterSpacing: 0.0,
-                  ),
-              validator: emailValidator,
-            ),
-            FFButtonWidget(
-              onPressed: onResetPassword,
-              text: 'Restablecer contraseña',
-              options: FFButtonOptions(
-                width: double.infinity,
-                height: 50.0,
-                color: GlobalTheme.of(context).primary,
-                textStyle: GlobalTheme.of(context).titleSmall.override(
-                      fontFamily: 'Manrope',
-                      color: GlobalTheme.of(context).info,
-                      letterSpacing: 0.0,
-                    ),
-                elevation: 0.0,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-            ),
-          ].divide(const SizedBox(height: 20.0)),
-        ),
+      child: _buildFormContent(context),
+    );
+  }
+
+  Widget _buildFormContent(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildNitField(context),
+          const SizedBox(height: 20),
+          _buildEmailField(context),
+          const SizedBox(height: 20),
+          _buildSubmitButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNitField(BuildContext context) {
+    final theme = GlobalTheme.of(context);
+    
+    return TextFormField(
+      controller: nitController,
+      focusNode: nitFocusNode,
+      textInputAction: TextInputAction.next,
+      decoration: _buildInputDecoration(
+        context,
+        label: 'Ingrese el Nit',
+        prefixIcon: Icons.numbers,
+      ),
+      style: _buildTextStyle(theme),
+      validator: nitValidator,
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9-]'))],
+    );
+  }
+
+  Widget _buildEmailField(BuildContext context) {
+    final theme = GlobalTheme.of(context);
+    
+    return TextFormField(
+      controller: emailController,
+      focusNode: emailFocusNode,
+      keyboardType: TextInputType.emailAddress,
+      decoration: _buildInputDecoration(
+        context,
+        label: 'Correo electrónico',
+        prefixIcon: Icons.email,
+      ),
+      style: _buildTextStyle(theme),
+      validator: emailValidator,
+    );
+  }
+
+  InputDecoration _buildInputDecoration(
+    BuildContext context, {
+    required String label,
+    required IconData prefixIcon,
+  }) {
+    final theme = GlobalTheme.of(context);
+    
+    return InputDecoration(
+      labelText: label,
+      labelStyle: theme.bodyMedium?.copyWith(
+        fontFamily: 'Manrope',
+        color: theme.secondaryText,
+        fontSize: 15.0,
+        letterSpacing: 0.0,
+      ),
+      prefixIcon: Icon(prefixIcon, color: theme.secondaryText),
+      enabledBorder: _buildBorder(theme.alternate),
+      focusedBorder: _buildBorder(theme.primary, width: 1.5),
+      errorBorder: _buildBorder(Colors.red),
+      focusedErrorBorder: _buildBorder(Colors.red, width: 1.5),
+      filled: true,
+      fillColor: theme.primaryBackground,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    );
+  }
+
+  OutlineInputBorder _buildBorder(Color color, {double width = 1.0}) {
+    return OutlineInputBorder(
+      borderSide: BorderSide(color: color, width: width),
+      borderRadius: BorderRadius.circular(8.0),
+    );
+  }
+
+  TextStyle _buildTextStyle(GlobalTheme theme) {
+    return theme.bodyMedium?.copyWith(
+      fontFamily: 'Manrope',
+      letterSpacing: 0.0,
+    ) ?? const TextStyle();
+  }
+
+  Widget _buildSubmitButton(BuildContext context) {
+    final theme = GlobalTheme.of(context);
+    
+    return FFButtonWidget(
+      onPressed: onResetPassword,
+      text: 'Restablecer contraseña',
+      options: FFButtonOptions(
+        width: double.infinity,
+        height: 50.0,
+        color: theme.primary,
+        textStyle: theme.titleSmall?.copyWith(
+          fontFamily: 'Manrope',
+          color: theme.info,
+          letterSpacing: 0.0,
+        ) ?? const TextStyle(),
+        elevation: 0.0,
+        borderRadius: BorderRadius.circular(15.0),
       ),
     );
   }
