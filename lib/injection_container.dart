@@ -32,7 +32,10 @@ final getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
   // Blocs
-  getIt.registerFactory(() => AuthBloc(signInUseCase: getIt()));
+  getIt.registerFactory(() => AuthBloc(
+        signInUseCase: getIt(),
+        prefs: getIt<SharedPreferences>(),
+      ));
   getIt.registerFactory(() => CartBloc(
         getCartItemsUseCase: getIt(),
         addItemUseCase: getIt(),
@@ -141,9 +144,11 @@ Future<void> configureDependencies() async {
   // Core
   getIt.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(getIt()));
 
-  // External
+  // External - Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerLazySingleton(() => sharedPreferences);
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  
+  // Configure Dio
   getIt.registerLazySingleton(() {
     final dio = Dio();
     dio.options.connectTimeout = const Duration(milliseconds: 15000);

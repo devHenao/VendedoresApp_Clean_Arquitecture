@@ -59,7 +59,6 @@ dependencies:
   path_provider_windows: 2.3.0
   permission_handler: ^11.3.1
   provider: 6.1.2
-  shared_preferences: 2.3.2
   shared_preferences_android: 2.3.2
   shared_preferences_foundation: 2.5.2
   shared_preferences_linux: 2.4.1
@@ -89,6 +88,7 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   rxdart: ^0.27.7
   json_annotation: ^4.8.1
+  shared_preferences: ^2.2.2
 
 dependency_overrides:
   http: 1.2.2

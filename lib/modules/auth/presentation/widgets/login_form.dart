@@ -6,6 +6,7 @@ import 'package:app_vendedores/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_state.dart';
 import 'package:app_vendedores/modules/recovery_password/presentation/pages/recovery_password_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -26,6 +27,48 @@ class _LoginFormState extends State<LoginForm> {
   final _borderRadius = BorderRadius.circular(8);
   final _contentPadding =
       const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberMe = prefs.getBool('remember_me') ?? false;
+    
+    if (rememberMe) {
+      final nitId = prefs.getString('remembered_nit_id') ?? '';
+      final email = prefs.getString('remembered_email') ?? '';
+      final password = prefs.getString('remembered_password') ?? '';
+      
+      if (mounted) {
+        setState(() {
+          _identificationController.text = nitId;
+          _emailController.text = email;
+          _passwordController.text = password;
+          _rememberMe = true;
+        });
+      }
+    }
+  }
+
+  Future<void> _saveCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('remembered_nit_id', _identificationController.text);
+    await prefs.setString('remembered_email', _emailController.text);
+    await prefs.setString('remembered_password', _passwordController.text);
+    await prefs.setBool('remember_me', true);
+  }
+
+  Future<void> _clearCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('remembered_nit_id');
+    await prefs.remove('remembered_email');
+    await prefs.remove('remembered_password');
+    await prefs.setBool('remember_me', false);
+  }
 
   @override
   void dispose() {
@@ -365,11 +408,19 @@ class _LoginFormState extends State<LoginForm> {
 
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
+      // Save credentials if remember me is checked
+      if (_rememberMe) {
+        _saveCredentials();
+      } else {
+        _clearCredentials();
+      }
+      
       context.read<AuthBloc>().add(
             LoginButtonPressed(
               identification: _identificationController.text,
               email: _emailController.text,
               password: _passwordController.text,
+              rememberMe: _rememberMe,
             ),
           );
     }

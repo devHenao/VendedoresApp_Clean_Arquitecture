@@ -27,8 +27,9 @@ class ClientPage extends StatelessWidget {
             const Spacer(),
             MenuActions(onSignOut: () async {
               await authManager.signOut();
-              // ignore: use_build_context_synchronously
-              context.goNamed('Login');
+              if (context.mounted) {
+                GoRouter.of(context).go('/');
+              }
             }),
             const SizedBox(height: 20),
             const MenuFooter(),
