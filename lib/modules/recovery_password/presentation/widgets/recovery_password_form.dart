@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '../../utils/validators.dart';
 
 class RecoveryPasswordForm extends StatefulWidget {
   const RecoveryPasswordForm({
@@ -72,10 +73,8 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
         errorText: _getNitErrorText(),
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor ingrese el NIT';
-        }
-        return widget.nitValidator?.call(value);
+        final validationError = RecoveryPasswordValidators.validateNit(value);
+        return validationError ?? widget.nitValidator?.call(value ?? '');
       },
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp('[0-9-]')),
@@ -86,11 +85,8 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
 
   String? _getNitErrorText() {
     if (!_isFormSubmitted) return null;
-    final value = widget.nitController.text;
-    if (value.isEmpty) {
-      return 'Por favor ingrese el NIT';
-    }
-    return widget.nitValidator?.call(value);
+    return RecoveryPasswordValidators.validateNit(widget.nitController.text) ?? 
+           widget.nitValidator?.call(widget.nitController.text);
   }
 
   Widget _buildEmailField(GlobalTheme theme) {
@@ -106,24 +102,16 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
         errorText: _getEmailErrorText(),
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Este campo es obligatorio';
-        }
-        if (!value.contains('@') || !value.contains('.')) {
-          return 'Ingrese un correo electrónico válido';
-        }
-        return widget.emailValidator?.call(value);
+        final validationError = RecoveryPasswordValidators.validateEmail(value);
+        return validationError ?? widget.emailValidator?.call(value ?? '');
       },
     );
   }
 
   String? _getEmailErrorText() {
     if (!_isFormSubmitted) return null;
-    final value = widget.emailController.text;
-    if (value.isEmpty) {
-      return 'Este campo es obligatorio';
-    }
-    return widget.emailValidator?.call(value);
+    return RecoveryPasswordValidators.validateEmail(widget.emailController.text) ?? 
+           widget.emailValidator?.call(widget.emailController.text);
   }
 
   InputDecoration _buildInputDecoration({
