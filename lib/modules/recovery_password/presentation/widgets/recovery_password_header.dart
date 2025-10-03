@@ -13,10 +13,11 @@ class RecoveryPasswordHeader extends StatelessWidget {
       children: [
         Text(
           '¿Has olvidado tu contraseña?',
-          style: theme.headlineMedium.copyWith(
+          style: theme.titleLarge.copyWith(
             fontFamily: 'Outfit',
             fontWeight: FontWeight.w600,
             color: theme.primaryText,
+            fontSize: 30.0,
           ),
         ),
         const SizedBox(height: 8),
