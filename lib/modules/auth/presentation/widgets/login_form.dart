@@ -1,7 +1,6 @@
 import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_state.dart';
@@ -28,9 +27,18 @@ class _LoginFormState extends State<LoginForm> {
       const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
 
   @override
+  void dispose() {
+    _identificationController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: globalTheme.secondaryBackground,
       body: _buildBody(),
     );
   }
@@ -60,7 +68,6 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  // Logo y encabezado
   Widget _buildLogoHeader() {
     return Column(
       children: [
@@ -89,179 +96,190 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  // Texto de bienvenida
   Widget _buildWelcomeText() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 40),
-        // Título centrado
-        Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Vendedores',
-            style: GlobalTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Work Sans',
-                  fontSize: 50.0,
-                  letterSpacing: 0.0,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Bienvenidos',
-          style: GoogleFonts.roboto(
-            fontSize: 24,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Acceso al Sistema',
-          style: GoogleFonts.roboto(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
-        ),
+        _title(),
+        const SizedBox(height: 30),
+        _subtitle(),
+        _subtitleText(),
       ],
     );
   }
 
-  // Campos del formulario
+  Widget _title() {
+    final globalTheme = GlobalTheme.of(context);
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Text(
+        'Vendedores',
+        style: globalTheme.headlineMedium.copyWith(
+          fontSize: 40,
+          fontWeight: FontWeight.bold,
+          color: globalTheme.primaryText,
+        ),
+      ),
+    );
+  }
+
+  Widget _subtitle() {
+    final globalTheme = GlobalTheme.of(context);
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Text(
+        'Bienvenido',
+        style: globalTheme.headlineMedium.copyWith(
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+          color: globalTheme.primaryText,
+        ),
+      ),
+    );
+  }
+
+  Widget _subtitleText() {
+    final globalTheme = GlobalTheme.of(context);
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Text(
+        'Acceso al Sistema',
+        style: globalTheme.bodyLarge.copyWith(
+          color: globalTheme.secondaryText,
+        ),
+      ),
+    );
+  }
+
   Widget _buildFormFields() {
     return Column(
       children: [
         _buildNitField(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 30),
         _buildEmailField(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 30),
         _buildPasswordField(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 30),
         _buildRememberAndForgot(),
       ],
     );
   }
 
-  // Campo NIT/ID
   Widget _buildNitField() {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      child: TextFormField(
-        controller: _identificationController,
-        style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
-        decoration: InputDecoration(
-          labelText: 'NIT/ID',
-          labelStyle: GoogleFonts.roboto(color: Colors.grey[600]),
-          prefixIcon: const Icon(Icons.numbers, color: Colors.grey),
-          border: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: Colors.grey[500]!),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: Colors.grey[500]!),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    final globalTheme = GlobalTheme.of(context);
+    return TextFormField(
+      controller: _identificationController,
+      style: globalTheme.bodyMedium.copyWith(color: globalTheme.primaryText),
+      decoration: InputDecoration(
+        labelText: 'NIT/ID',
+        labelStyle: globalTheme.labelMedium,
+        prefixIcon: Icon(Icons.numbers, color: globalTheme.secondaryText),
+        border: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide:
+              BorderSide(color: globalTheme.secondaryText.withValues(alpha: 0.5)),
         ),
-        validator: (value) => value?.isEmpty ?? true ? 'Por favor ingrese su NIT/ID' : null,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide:
+              BorderSide(color: globalTheme.secondaryText.withValues(alpha: 0.5)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide: BorderSide(color: globalTheme.primary, width: 1.5),
+        ),
+        filled: true,
+        fillColor: globalTheme.secondaryBackground,
+        contentPadding: _contentPadding,
       ),
+      validator: (value) =>
+          value?.isEmpty ?? true ? 'Por favor ingrese su NIT/ID' : null,
     );
   }
 
-  // Campo Email
   Widget _buildEmailField() {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      child: TextFormField(
-        controller: _emailController,
-        keyboardType: TextInputType.emailAddress,
-        style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
-        decoration: InputDecoration(
-          labelText: 'Correo electrónico',
-          labelStyle: GoogleFonts.roboto(color: Colors.grey[600]),
-          prefixIcon: const Icon(Icons.email, color: Colors.grey),
-          border: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: Colors.grey[500]!),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: Colors.grey[500]!),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    final globalTheme = GlobalTheme.of(context);
+    return TextFormField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      style: globalTheme.bodyMedium.copyWith(color: globalTheme.primaryText),
+      decoration: InputDecoration(
+        labelText: 'Correo electrónico',
+        labelStyle: globalTheme.labelMedium,
+        prefixIcon: Icon(Icons.email, color: globalTheme.secondaryText),
+        border: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide:
+              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) return 'Por favor ingrese su email';
-          if (!value.contains('@')) return 'Ingrese un email válido';
-          return null;
-        },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide:
+              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide: BorderSide(color: globalTheme.primary, width: 1.5),
+        ),
+        filled: true,
+        fillColor: globalTheme.secondaryBackground,
+        contentPadding: _contentPadding,
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) return 'Por favor ingrese su email';
+        if (!value.contains('@')) return 'Ingrese un email válido';
+        return null;
+      },
     );
   }
 
-  // Campo Contraseña
   Widget _buildPasswordField() {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      child: TextFormField(
-        controller: _passwordController,
-        obscureText: _obscurePassword,
-        style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87),
-        decoration: InputDecoration(
-          labelText: 'Contraseña',
-          labelStyle: GoogleFonts.roboto(color: Colors.grey[600]),
-          prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-          border: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: Colors.grey[500]!),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: Colors.grey[500]!),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: _borderRadius,
-            borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscurePassword ? Icons.visibility : Icons.visibility_off,
-              color: Colors.grey,
-            ),
-            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-          ),
+    final globalTheme = GlobalTheme.of(context);
+    return TextFormField(
+      controller: _passwordController,
+      obscureText: _obscurePassword,
+      style: globalTheme.bodyMedium.copyWith(color: globalTheme.primaryText),
+      decoration: InputDecoration(
+        labelText: 'Contraseña',
+        labelStyle: globalTheme.labelMedium,
+        prefixIcon: Icon(Icons.lock, color: globalTheme.secondaryText),
+        border: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide:
+              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) return 'Por favor ingrese su contraseña';
-          if (value.length < 4) return 'La contraseña debe tener al menos 4 caracteres';
-          return null;
-        },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide:
+              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: _borderRadius,
+          borderSide: BorderSide(color: globalTheme.primary, width: 1.5),
+        ),
+        filled: true,
+        fillColor: globalTheme.secondaryBackground,
+        contentPadding: _contentPadding,
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+            color: globalTheme.secondaryText,
+          ),
+          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+        ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty)
+          return 'Por favor ingrese su contraseña';
+        if (value.length < 4)
+          return 'La contraseña debe tener al menos 4 caracteres';
+        return null;
+      },
     );
   }
 
-  // Recordar contraseña y olvidé mi contraseña
   Widget _buildRememberAndForgot() {
-    final theme = Theme.of(context);
+    final globalTheme = GlobalTheme.of(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,25 +287,28 @@ class _LoginFormState extends State<LoginForm> {
         // Recordarme
         Row(
           children: [
-            Checkbox(
-              value: _rememberMe,
-              onChanged: (value) =>
-                  setState(() => _rememberMe = value ?? false),
-              side: BorderSide(color: Colors.grey[600]!),
-              fillColor: MaterialStateProperty.resolveWith<Color>(
-                (states) => states.contains(MaterialState.selected)
-                    ? theme.primaryColor
-                    : Colors.white,
+            Theme(
+              data: Theme.of(context).copyWith(
+                unselectedWidgetColor: globalTheme.secondaryText,
+              ),
+              child: Checkbox(
+                value: _rememberMe,
+                onChanged: (value) =>
+                    setState(() => _rememberMe = value ?? false),
+                fillColor: WidgetStateProperty.resolveWith<Color>(
+                  (states) => states.contains(WidgetState.selected)
+                      ? globalTheme.primary
+                      : globalTheme.secondaryBackground,
+                ),
+                side: BorderSide(color: globalTheme.secondaryText),
               ),
             ),
             Text(
               'Recordarme',
-              style: GlobalTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Manrope',
-                    color: GlobalTheme.of(context).secondaryText,
-                    letterSpacing: 0.0,
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: globalTheme.labelMedium.copyWith(
+                color: globalTheme.secondaryText,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -308,10 +329,9 @@ class _LoginFormState extends State<LoginForm> {
           },
           child: Text(
             '¿Olvidó su contraseña?',
-            style: GoogleFonts.roboto(
-              fontSize: 14,
-              color: theme.primaryColor,
-              fontWeight: FontWeight.w500,
+            style: globalTheme.labelMedium.copyWith(
+              color: globalTheme.primary,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -319,42 +339,40 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  // Botón de inicio de sesión
   Widget _buildLoginButton() {
-    final theme = Theme.of(context);
-
+    final globalTheme = GlobalTheme.of(context);
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        if (state is AuthLoading) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(globalTheme.primary),
+            ),
+          );
+        }
+
         return ElevatedButton(
-          onPressed: state is AuthLoading ? null : _handleLogin,
+          onPressed: _handleLogin,
           style: ElevatedButton.styleFrom(
-            backgroundColor: theme.primaryColor,
+            backgroundColor: globalTheme.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: _borderRadius,
+            ),
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: _borderRadius),
+            elevation: 2,
           ),
-          child: state is AuthLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  ),
-                )
-              : Text(
-                  'Iniciar Sesión',
-                  style: GoogleFonts.roboto(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+          child: Text(
+            'Iniciar Sesión',
+            style: globalTheme.labelLarge.copyWith(
+              color: globalTheme.info,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         );
       },
     );
   }
 
-  // Manejador del inicio de sesión
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
