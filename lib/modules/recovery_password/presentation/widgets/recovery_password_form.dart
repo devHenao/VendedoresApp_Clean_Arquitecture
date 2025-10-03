@@ -73,7 +73,7 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
         errorText: _getNitErrorText(),
       ),
       validator: (value) {
-        final validationError = RecoveryPasswordValidators.validateNit(value);
+        final validationError = AppValidators.validateNit(value);
         return validationError ?? widget.nitValidator?.call(value ?? '');
       },
       inputFormatters: [
@@ -85,7 +85,7 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
 
   String? _getNitErrorText() {
     if (!_isFormSubmitted) return null;
-    return RecoveryPasswordValidators.validateNit(widget.nitController.text) ?? 
+    return AppValidators.validateNit(widget.nitController.text) ?? 
            widget.nitValidator?.call(widget.nitController.text);
   }
 
@@ -102,7 +102,7 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
         errorText: _getEmailErrorText(),
       ),
       validator: (value) {
-        final validationError = RecoveryPasswordValidators.validateEmail(value);
+        final validationError = AppValidators.validateEmail(value);
         return validationError ?? widget.emailValidator?.call(value ?? '');
       },
     );
@@ -110,7 +110,7 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
 
   String? _getEmailErrorText() {
     if (!_isFormSubmitted) return null;
-    return RecoveryPasswordValidators.validateEmail(widget.emailController.text) ?? 
+    return AppValidators.validateEmail(widget.emailController.text) ?? 
            widget.emailValidator?.call(widget.emailController.text);
   }
 

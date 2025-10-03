@@ -1,4 +1,5 @@
 import 'package:app_vendedores/core/theme/theme.dart';
+import 'package:app_vendedores/core/validations/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_bloc.dart';
@@ -192,8 +193,7 @@ class _LoginFormState extends State<LoginForm> {
         fillColor: globalTheme.secondaryBackground,
         contentPadding: _contentPadding,
       ),
-      validator: (value) =>
-          value?.isEmpty ?? true ? 'Por favor ingrese su NIT/ID' : null,
+      validator: (value) => AppValidators.validateNitOrId(value),
     );
   }
 
@@ -225,11 +225,7 @@ class _LoginFormState extends State<LoginForm> {
         fillColor: globalTheme.secondaryBackground,
         contentPadding: _contentPadding,
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Por favor ingrese su email';
-        if (!value.contains('@')) return 'Ingrese un email válido';
-        return null;
-      },
+      validator: (value) => AppValidators.validateEmail(value),
     );
   }
 
@@ -268,13 +264,7 @@ class _LoginFormState extends State<LoginForm> {
           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
         ),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty)
-          return 'Por favor ingrese su contraseña';
-        if (value.length < 4)
-          return 'La contraseña debe tener al menos 4 caracteres';
-        return null;
-      },
+      validator: (value) => AppValidators.validatePassword(value),
     );
   }
 
