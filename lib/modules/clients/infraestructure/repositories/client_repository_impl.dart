@@ -80,17 +80,6 @@ class ClientRepositoryImpl implements ClientRepository {
   }
 
   @override
-  Future<Either<Failure, Client>> getClientByNit(String nit) async {
-    return _handleNetworkCall(
-      () async {
-        final token = await _getToken();
-        final clientModel = await remoteDataSource.getClientByNit(token, nit);
-        return clientModel.toEntity();
-      },
-    );
-  }
-
-  @override
   Future<Either<Failure, Client>> updateClient(Client client) async {
     return _handleNetworkCall(
       () async {

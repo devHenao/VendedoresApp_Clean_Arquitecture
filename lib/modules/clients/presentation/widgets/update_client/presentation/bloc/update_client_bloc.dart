@@ -1,17 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/domain/usecases/client_use_cases.dart';
+import 'package:app_vendedores/modules/clients/domain/usecases/client_use_cases.dart';
+import 'package:app_vendedores/core/errors/failures.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_state.dart';
 
 class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
   final UpdateClientUseCase updateClientUseCase;
   final GetDepartmentsUseCase getDepartmentsUseCase;
-  final GetCitiesUseCase getCitiesUseCase;
+  final GetCitiesByDepartmentUseCase getCitiesByDepartmentUseCase;
 
   UpdateClientBloc({
     required this.updateClientUseCase,
     required this.getDepartmentsUseCase,
-    required this.getCitiesUseCase,
+    required this.getCitiesByDepartmentUseCase,
   }) : super(UpdateClientInitial()) {
     on<UpdateClientSubmittedEvent>(_onUpdateClient);
     on<DepartmentChangedEvent>(_onDepartmentChanged);
@@ -19,34 +20,27 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     on<SetClientEvent>(_onSetClient);
   }
 
-
   Future<void> _onUpdateClient(
     UpdateClientSubmittedEvent event,
     Emitter<UpdateClientState> emit,
   ) async {
     if (state is! UpdateClientLoaded) return;
-    
+
     final currentState = state as UpdateClientLoaded;
     emit(currentState.copyWith(isSubmitting: true));
-    
-    try {
-      await updateClientUseCase(event.client);
-      emit(currentState.copyWith(
+
+    final result = await updateClientUseCase(event.client);
+    result.fold(
+      (failure) => emit(currentState.copyWith(
+        isSubmitting: false,
+        errorMessage: failure.toString(),
+      )),
+      (client) => emit(currentState.copyWith(
         isSubmitting: false,
         isSuccess: true,
-        client: event.client, // Actualizar el cliente en el estado
-      ));
-    } catch (e) {
-      emit(currentState.copyWith(
-        isSubmitting: false,
-        errorMessage: e.toString(),
-      ));
-      
-      // Re-emitir el estado anterior para mantener los datos
-      emit(currentState.copyWith(
-        isSubmitting: false,
-      ));
-    }
+        client: client,
+      )),
+    );
   }
 
   Future<void> _onDepartmentChanged(
@@ -60,18 +54,22 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
       selectedDepartment: event.department,
       cities: [],
       selectedCity: null,
+      isSubmitting: true, // Para mostrar un indicador de carga
     ));
 
-    try {
-      final cities = await getCitiesUseCase(event.department);
-      if (state is UpdateClientLoaded) {
-        emit((state as UpdateClientLoaded).copyWith(cities: cities));
-      }
-    } catch (e) {
-      emit(currentState.copyWith(
-        errorMessage: 'Error al cargar las ciudades: $e',
-      ));
-    }
+    final citiesResult = await getCitiesByDepartmentUseCase(event.department);
+    citiesResult.fold(
+      (failure) => emit(currentState.copyWith(
+        errorMessage: 'Error al cargar las ciudades: $failure',
+        isSubmitting: false,
+      )),
+      (citiesMap) {
+        final cities = citiesMap.map((c) => c['name'].toString()).toList();
+        if (state is UpdateClientLoaded) {
+          emit((state as UpdateClientLoaded).copyWith(cities: cities, isSubmitting: false));
+        }
+      },
+    );
   }
 
   void _onCityChanged(
@@ -80,7 +78,7 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
   ) {
     if (state is! UpdateClientLoaded) return;
     final currentState = state as UpdateClientLoaded;
-    
+
     emit(currentState.copyWith(selectedCity: event.city));
   }
 
@@ -88,26 +86,40 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     SetClientEvent event,
     Emitter<UpdateClientState> emit,
   ) async {
-    try {
-      final departments = await getDepartmentsUseCase();
-      
+    emit(UpdateClientLoading());
+
+    final departmentsResult = await getDepartmentsUseCase();
+
+    // Manejar el caso de fallo para los departamentos
+    if (departmentsResult.isLeft()) {
+      final failure = departmentsResult.getOrElse(() => []) as Failure;
+      emit(UpdateClientError('Error al cargar los departamentos: $failure'));
+      return;
+    }
+
+    final departmentsMap = departmentsResult.getOrElse(() => []);
+    final departments = departmentsMap.map((d) => d['name'].toString()).toList();
+    List<String> cities = [];
+
+    // Si hay un departamento, cargar las ciudades
+    if (event.client.nomdpto != null && event.client.nomdpto!.isNotEmpty) {
+      final citiesResult = await getCitiesByDepartmentUseCase(event.client.nomdpto!);
+      // No es necesario manejar el fallo aquí, si falla, la lista de ciudades quedará vacía
+      cities = citiesResult.fold(
+        (l) => [],
+        (r) => r.map((c) => c['name'].toString()).toList(),
+      );
+    }
+
+    // Si el emitter sigue activo, emitir el estado final
+    if (!emit.isDone) {
       emit(UpdateClientLoaded(
         client: event.client,
         departments: departments,
+        cities: cities,
         selectedDepartment: event.client.nomdpto,
+        selectedCity: event.client.nomciud,
       ));
-
-      if (event.client.nomdpto != null) {
-        final cities = await getCitiesUseCase(event.client.nomdpto!);
-        if (state is UpdateClientLoaded) {
-          emit((state as UpdateClientLoaded).copyWith(
-            cities: cities,
-            selectedCity: event.client.nomciud,
-          ));
-        }
-      }
-    } catch (e) {
-      emit(UpdateClientError('Error al cargar los datos: $e'));
     }
   }
 }

@@ -10,7 +10,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.da
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_bloc.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/pages/update_client_page.dart';
+import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/widgets/update_client_form.dart';
 
 class ClientController {
   final BuildContext context;
@@ -19,8 +19,8 @@ class ClientController {
   final UpdateClientBloc updateClientBloc;
 
   ClientController(
-    this.context, 
-    this.clientBloc, 
+    this.context,
+    this.clientBloc,
     {required this.downloadFileBloc, required this.updateClientBloc}
   );
 
@@ -39,98 +39,32 @@ class ClientController {
   }
 
   void resetDateRange() {
-    final now = DateTime.now();
-    final firstDay = DateTime(now.year, now.month, 1);
-    final lastDay = DateTime(now.year, now.month + 1, 0);
-    updateDateRange(startDate: firstDay, endDate: lastDay);
+    clientBloc.add(UpdateDateRange(startDate: null, endDate: null));
   }
 
-  void viewClientWallet(Client client) {
-    _showConfirmationDialog(
-      title: 'Descargar cartera',
-      content: '¿Desea descargar el reporte de cartera de ${client.nombre}?',
-      onConfirm: () => downloadFileBloc.add(
-        DownloadFileRequested(
-          clientId: client.nit,
-          type: DownloadType.wallet,
-        ),
-      ),
-    );
-  }
+  void showClientDetails(Client client) {
+    final clientService = Provider.of<ClientService>(context, listen: false);
+    clientService.setSelectedClient(client);
 
-  void viewClientPending(Client client) {
-    final state = clientBloc.state;
-    _showConfirmationDialog(
-      title: 'Descargar pendientes',
-      content: '¿Desea descargar el reporte de pendientes de ${client.nombre}?',
-      onConfirm: () => downloadFileBloc.add(
-        DownloadFileRequested(
-          clientId: client.nit,
-          type: DownloadType.orders,
-          startDate: state.startDate,
-          endDate: state.endDate,
-        ),
-      ),
-    );
-  }
-
-  void viewClientSales(Client client) {
-    final state = clientBloc.state;
-    _showConfirmationDialog(
-      title: 'Descargar ventas',
-      content: '¿Desea descargar el reporte de Ventas de ${client.nombre}?',
-      onConfirm: () => downloadFileBloc.add(
-        DownloadFileRequested(
-          clientId: client.nit,
-          type: DownloadType.sales,
-          startDate: state.startDate,
-          endDate: state.endDate,
-        ),
-      ),
-    );
-  }
-
-  Future<void> showClientDetails(Client client) async {
     try {
-      // Obtener el servicio de clientes
-      final clientService = Provider.of<ClientService>(context, listen: false);
-      
-      // Establecer el cliente seleccionado
-      clientService.setSelectedClient(client);
-      
-      // Mostrar el diálogo
-      await showDialog<Client?>(
+      showDialog(
         context: context,
-        barrierDismissible: false,
-        builder: (BuildContext dialogContext) {
-          return Dialog(
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Editar Cliente',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: MediaQuery.of(dialogContext).size.width * 0.8,
-                    child: BlocProvider.value(
-                      value: updateClientBloc,
-                      child: const UpdateClientPage(),
-                    ),
-                  ),
-                ],
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text('Editar Cliente'),
+            content: SingleChildScrollView(
+              child: SizedBox(
+                width: MediaQuery.of(dialogContext).size.width * 0.9,
+                child: BlocProvider.value(
+                  value: updateClientBloc,
+                  child: UpdateClientForm(client: client),
+                ),
               ),
             ),
           );
         },
       ).then((_) {
-        // Limpiar el cliente seleccionado
         clientService.clearSelectedClient();
-        
-        // Recargar la lista de clientes después de cerrar el diálogo
         if (context.mounted) {
           clientBloc.add(LoadClients());
         }
@@ -143,6 +77,49 @@ class ClientController {
         );
       }
     }
+  }
+
+  Future<void> viewClientWallet(Client client) async {
+    await _showConfirmationDialog(
+      title: 'Descargar Cartera',
+      content: '¿Desea descargar el estado de cartera de ${client.nombre}?',
+      onConfirm: () {
+        downloadFileBloc.add(DownloadFileRequested(
+          clientId: client.nit,
+          type: DownloadType.wallet,
+        ));
+      },
+    );
+  }
+
+  Future<void> viewClientPending(Client client) async {
+    await _showConfirmationDialog(
+      title: 'Descargar Pedidos Pendientes',
+      content: '¿Desea descargar los pedidos pendientes de ${client.nombre}?',
+      onConfirm: () {
+        downloadFileBloc.add(DownloadFileRequested(
+          clientId: client.nit,
+          type: DownloadType.orders,
+          startDate: clientBloc.state.startDate,
+          endDate: clientBloc.state.endDate,
+        ));
+      },
+    );
+  }
+
+  Future<void> viewClientSales(Client client) async {
+    await _showConfirmationDialog(
+      title: 'Descargar Ventas',
+      content: '¿Desea descargar el historial de Ventas de ${client.nombre}?',
+      onConfirm: () {
+        downloadFileBloc.add(DownloadFileRequested(
+          clientId: client.nit,
+          type: DownloadType.sales,
+          startDate: clientBloc.state.startDate,
+          endDate: clientBloc.state.endDate,
+        ));
+      },
+    );
   }
 
   Future<void> _showConfirmationDialog({
@@ -161,6 +138,5 @@ class ClientController {
     if (result == true) {
       onConfirm();
     }
-    return; // Explicitly return void
   }
 }
