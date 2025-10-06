@@ -1,4 +1,4 @@
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/shared/datePickers/date_range_selector_controller.dart';

@@ -9,8 +9,8 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dar
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_bloc.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/widgets/update_client_form.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/widgets/update_client_form.dart';
 
 class ClientController {
   final BuildContext context;

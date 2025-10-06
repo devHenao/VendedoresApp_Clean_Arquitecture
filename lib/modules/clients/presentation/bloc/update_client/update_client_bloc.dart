@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/clients/domain/usecases/client_use_cases.dart';
 import 'package:app_vendedores/core/errors/failures.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_event.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_state.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_event.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_state.dart';
 
 class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
   final UpdateClientUseCase updateClientUseCase;
