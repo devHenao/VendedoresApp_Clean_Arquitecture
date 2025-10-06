@@ -95,9 +95,9 @@ class _LoginFormState extends State<LoginForm> {
               if (isLoading)
                 Container(
                   color: Colors.black54, // Semi-transparent black overlay
-                  child: const Center(
+                  child: Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(globalTheme.primary),
                       strokeWidth: 3.0,
                     ),
                   ),
