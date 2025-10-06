@@ -47,7 +47,6 @@ Future<void> configureDependencies() async {
   getIt.registerFactory(() => ClientBloc(
         getClientsUseCase: getIt(),
         searchClientsUseCase: getIt(),
-        getClientByNitUseCase: getIt(),
         updateClientUseCase: getIt(),
         getDepartmentsUseCase: getIt(),
         getCitiesByDepartmentUseCase: getIt(),
@@ -75,7 +74,6 @@ Future<void> configureDependencies() async {
   // Client Use Cases
   getIt.registerLazySingleton(() => GetClientsUseCase(getIt()));
   getIt.registerLazySingleton(() => SearchClientsUseCase(getIt()));
-  getIt.registerLazySingleton(() => GetClientByNitUseCase(getIt()));
   getIt.registerLazySingleton(() => UpdateClientUseCase(getIt()));
   getIt.registerLazySingleton(() => GetDepartmentsUseCase(getIt()));
   getIt.registerLazySingleton(() => GetCitiesByDepartmentUseCase(getIt()));

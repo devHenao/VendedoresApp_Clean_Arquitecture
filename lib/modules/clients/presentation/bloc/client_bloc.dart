@@ -8,7 +8,6 @@ import 'client_state.dart';
 class ClientBloc extends Bloc<ClientEvent, ClientState> {
   final GetClientsUseCase getClientsUseCase;
   final SearchClientsUseCase searchClientsUseCase;
-  final GetClientByNitUseCase getClientByNitUseCase;
   final UpdateClientUseCase updateClientUseCase;
   final GetDepartmentsUseCase getDepartmentsUseCase;
   final GetCitiesByDepartmentUseCase getCitiesByDepartmentUseCase;
@@ -17,7 +16,6 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
   ClientBloc({
     required this.getClientsUseCase,
     required this.searchClientsUseCase,
-    required this.getClientByNitUseCase,
     required this.updateClientUseCase,
     required this.getDepartmentsUseCase,
     required this.getCitiesByDepartmentUseCase,
@@ -28,7 +26,6 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     on<UpdateClient>(_onUpdateClient);
     on<LoadDepartments>(_onLoadDepartments);
     on<LoadCitiesByDepartment>(_onLoadCitiesByDepartment);
-    on<GetClientByNit>(_onGetClientByNit);
     on<UpdateDateRange>(_onUpdateDateRange);
     on<DownloadClientFile>(_onDownloadClientFile);
   }
@@ -85,19 +82,6 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
       (failure) => emit(ClientError(message: failure.toString())),
       (clients) => emit(ClientLoaded(
         clients: clients,
-      )),
-    );
-  }
-
-  Future<void> _onGetClientByNit(GetClientByNit event, Emitter<ClientState> emit) async {
-    emit(ClientLoading(startDate: state.startDate, endDate: state.endDate));
-    final failureOrClient = await getClientByNitUseCase(event.nit);
-    failureOrClient.fold(
-      (failure) => emit(ClientError(message: failure.toString())),
-      (client) => emit(ClientLoaded(
-        clients: [client],
-        startDate: state.startDate,
-        endDate: state.endDate,
       )),
     );
   }

@@ -26,17 +26,6 @@ class SearchClientsUseCase {
   }
 }
 
-/// Caso de uso para obtener un cliente por su NIT
-class GetClientByNitUseCase {
-  final ClientRepository repository;
-
-  GetClientByNitUseCase(this.repository);
-
-  Future<Either<Failure, Client>> call(String nit) async {
-    return await repository.getClientByNit(nit);
-  }
-}
-
 /// Caso de uso para actualizar la información de un cliente
 class UpdateClientUseCase {
   final ClientRepository repository;

@@ -8,8 +8,6 @@ abstract class ClientRepository {
   
   Future<Either<Failure, List<Client>>> searchClients(String query);
   
-  Future<Either<Failure, Client>> getClientByNit(String nit);
-  
   Future<Either<Failure, Client>> updateClient(Client client);
   
   Future<Either<Failure, List<Map<String, dynamic>>>> getDepartments();
