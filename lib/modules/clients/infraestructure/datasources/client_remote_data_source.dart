@@ -3,17 +3,20 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
+import 'dart:convert';
 
 import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/modules/clients/infraestructure/models/client_model.dart';
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
+
 abstract class ClientRemoteDataSource {
   Future<List<ClientModel>> getClients(String token);
   Future<List<ClientModel>> searchClients(String token, String query);
   Future<ClientModel> getClientByNit(String token, String nit);
   Future<ClientModel> updateClient(String token, ClientModel client);
   Future<List<Map<String, dynamic>>> getDepartments(String token);
-  Future<List<Map<String, dynamic>>> getCitiesByDepartment(String token, String department);
+  Future<List<Map<String, dynamic>>> getCitiesByDepartment(
+      String token, String department);
   Future<String> downloadFile({
     required String clientId,
     required String token,
@@ -25,14 +28,17 @@ abstract class ClientRemoteDataSource {
 
 class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
   final Dio dio;
-  static const String baseUrl = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller';
+  static const String baseUrl =
+      'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller';
+  static const String baseUrlMaster =
+      'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appMaster';
 
   ClientRemoteDataSourceImpl({required this.dio});
 
   Map<String, String> _getHeaders(String token) => {
-    'Authorization': 'Bearer $token',
-    'Content-Type': 'application/json',
-  };
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
 
   @override
   Future<List<ClientModel>> getClients(String token) async {
@@ -51,12 +57,16 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         } else {
           throw ServerException('Formato de datos de clientes inesperado');
         }
-        return clientList.map((json) => ClientModel.fromJson(json as Map<String, dynamic>)).toList();
+        return clientList
+            .map((json) => ClientModel.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
-        throw ServerException(response.data['data'] ?? 'Error al obtener los clientes');
+        throw ServerException(
+            response.data['data'] ?? 'Error al obtener los clientes');
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al conectar con el servidor');
+      throw ServerException(
+          e.response?.data?['message'] ?? 'Error al conectar con el servidor');
     }
   }
 
@@ -78,12 +88,16 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         } else {
           throw ServerException('Formato de datos de búsqueda inesperado');
         }
-        return clientList.map((json) => ClientModel.fromJson(json as Map<String, dynamic>)).toList();
+        return clientList
+            .map((json) => ClientModel.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
-        throw ServerException(response.data['message'] ?? 'Error al buscar clientes');
+        throw ServerException(
+            response.data['message'] ?? 'Error al buscar clientes');
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al buscar clientes');
+      throw ServerException(
+          e.response?.data?['message'] ?? 'Error al buscar clientes');
     }
   }
 
@@ -97,10 +111,12 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       if (response.statusCode == 200) {
         return ClientModel.fromJson(response.data['data']);
       } else {
-        throw ServerException(response.data['message'] ?? 'Error al obtener el cliente');
+        throw ServerException(
+            response.data['message'] ?? 'Error al obtener el cliente');
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al obtener el cliente');
+      throw ServerException(
+          e.response?.data?['message'] ?? 'Error al obtener el cliente');
     }
   }
 
@@ -115,45 +131,178 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       if (response.statusCode == 200) {
         return ClientModel.fromJson(response.data['data']);
       } else {
-        throw ServerException(response.data['message'] ?? 'Error al actualizar el cliente');
+        throw ServerException(
+            response.data['message'] ?? 'Error al actualizar el cliente');
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al actualizar el cliente');
+      throw ServerException(
+          e.response?.data?['message'] ?? 'Error al actualizar el cliente');
     }
   }
 
   @override
   Future<List<Map<String, dynamic>>> getDepartments(String token) async {
-    const url = '$baseUrl/maestras/departamentos';
+    const url = '$baseUrlMaster/getListDepto';
     final options = Options(headers: _getHeaders(token));
 
     try {
+      print('Solicitando lista de departamentos...');
       final response = await dio.get(url, options: options);
+
+      print('Respuesta de departamentos (raw): ${response.data}');
+      print('Status code: ${response.statusCode}');
+
       if (response.statusCode == 200) {
-        return List<Map<String, dynamic>>.from(response.data['data']);
+        // Verificar si la respuesta tiene la estructura esperada
+        if (response.data is! Map<String, dynamic>) {
+          throw const FormatException('Formato de respuesta inválido');
+        }
+
+        // Verificar si hay un error en la respuesta
+        if (response.data['error'] != null) {
+          throw ServerException(response.data['error'].toString());
+        }
+
+        // Verificar si existe la propiedad 'data' y es una lista
+        if (response.data['data'] == null) {
+          throw const FormatException(
+              'No se encontraron datos de departamentos');
+        }
+
+        if (response.data['data'] is! List) {
+          throw const FormatException(
+              'Formato de datos de departamentos inválido');
+        }
+
+        // Convertir la respuesta a una lista de mapas
+        final List<dynamic> departmentsData = response.data['data'];
+
+        final result = departmentsData.map<Map<String, dynamic>>((dept) {
+          if (dept is Map<String, dynamic>) {
+            return dept;
+          } else if (dept is String) {
+            return {'name': dept};
+          }
+          return {'name': dept?.toString() ?? 'Departamento desconocido'};
+        }).toList();
+
+        print('Departamentos procesados: $result');
+        return result;
       } else {
-        throw ServerException('Error al obtener los departamentos');
+        final errorMessage = response.data is Map
+            ? response.data['message'] ?? 'Error al obtener los departamentos'
+            : 'Error al obtener los departamentos (${response.statusCode})';
+        throw ServerException(errorMessage.toString());
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al obtener los departamentos');
+      print('Error en getDepartments: ${e.message}');
+      print('Datos de error: ${e.response?.data}');
+
+      String errorMessage = 'Error al obtener los departamentos';
+
+      if (e.response?.data != null) {
+        if (e.response!.data is Map) {
+          errorMessage =
+              e.response!.data['message']?.toString() ?? errorMessage;
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+      } else if (e.message != null) {
+        errorMessage = e.message!;
+      }
+
+      throw ServerException(errorMessage);
+    } catch (e) {
+      print('Error inesperado en getDepartments: $e');
+      throw ServerException('Error inesperado al obtener los departamentos');
     }
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getCitiesByDepartment(String token, String department) async {
-    const url = '$baseUrl/maestras/ciudades';
-    final options = Options(headers: _getHeaders(token));
-    final data = {'departamento': department};
+  Future<List<Map<String, dynamic>>> getCitiesByDepartment(
+      String token, String department) async {
+    final url = '$baseUrlMaster/getListCities';
+    final options = Options(headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    });
+
+    // Usando el mismo formato que en la versión que funcionaba
+    final data = jsonEncode({'nomdpto': department});
 
     try {
-      final response = await dio.post(url, data: data, options: options);
+      print('Solicitando ciudades para departamento: $department');
+      print('URL: $url');
+      print('Headers: ${options.headers}');
+      print('Body: $data');
+
+      final response = await dio.post(
+        url,
+        data: data,
+        options: options,
+      );
+
+      print('Respuesta de ciudades: ${response.data}');
+
       if (response.statusCode == 200) {
-        return List<Map<String, dynamic>>.from(response.data['data']);
+        // Verificar si la respuesta tiene la estructura esperada
+        if (response.data is! Map<String, dynamic>) {
+          throw const FormatException('Formato de respuesta inválido');
+        }
+
+        // Verificar si hay un error en la respuesta
+        if (response.data['error'] != null) {
+          throw ServerException(response.data['error'].toString());
+        }
+
+        // Verificar si existe la propiedad 'data' y es una lista
+        if (response.data['data'] == null) {
+          throw const FormatException('No se encontraron datos de ciudades');
+        }
+
+        if (response.data['data'] is! List) {
+          throw const FormatException('Formato de datos de ciudades inválido');
+        }
+
+        // Convertir la respuesta a una lista de mapas
+        final List<dynamic> citiesData = response.data['data'];
+
+        return citiesData.map<Map<String, dynamic>>((city) {
+          if (city is Map<String, dynamic>) {
+            return city;
+          } else if (city is String) {
+            return {'name': city};
+          }
+          return {'name': city?.toString() ?? 'Ciudad desconocida'};
+        }).toList();
       } else {
-        throw ServerException('Error al obtener las ciudades');
+        final errorMessage = response.data is Map
+            ? response.data['message'] ?? 'Error al obtener las ciudades'
+            : 'Error al obtener las ciudades (${response.statusCode})';
+        throw ServerException(errorMessage.toString());
       }
     } on DioException catch (e) {
-      throw ServerException(e.response?.data?['message'] ?? 'Error al obtener las ciudades');
+      print('Error en getCitiesByDepartment: ${e.message}');
+      print('Datos de error: ${e.response?.data}');
+      print('Request: ${e.requestOptions.data}');
+      print('Headers: ${e.requestOptions.headers}');
+
+      String errorMessage = 'Error al obtener las ciudades';
+      if (e.response?.data != null) {
+        if (e.response!.data is Map) {
+          errorMessage =
+              e.response!.data['message']?.toString() ?? errorMessage;
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+      } else if (e.message != null) {
+        errorMessage = e.message!;
+      }
+
+      throw ServerException(errorMessage);
+    } catch (e) {
+      print('Error inesperado en getCitiesByDepartment: $e');
+      throw ServerException('Error inesperado al obtener las ciudades: $e');
     }
   }
 
@@ -168,7 +317,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     try {
       String endpoint;
       final params = <String, dynamic>{};
-      
+
       switch (type) {
         case DownloadType.wallet:
           endpoint = '/clients/getWalletClient';
@@ -176,26 +325,31 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         case DownloadType.orders:
           endpoint = '/clients/getOrderClient';
           if (startDate != null) {
-            params['startDate'] = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+            params['startDate'] =
+                '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
           }
           if (endDate != null) {
-            params['endDate'] = '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
+            params['endDate'] =
+                '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
           }
           break;
         case DownloadType.sales:
           endpoint = '/clients/getLastSalesClient';
           if (startDate != null) {
-            params['startDate'] = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+            params['startDate'] =
+                '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
           }
           if (endDate != null) {
-            params['endDate'] = '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
+            params['endDate'] =
+                '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
           }
           break;
       }
 
       final url = '$baseUrl$endpoint/$clientId';
-      final uri = Uri.parse(url).replace(queryParameters: params.isNotEmpty ? params : null);
-      
+      final uri = Uri.parse(url)
+          .replace(queryParameters: params.isNotEmpty ? params : null);
+
       final response = await dio.get(
         uri.toString(),
         options: Options(
@@ -204,36 +358,41 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
           receiveTimeout: const Duration(minutes: 5),
         ),
       );
-      
+
       final bytes = response.data as List<int>;
 
       if (response.statusCode == 200) {
-
         // Determinar la extensión basada en el tipo de contenido de la respuesta
         String extension = 'pdf'; // Por defecto PDF
-        final contentType = response.headers.value('content-type')?.toLowerCase() ?? '';
-        
-        if (contentType.contains('excel') || contentType.contains('spreadsheet')) {
+        final contentType =
+            response.headers.value('content-type')?.toLowerCase() ?? '';
+
+        if (contentType.contains('excel') ||
+            contentType.contains('spreadsheet')) {
           extension = 'xlsx';
         }
-        final fileName = '${type.toString().split('.').last}_${DateTime.now().millisecondsSinceEpoch}.$extension';
-        
+        final fileName =
+            '${type.toString().split('.').last}_${DateTime.now().millisecondsSinceEpoch}.$extension';
+
         if (Platform.isAndroid) {
-          const methodChannel =  MethodChannel('com.mycompany.appvendedores/media_store');
+          const methodChannel =
+              MethodChannel('com.mycompany.appvendedores/media_store');
           try {
             // Determinar el mimeType basado en la extensión
-            final mimeType = extension == 'pdf' 
-                ? 'application/pdf' 
+            final mimeType = extension == 'pdf'
+                ? 'application/pdf'
                 : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                
-            final savedFilePath = await methodChannel.invokeMethod<String>('saveFile', {
+
+            final savedFilePath =
+                await methodChannel.invokeMethod<String>('saveFile', {
               'fileBytes': bytes,
               'fileName': fileName,
               'mimeType': mimeType,
             });
-            
+
             if (savedFilePath == null) {
-              throw Exception('No se pudo guardar el archivo en el almacenamiento externo');
+              throw Exception(
+                  'No se pudo guardar el archivo en el almacenamiento externo');
             }
             return savedFilePath;
           } catch (e) {
@@ -249,9 +408,11 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
           throw ServerException('Plataforma no soportada');
         }
       } else if (response.statusCode == 400) {
-        throw ServerException('No se encontraron datos para generar el reporte');
+        throw ServerException(
+            'No se encontraron datos para generar el reporte');
       } else {
-        throw ServerException('Error al descargar el archivo (${response.statusCode})');
+        throw ServerException(
+            'Error al descargar el archivo (${response.statusCode})');
       }
     } on DioException catch (e) {
       throw ServerException(e.message ?? 'Error de conexión');
