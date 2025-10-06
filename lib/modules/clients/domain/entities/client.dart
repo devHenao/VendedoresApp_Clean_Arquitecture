@@ -47,4 +47,36 @@ class Client extends Equatable {
         nomciud,
         nomdpto,
       ];
+
+  Client copyWith({
+    String? tipocar,
+    String? codigocta,
+    String? nit,
+    String? vendedor,
+    String? nombre,
+    String? direccion,
+    String? cdciiu,
+    String? contacto,
+    String? tel1,
+    String? email,
+    String? codprecio,
+    String? nomciud,
+    String? nomdpto,
+  }) {
+    return Client(
+      tipocar: tipocar ?? this.tipocar,
+      codigocta: codigocta ?? this.codigocta,
+      nit: nit ?? this.nit,
+      vendedor: vendedor ?? this.vendedor,
+      nombre: nombre ?? this.nombre,
+      direccion: direccion ?? this.direccion,
+      cdciiu: cdciiu ?? this.cdciiu,
+      contacto: contacto ?? this.contacto,
+      tel1: tel1 ?? this.tel1,
+      email: email ?? this.email,
+      codprecio: codprecio ?? this.codprecio,
+      nomciud: nomciud ?? this.nomciud,
+      nomdpto: nomdpto ?? this.nomdpto,
+    );
+  }
 }

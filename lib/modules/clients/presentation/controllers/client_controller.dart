@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
+import 'package:app_vendedores/modules/clients/domain/services/client_service.dart';
 import 'package:app_vendedores/shared/confirmDialog/confirmation_dialog.dart';
-import 'package:app_vendedores/core/backend/schema/structs/index.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/update_client_widget.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
+import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/pages/update_client_page.dart';
 
 class ClientController {
   final BuildContext context;
   final ClientBloc clientBloc;
   final DownloadFileBloc downloadFileBloc;
+  final UpdateClientBloc updateClientBloc;
 
-  ClientController(this.context, this.clientBloc, {required this.downloadFileBloc});
+  ClientController(
+    this.context, 
+    this.clientBloc, 
+    {required this.downloadFileBloc, required this.updateClientBloc}
+  );
 
   void searchClients(String query) {
     clientBloc.add(SearchClients(query));
@@ -83,40 +91,58 @@ class ClientController {
   }
 
   Future<void> showClientDetails(Client client) async {
-    // Convert Client to DataClienteStruct using the createDataClienteStruct helper
-    final dataClient = createDataClienteStruct(
-      nombre: client.nombre,
-      nit: client.nit,
-      tel1: client.tel1,
-      email: client.email,
-      direccion: client.direccion,
-      // Set default values for required fields
-      tipoCar: 'C',  // Default value for tipoCar
-      codigoCta: client.nit,  // Using NIT as codigoCta
-      vendedor: '',  // Empty default
-      cdciiu: '',    // Empty default
-      contacto: '',  // Empty default
-      codprecio: '1', // Default price code
-      nomciud: '',   // Empty default
-      nomdpto: '',   // Empty default
-    );
-    
-    await showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(20),
-        child: UpdateClientWidget(
-          dataClients: dataClient,
-          updated: () async {
-            // Refresh client list or perform any action after update
-            // For example: clientBloc.add(LoadClients());
-            Navigator.of(context).pop(); // Close the dialog after update
-            return; // Explicit return to satisfy the Future return type
-          },
-        ),
-      ),
-    );
+    try {
+      // Obtener el servicio de clientes
+      final clientService = Provider.of<ClientService>(context, listen: false);
+      
+      // Establecer el cliente seleccionado
+      clientService.setSelectedClient(client);
+      
+      // Mostrar el diálogo
+      await showDialog<Client?>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return Dialog(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Editar Cliente',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: MediaQuery.of(dialogContext).size.width * 0.8,
+                    child: BlocProvider.value(
+                      value: updateClientBloc,
+                      child: const UpdateClientPage(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ).then((_) {
+        // Limpiar el cliente seleccionado
+        clientService.clearSelectedClient();
+        
+        // Recargar la lista de clientes después de cerrar el diálogo
+        if (context.mounted) {
+          clientBloc.add(LoadClients());
+        }
+      });
+    } catch (e) {
+      debugPrint('Error al mostrar el diálogo: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cargar el formulario de edición: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _showConfirmationDialog({

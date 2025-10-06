@@ -52,7 +52,7 @@ class ClientRepositoryImpl implements ClientRepository {
   Future<String> _getToken() async {
     final user = await authRepository.getCurrentUser();
     return user.fold(
-      (failure) => throw  UnauthorizedException(),
+      (failure) => throw UnauthorizedException(),
       (user) => user.token,
     );
   }
@@ -78,6 +78,7 @@ class ClientRepositoryImpl implements ClientRepository {
       },
     );
   }
+
   @override
   Future<Either<Failure, Client>> getClientByNit(String nit) async {
     return _handleNetworkCall(

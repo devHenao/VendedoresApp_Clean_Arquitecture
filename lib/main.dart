@@ -10,6 +10,9 @@ import 'modules/auth/infrastructure/services/auth_util.dart';
 import 'modules/auth/infrastructure/services/auth_user_provider.dart'
     show AppVendedoresAuthUser, appVendedoresAuthUserStream;
 
+// Importaciones de servicios
+import 'modules/clients/domain/services/client_service.dart';
+
 // Inyección de dependencias
 import 'injection_container.dart' as di;
 
@@ -22,10 +25,17 @@ void main() async {
 
   final appState = FFAppState();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => appState,
-    child: MyApp(),
-  ));
+  final clientService = ClientService();
+  
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => appState),
+        Provider<ClientService>.value(value: clientService),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {

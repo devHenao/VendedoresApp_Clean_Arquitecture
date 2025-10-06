@@ -1,3 +1,4 @@
+import 'package:app_vendedores/modules/clients/presentation/widgets/update_client/presentation/bloc/update_client_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/shared/datePickers/date_range_selector_controller.dart';
@@ -19,10 +20,12 @@ class ClientView extends StatelessWidget {
   Widget build(BuildContext context) {
     final clientBloc = context.read<ClientBloc>();
     final downloadFileBloc = context.read<DownloadFileBloc>();
+    final updateClientBloc = context.read<UpdateClientBloc>();
     final controller = ClientController(
       context, 
       clientBloc, 
       downloadFileBloc: downloadFileBloc,
+      updateClientBloc: updateClientBloc,
     );
 
     return BlocListener<DownloadFileBloc, DownloadFileState>(
