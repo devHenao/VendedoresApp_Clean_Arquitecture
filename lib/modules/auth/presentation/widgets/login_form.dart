@@ -81,9 +81,31 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return Scaffold(
-      backgroundColor: globalTheme.secondaryBackground,
-      body: _buildBody(),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isLoading = state is AuthLoading;
+        return AbsorbPointer(
+          absorbing: isLoading,
+          child: Stack(
+            children: [
+              Scaffold(
+                backgroundColor: globalTheme.secondaryBackground,
+                body: _buildBody(),
+              ),
+              if (isLoading)
+                Container(
+                  color: Colors.black54, // Semi-transparent black overlay
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 3.0,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -253,12 +275,12 @@ class _LoginFormState extends State<LoginForm> {
         border: OutlineInputBorder(
           borderRadius: _borderRadius,
           borderSide:
-              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
+              BorderSide(color: globalTheme.secondaryText.withValues(alpha: 0.5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: _borderRadius,
           borderSide:
-              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
+              BorderSide(color: globalTheme.secondaryText.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: _borderRadius,
@@ -285,12 +307,12 @@ class _LoginFormState extends State<LoginForm> {
         border: OutlineInputBorder(
           borderRadius: _borderRadius,
           borderSide:
-              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
+              BorderSide(color: globalTheme.secondaryText.withValues(alpha: 0.5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: _borderRadius,
           borderSide:
-              BorderSide(color: globalTheme.secondaryText.withOpacity(0.5)),
+              BorderSide(color: globalTheme.secondaryText.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: _borderRadius,
@@ -313,6 +335,7 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget _buildRememberAndForgot() {
     final globalTheme = GlobalTheme.of(context);
+
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -374,35 +397,23 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget _buildLoginButton() {
     final globalTheme = GlobalTheme.of(context);
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthLoading) {
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(globalTheme.primary),
-            ),
-          );
-        }
-
-        return ElevatedButton(
-          onPressed: _handleLogin,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: globalTheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: _borderRadius,
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            elevation: 2,
-          ),
-          child: Text(
-            'Iniciar Sesión',
-            style: globalTheme.labelLarge.copyWith(
-              color: globalTheme.info,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        );
-      },
+    return ElevatedButton(
+      onPressed: _handleLogin,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: globalTheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: _borderRadius,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        elevation: 2,
+      ),
+      child: Text(
+        'Iniciar Sesión',
+        style: globalTheme.labelLarge.copyWith(
+          color: globalTheme.info,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 
