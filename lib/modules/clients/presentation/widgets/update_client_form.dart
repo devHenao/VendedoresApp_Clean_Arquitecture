@@ -148,7 +148,7 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   }
 
   Widget _buildDepartmentDropdown(UpdateClientLoaded state) {
-    final departments = state.departments ?? [];
+    final departments = state.departments;
 
     final selectedValue = departments.contains(state.selectedDepartment)
         ? state.selectedDepartment
