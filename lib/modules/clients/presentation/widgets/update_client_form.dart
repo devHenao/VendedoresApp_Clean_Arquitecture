@@ -5,6 +5,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/u
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/core/theme/theme.dart';
+import 'package:app_vendedores/core/validations/validators.dart';
 
 class UpdateClientForm extends StatefulWidget {
   final Client client;
@@ -33,7 +34,6 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     _documentoController = TextEditingController(text: widget.client.nit);
     _contactoController = TextEditingController(text: widget.client.contacto ?? '');
     
-    // Initialize the form with the client data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UpdateClientBloc>().add(SetClientEvent(widget.client));
     });
@@ -61,7 +61,7 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           Navigator.of(context).pop(true);
         } else if (state is UpdateClientError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${state.message}')),
+            SnackBar(content: Text(state.message)),
           );
         }
       },
@@ -150,13 +150,13 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   Widget _buildAddressField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
     return TextFormField(
       controller: _addressController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       maxLines: 2,
       decoration: InputDecoration(
-        labelText: 'Dirección',
+        labelText: 'Dirección *',
+        suffixIcon: const Icon(Icons.location_on_outlined, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -172,17 +172,12 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor ingrese la dirección';
-        }
-        return null;
-      },
+      validator: AppValidators.validateAddress,
     );
   }
-
+  
   Widget _buildDocumentoField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
@@ -190,9 +185,10 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     return TextFormField(
       controller: _documentoController,
       enabled: false,
-      style: TextStyle(color: colors.secondaryText),
+      style: theme.textTheme.bodyLarge?.copyWith(color: colors.secondaryText),
       decoration: InputDecoration(
-        labelText: 'Documento (NIT)',
+        labelText: 'Documento',
+        suffixIcon: const Icon(Icons.credit_card_outlined, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -207,10 +203,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           borderSide: BorderSide(color: colors.primary, width: 2),
         ),
         filled: true,
-        fillColor: colors.accent4,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        fillColor: colors.secondaryBackground.withValues(alpha: 0.7),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      keyboardType: TextInputType.none,
     );
   }
   
@@ -222,7 +217,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       controller: _nameController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
-        labelText: 'Nombre',
+        labelText: 'Nombre *',
+        suffixIcon: const Icon(Icons.person_outline, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -238,14 +234,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor ingrese el nombre';
-        }
-        return null;
-      },
+      validator: AppValidators.validateName,
     );
   }
   
@@ -257,7 +248,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       controller: _contactoController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
-        labelText: 'Contacto',
+        labelText: 'Contacto *',
+        suffixIcon: const Icon(Icons.person_outline, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -273,8 +265,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
+      validator: AppValidators.validateContact,
     );
   }
   
@@ -287,7 +280,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        labelText: 'Correo electrónico',
+        labelText: 'Correo Electrónico *',
+        suffixIcon: const Icon(Icons.email_outlined, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -303,14 +297,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      validator: (value) {
-        if (value != null && value.isNotEmpty && !value.contains('@')) {
-          return 'Ingrese un correo electrónico válido';
-        }
-        return null;
-      },
+      validator: AppValidators.validateEmail,
     );
   }
   
@@ -323,7 +312,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
-        labelText: 'Teléfono',
+        labelText: 'Teléfono *',
+        suffixIcon: const Icon(Icons.phone_outlined, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -339,8 +329,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
+      validator: AppValidators.validatePhone,
     );
   }
   
@@ -352,7 +343,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       initialValue: state.selectedDepartment,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
-        labelText: 'Departamento',
+        labelText: 'Departamento *',
+        suffixIcon: const Icon(Icons.location_city_outlined, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -368,15 +360,15 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: state.departments
-          .map((dept) => DropdownMenuItem<String>(
+          .map<DropdownMenuItem<String>>((dept) => DropdownMenuItem<String>(
                 value: dept,
                 child: Text(dept),
               ))
           .toList(),
-      onChanged: (value) {
+      onChanged: (String? value) {
         if (value != null) {
           context.read<UpdateClientBloc>().add(DepartmentChangedEvent(value));
         }
@@ -395,10 +387,11 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     final colors = GlobalTheme.of(context);
     
     return DropdownButtonFormField<String>(
-      value: state.selectedCityCode,
+      initialValue: state.selectedCityCode,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
-        labelText: 'Ciudad',
+        labelText: 'Ciudad *',
+        suffixIcon: const Icon(Icons.map_outlined, size: 20),
         labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -414,7 +407,7 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: state.cities
           .map((city) => DropdownMenuItem<String>(
@@ -427,12 +420,7 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           context.read<UpdateClientBloc>().add(CityChangedEvent(cityCode: value));
         }
       },
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor seleccione una ciudad';
-        }
-        return null;
-      },
+      validator: AppValidators.validateCity,
     );
   }
 
@@ -444,7 +432,6 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       direccion: _addressController.text,
       nit: _documentoController.text,
       contacto: _contactoController.text,
-      // Add any other fields that need to be updated
     );
   }
 }
