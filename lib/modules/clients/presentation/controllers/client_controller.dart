@@ -10,6 +10,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.da
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_state.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/update_client_form.dart';
 
 class ClientController {
@@ -50,22 +51,29 @@ class ClientController {
       showDialog(
         context: context,
         builder: (dialogContext) {
-          return AlertDialog(
-            title: const Text('Editar Cliente'),
-            content: SingleChildScrollView(
-              child: SizedBox(
-                width: MediaQuery.of(dialogContext).size.width * 0.9,
-                child: BlocProvider.value(
-                  value: updateClientBloc,
-                  child: UpdateClientForm(client: client),
+          return BlocListener<UpdateClientBloc, UpdateClientState>(
+            bloc: updateClientBloc,
+            listenWhen: (previous, current) => current is UpdateClientSuccess,
+            listener: (context, state) {
+              Navigator.of(dialogContext).pop(true); // true indicates changes were made
+            },
+            child: AlertDialog(
+              title: const Text('Editar Cliente'),
+              content: SingleChildScrollView(
+                child: SizedBox(
+                  width: MediaQuery.of(dialogContext).size.width * 0.9,
+                  child: BlocProvider.value(
+                    value: updateClientBloc,
+                    child: UpdateClientForm(client: client),
+                  ),
                 ),
               ),
             ),
           );
         },
-      ).then((_) {
+      ).then((changesMade) {
         clientService.clearSelectedClient();
-        if (context.mounted) {
+        if (changesMade == true && context.mounted) {
           clientBloc.add(LoadClients());
         }
       });
