@@ -43,43 +43,56 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     );
   }
 
-  Future<void> _onDepartmentChanged(
-    DepartmentChangedEvent event,
-    Emitter<UpdateClientState> emit,
-  ) async {
-    if (state is! UpdateClientLoaded) return;
-    final currentState = state as UpdateClientLoaded;
+Future<void> _onDepartmentChanged(
+  DepartmentChangedEvent event,
+  Emitter<UpdateClientState> emit,
+) async {
+  if (state is! UpdateClientLoaded) return;
+  
+  final currentState = state as UpdateClientLoaded;
 
-    emit(currentState.copyWith(
-      selectedDepartment: event.department,
-      cities: [],
-      selectedCity: null,
-      isSubmitting: true, // Para mostrar un indicador de carga
-    ));
+  emit(currentState.copyWith(
+    selectedDepartment: event.department,
+    cities: [], // Clear cities when department changes
+    selectedCityCode: null, // Reset selected city
+    isSubmitting: true, // Show loading indicator
+  ));
 
-    final citiesResult = await getCitiesByDepartmentUseCase(event.department);
-    citiesResult.fold(
-      (failure) => emit(currentState.copyWith(
+  // Load cities for the selected department
+  final citiesResult = await getCitiesByDepartmentUseCase(event.department);
+  
+  citiesResult.fold(
+    (failure) {
+      emit(currentState.copyWith(
         errorMessage: 'Error al cargar las ciudades: $failure',
         isSubmitting: false,
-      )),
-      (citiesMap) {
-        final cities = citiesMap.map((c) => c['name'].toString()).toList();
-        if (state is UpdateClientLoaded) {
-          emit((state as UpdateClientLoaded).copyWith(cities: cities, isSubmitting: false));
-        }
-      },
-    );
-  }
-
+      ));
+    },
+    (citiesMap) {
+      // Convert API response to list of city maps with both name and code
+      final cities = citiesMap.map<Map<String, String>>((city) => {
+        'name': city['nomciud'].toString().toUpperCase(),
+        'code': city['codigo'].toString(),
+      }).toList();
+      
+      emit(currentState.copyWith(
+        cities: cities,
+        isSubmitting: false,
+      ));
+    },
+  );
+}
   void _onCityChanged(
     CityChangedEvent event,
     Emitter<UpdateClientState> emit,
   ) {
     if (state is! UpdateClientLoaded) return;
+    
     final currentState = state as UpdateClientLoaded;
-
-    emit(currentState.copyWith(selectedCity: event.city));
+    
+    emit(currentState.copyWith(
+      selectedCityCode: event.cityCode,
+    ));
   }
 
   Future<void> _onSetClient(
@@ -90,35 +103,55 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
 
     final departmentsResult = await getDepartmentsUseCase();
 
-    // Manejar el caso de fallo para los departamentos
     if (departmentsResult.isLeft()) {
       final failure = departmentsResult.getOrElse(() => []) as Failure;
       emit(UpdateClientError('Error al cargar los departamentos: $failure'));
       return;
     }
 
-    final departmentsMap = departmentsResult.getOrElse(() => []);
-    final departments = departmentsMap.map((d) => d['name'].toString()).toList();
-    List<String> cities = [];
+    final departmentsData = departmentsResult.getOrElse(() => []);
 
-    // Si hay un departamento, cargar las ciudades
+    final List<String> departments = (departmentsData as List)
+        .where((d) => d is Map && d['nomdpto'] != null)
+        .map<String>((d) => d['nomdpto'].toString())
+        .toList();
+
+    List<Map<String, String>> cities = [];
+    String? selectedCityCode;
+
     if (event.client.nomdpto != null && event.client.nomdpto!.isNotEmpty) {
       final citiesResult = await getCitiesByDepartmentUseCase(event.client.nomdpto!);
-      // No es necesario manejar el fallo aquí, si falla, la lista de ciudades quedará vacía
-      cities = citiesResult.fold(
+      
+      citiesResult.fold(
         (l) => [],
-        (r) => r.map((c) => c['name'].toString()).toList(),
+        (citiesMap) {
+          cities = citiesMap.map<Map<String, String>>((city) => ({
+                'name': city['nomciud'].toString().toUpperCase(),
+                'code': city['codigo'].toString(),
+              })).toList();
+          
+          // Find the selected city code if we have a city name
+          if (event.client.nomciud != null && event.client.nomciud!.isNotEmpty) {
+            try {
+              final selectedCity = cities.firstWhere(
+                (city) => city['name'] == event.client.nomciud,
+              );
+              selectedCityCode = selectedCity['code'];
+            } catch (e) {
+              selectedCityCode = null;
+            }
+          }
+        },
       );
     }
 
-    // Si el emitter sigue activo, emitir el estado final
     if (!emit.isDone) {
       emit(UpdateClientLoaded(
         client: event.client,
         departments: departments,
         cities: cities,
         selectedDepartment: event.client.nomdpto,
-        selectedCity: event.client.nomciud,
+        selectedCityCode: selectedCityCode,
       ));
     }
   }

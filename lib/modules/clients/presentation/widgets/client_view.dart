@@ -22,8 +22,8 @@ class ClientView extends StatelessWidget {
     final downloadFileBloc = context.read<DownloadFileBloc>();
     final updateClientBloc = context.read<UpdateClientBloc>();
     final controller = ClientController(
-      context, 
-      clientBloc, 
+      context,
+      clientBloc,
       downloadFileBloc: downloadFileBloc,
       updateClientBloc: updateClientBloc,
     );
@@ -34,7 +34,8 @@ class ClientView extends StatelessWidget {
         if (state.status == DownloadFileStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Error al descargar el archivo'),
+              content:
+                  Text(state.errorMessage ?? 'Error al descargar el archivo'),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
@@ -65,10 +66,12 @@ class ClientView extends StatelessWidget {
                               TextField(
                                 onChanged: controller.searchClients,
                                 decoration: const InputDecoration(
-                                  labelText: 'Buscar cliente por nombre o documento',
+                                  labelText:
+                                      'Buscar cliente por nombre o documento',
                                   prefixIcon: Icon(Icons.search),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12.0)),
                                   ),
                                 ),
                               ),
@@ -78,11 +81,12 @@ class ClientView extends StatelessWidget {
                                   ..updateStartDate(state.startDate)
                                   ..updateEndDate(state.endDate),
                                 model: const DateRangeSelectorModel(
-                                  title: 'Selecciona el rango de fechas para filtrar los reportes',
+                                  title:
+                                      'Selecciona el rango de fechas para filtrar los reportes',
                                 ),
-                                onStartDateSelected: (date) => 
+                                onStartDateSelected: (date) =>
                                     controller.updateDateRange(startDate: date),
-                                onEndDateSelected: (date) => 
+                                onEndDateSelected: (date) =>
                                     controller.updateDateRange(endDate: date),
                                 onClearDates: controller.resetDateRange,
                               ),
@@ -112,7 +116,7 @@ class ClientView extends StatelessWidget {
   }
 
   Widget _buildClientList(
-    BuildContext context, 
+    BuildContext context,
     ClientState state,
     ClientController controller,
   ) {
@@ -153,7 +157,7 @@ class ClientView extends StatelessWidget {
           Icon(
             Icons.search_off_rounded,
             size: 64,
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -216,7 +220,7 @@ class ClientView extends StatelessWidget {
           Icon(
             Icons.search_rounded,
             size: 64,
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(

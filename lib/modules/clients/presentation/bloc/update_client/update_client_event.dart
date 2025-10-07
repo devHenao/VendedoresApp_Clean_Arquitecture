@@ -1,6 +1,12 @@
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class UpdateClientEvent {}
+abstract class UpdateClientEvent extends Equatable {
+  const UpdateClientEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class LoadClientEvent extends UpdateClientEvent {
   final String clientId;
@@ -18,8 +24,12 @@ class DepartmentChangedEvent extends UpdateClientEvent {
 }
 
 class CityChangedEvent extends UpdateClientEvent {
-  final String city;
-  CityChangedEvent(this.city);
+  final String cityCode;
+  
+  const CityChangedEvent({required this.cityCode});
+  
+  @override
+  List<Object?> get props => [cityCode];
 }
 
 class SetClientEvent extends UpdateClientEvent {

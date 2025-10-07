@@ -47,7 +47,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Cliente actualizado con éxito')),
           );
-          Navigator.of(context).pop(true); // Indicar que la actualización fue exitosa
+          Navigator.of(context)
+              .pop(true); // Indicar que la actualización fue exitosa
         } else if (state is UpdateClientLoaded && state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: ${state.errorMessage}')),
@@ -147,17 +148,21 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   }
 
   Widget _buildDepartmentDropdown(UpdateClientLoaded state) {
-    final selectedValue = state.departments.toSet().contains(state.selectedDepartment)
+    final departments = state.departments ?? [];
+
+    final selectedValue = departments.contains(state.selectedDepartment)
         ? state.selectedDepartment
         : null;
 
     return DropdownButtonFormField<String>(
-      value: selectedValue,
+      initialValue: selectedValue,
+      isExpanded: true,
       decoration: const InputDecoration(
         labelText: 'Departamento',
         border: OutlineInputBorder(),
+        hintText: 'Seleccione un departamento',
       ),
-      items: state.departments.toSet()
+      items: departments
           .map((dept) => DropdownMenuItem(
                 value: dept,
                 child: Text(dept),
@@ -174,29 +179,39 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   }
 
   Widget _buildCityDropdown(UpdateClientLoaded state) {
-    final selectedValue = state.cities.toSet().contains(state.selectedCity)
-        ? state.selectedCity
-        : null;
+    final bool hasCities = state.cities.isNotEmpty;
 
     return DropdownButtonFormField<String>(
-      value: selectedValue,
-      decoration: const InputDecoration(
+      value: state.selectedCityCode,
+      isExpanded: true,
+      decoration: InputDecoration(
         labelText: 'Ciudad',
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
+        hintText: hasCities
+            ? 'Seleccione una ciudad'
+            : 'Seleccione un departamento primero',
       ),
-      items: state.cities.toSet()
-          .map((city) => DropdownMenuItem(
-                value: city,
-                child: Text(city),
-              ))
-          .toList(),
-      onChanged: (value) {
-        if (value != null) {
-          context.read<UpdateClientBloc>().add(CityChangedEvent(value));
-        }
-      },
+      items: hasCities
+          ? state.cities.map<DropdownMenuItem<String>>((city) {
+              final cityCode = city['code'] ?? '';
+              final cityName = city['name'] ?? '';
+              return DropdownMenuItem<String>(
+                value: cityCode,
+                child: Text(cityName),
+              );
+            }).toList()
+          : null,
+      onChanged: hasCities
+          ? (String? cityCode) {
+              if (cityCode != null) {
+                context.read<UpdateClientBloc>().add(
+                  CityChangedEvent(cityCode: cityCode),
+                );
+              }
+            }
+          : null,
       validator: (value) =>
-          value == null ? 'Por favor seleccione una ciudad' : null,
+          value == null || value.isEmpty ? 'Por favor seleccione una ciudad' : null,
     );
   }
 
@@ -232,7 +247,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       tel1: _phoneController.text,
       direccion: _addressController.text,
       nomdpto: state.selectedDepartment,
-      nomciud: state.selectedCity,
+      nomciud: state.selectedCityName,
+      // The Client model doesn't have a separate field for city code,
+      // so we only update the city name (nomciud) which is already set above
     );
   }
 }
