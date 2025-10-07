@@ -1,9 +1,9 @@
-import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_event.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_state.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UpdateClientForm extends StatefulWidget {
   final Client client;
@@ -19,15 +19,23 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _addressController;
+  late TextEditingController _documentoController;
+  late TextEditingController _contactoController;
 
   @override
   void initState() {
     super.initState();
-    context.read<UpdateClientBloc>().add(SetClientEvent(widget.client));
-    _nameController = TextEditingController(text: widget.client.nombre);
-    _emailController = TextEditingController(text: widget.client.email);
-    _phoneController = TextEditingController(text: widget.client.tel1);
-    _addressController = TextEditingController(text: widget.client.direccion);
+    _nameController = TextEditingController(text: widget.client.nombre ?? '');
+    _emailController = TextEditingController(text: widget.client.email ?? '');
+    _phoneController = TextEditingController(text: widget.client.tel1 ?? '');
+    _addressController = TextEditingController(text: widget.client.direccion ?? '');
+    _documentoController = TextEditingController(text: widget.client.nit ?? '');
+    _contactoController = TextEditingController(text: widget.client.contacto ?? '');
+    
+    // Initialize the form with the client data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UpdateClientBloc>().add(SetClientEvent(widget.client));
+    });
   }
 
   @override
@@ -36,6 +44,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _documentoController.dispose();
+    _contactoController.dispose();
     super.dispose();
   }
 
@@ -47,62 +57,66 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Cliente actualizado con éxito')),
           );
-          Navigator.of(context)
-              .pop(true); // Indicar que la actualización fue exitosa
-        } else if (state is UpdateClientLoaded && state.errorMessage != null) {
+          Navigator.of(context).pop(true);
+        } else if (state is UpdateClientError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${state.errorMessage}')),
+            SnackBar(content: Text('Error: ${state.message}')),
           );
         }
       },
       builder: (context, state) {
-        if (state is UpdateClientLoading || state is UpdateClientInitial) {
+        if (state is UpdateClientLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is UpdateClientLoaded) {
-          _updateControllers(state.client);
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildNameField(),
-                  const SizedBox(height: 16),
-                  _buildEmailField(),
-                  const SizedBox(height: 16),
-                  _buildPhoneField(),
-                  const SizedBox(height: 16),
-                  _buildDepartmentDropdown(state),
-                  const SizedBox(height: 16),
-                  _buildCityDropdown(state),
-                  const SizedBox(height: 16),
-                  _buildAddressField(),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: state.isSubmitting
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              final updatedClient = _createUpdatedClient(state);
-                              context.read<UpdateClientBloc>().add(
-                                    UpdateClientSubmittedEvent(updatedClient),
-                                  );
-                            }
-                          },
-                    child: state.isSubmitting
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Actualizar'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        } else if (state is UpdateClientError) {
-          return Center(child: Text(state.message));
+          return _buildForm(state);
         }
-        return const Center(child: Text('Estado no manejado'));
+        return const Center(child: Text('Error al cargar el formulario'));
       },
+    );
+  }
+
+  Widget _buildForm(UpdateClientLoaded state) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildDocumentoField(),
+            const SizedBox(height: 16),
+            _buildNameField(),
+            const SizedBox(height: 16),
+            _buildContactoField(),
+            const SizedBox(height: 16),
+            _buildEmailField(),
+            const SizedBox(height: 16),
+            _buildPhoneField(),
+            const SizedBox(height: 16),
+            _buildDepartmentDropdown(state),
+            const SizedBox(height: 16),
+            _buildCityDropdown(state),
+            const SizedBox(height: 16),
+            _buildAddressField(),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: state.isSubmitting
+                  ? null
+                  : () {
+                      if (_formKey.currentState!.validate()) {
+                        final updatedClient = _createUpdatedClient(state);
+                        context.read<UpdateClientBloc>().add(
+                              UpdateClientSubmittedEvent(updatedClient),
+                            );
+                      }
+                    },
+              child: state.isSubmitting
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Actualizar'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -114,7 +128,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         border: OutlineInputBorder(),
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) return 'El nombre es requerido';
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese el nombre';
+        }
         return null;
       },
     );
@@ -124,13 +140,16 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     return TextFormField(
       controller: _emailController,
       decoration: const InputDecoration(
-        labelText: 'Email',
+        labelText: 'Correo electrónico',
         border: OutlineInputBorder(),
       ),
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
-        if (value == null || value.isEmpty) return 'El email es requerido';
-        if (!value.contains('@')) return 'Email inválido';
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese el correo electrónico';
+        } else if (!value.contains('@')) {
+          return 'Por favor ingrese un correo electrónico válido';
+        }
         return null;
       },
     );
@@ -144,74 +163,12 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         border: OutlineInputBorder(),
       ),
       keyboardType: TextInputType.phone,
-    );
-  }
-
-  Widget _buildDepartmentDropdown(UpdateClientLoaded state) {
-    final departments = state.departments;
-
-    final selectedValue = departments.contains(state.selectedDepartment)
-        ? state.selectedDepartment
-        : null;
-
-    return DropdownButtonFormField<String>(
-      initialValue: selectedValue,
-      isExpanded: true,
-      decoration: const InputDecoration(
-        labelText: 'Departamento',
-        border: OutlineInputBorder(),
-        hintText: 'Seleccione un departamento',
-      ),
-      items: departments
-          .map((dept) => DropdownMenuItem(
-                value: dept,
-                child: Text(dept),
-              ))
-          .toList(),
-      onChanged: (value) {
-        if (value != null) {
-          context.read<UpdateClientBloc>().add(DepartmentChangedEvent(value));
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese el teléfono';
         }
+        return null;
       },
-      validator: (value) =>
-          value == null ? 'Por favor seleccione un departamento' : null,
-    );
-  }
-
-  Widget _buildCityDropdown(UpdateClientLoaded state) {
-    final bool hasCities = state.cities.isNotEmpty;
-
-    return DropdownButtonFormField<String>(
-      value: state.selectedCityCode,
-      isExpanded: true,
-      decoration: InputDecoration(
-        labelText: 'Ciudad',
-        border: const OutlineInputBorder(),
-        hintText: hasCities
-            ? 'Seleccione una ciudad'
-            : 'Seleccione un departamento primero',
-      ),
-      items: hasCities
-          ? state.cities.map<DropdownMenuItem<String>>((city) {
-              final cityCode = city['code'] ?? '';
-              final cityName = city['name'] ?? '';
-              return DropdownMenuItem<String>(
-                value: cityCode,
-                child: Text(cityName),
-              );
-            }).toList()
-          : null,
-      onChanged: hasCities
-          ? (String? cityCode) {
-              if (cityCode != null) {
-                context.read<UpdateClientBloc>().add(
-                  CityChangedEvent(cityCode: cityCode),
-                );
-              }
-            }
-          : null,
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Por favor seleccione una ciudad' : null,
     );
   }
 
@@ -222,22 +179,102 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         labelText: 'Dirección',
         border: OutlineInputBorder(),
       ),
+      maxLines: 2,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese la dirección';
+        }
+        return null;
+      },
     );
   }
 
-  void _updateControllers(Client client) {
-    if (_nameController.text != client.nombre) {
-      _nameController.text = client.nombre;
-    }
-    if (_emailController.text != client.email) {
-      _emailController.text = client.email ?? '';
-    }
-    if (_phoneController.text != client.tel1) {
-      _phoneController.text = client.tel1 ?? '';
-    }
-    if (_addressController.text != client.direccion) {
-      _addressController.text = client.direccion ?? '';
-    }
+  Widget _buildDocumentoField() {
+    return TextFormField(
+      controller: _documentoController,
+      decoration: InputDecoration(
+        labelText: 'Documento (NIT)',
+        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.grey[200],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      ),
+      style: TextStyle(color: Colors.grey[600]),
+      enabled: false, // Hace que el campo sea de solo lectura
+      keyboardType: TextInputType.none, // Deshabilita el teclado
+    );
+  }
+
+  Widget _buildContactoField() {
+    return TextFormField(
+      controller: _contactoController,
+      decoration: const InputDecoration(
+        labelText: 'Contacto',
+        border: OutlineInputBorder(),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese el contacto';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildDepartmentDropdown(UpdateClientLoaded state) {
+    return DropdownButtonFormField<String>(
+      value: state.selectedDepartment,
+      decoration: const InputDecoration(
+        labelText: 'Departamento',
+        border: OutlineInputBorder(),
+      ),
+      items: state.departments
+          .map((dept) => DropdownMenuItem(
+                value: dept,
+                child: Text(dept),
+              ))
+          .toList(),
+      onChanged: (value) {
+        if (value != null) {
+          context
+              .read<UpdateClientBloc>()
+              .add(DepartmentChangedEvent(value));
+        }
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor seleccione un departamento';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCityDropdown(UpdateClientLoaded state) {
+    return DropdownButtonFormField<String>(
+      value: state.selectedCityCode,
+      decoration: const InputDecoration(
+        labelText: 'Ciudad',
+        border: OutlineInputBorder(),
+      ),
+      items: state.cities
+          .map((city) => DropdownMenuItem(
+                value: city['code'],
+                child: Text(city['name'] ?? ''),
+              ))
+          .toList(),
+      onChanged: (value) {
+        if (value != null) {
+          context.read<UpdateClientBloc>().add(CityChangedEvent(cityCode: value));
+        }
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor seleccione una ciudad';
+        }
+        return null;
+      },
+    );
   }
 
   Client _createUpdatedClient(UpdateClientLoaded state) {
@@ -246,10 +283,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       email: _emailController.text,
       tel1: _phoneController.text,
       direccion: _addressController.text,
-      nomdpto: state.selectedDepartment,
-      nomciud: state.selectedCityName,
-      // The Client model doesn't have a separate field for city code,
-      // so we only update the city name (nomciud) which is already set above
+      nit: _documentoController.text,
+      contacto: _contactoController.text,
+      // Add any other fields that need to be updated
     );
   }
 }
