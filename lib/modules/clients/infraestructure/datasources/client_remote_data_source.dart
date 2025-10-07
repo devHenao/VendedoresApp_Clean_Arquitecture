@@ -146,11 +146,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     final options = Options(headers: _getHeaders(token));
 
     try {
-      print('Solicitando lista de departamentos...');
       final response = await dio.get(url, options: options);
-
-      print('Respuesta de departamentos (raw): ${response.data}');
-      print('Status code: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         // Verificar si la respuesta tiene la estructura esperada
@@ -186,7 +182,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
           return {'name': dept?.toString() ?? 'Departamento desconocido'};
         }).toList();
 
-        print('Departamentos procesados: $result');
         return result;
       } else {
         final errorMessage = response.data is Map
@@ -195,8 +190,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         throw ServerException(errorMessage.toString());
       }
     } on DioException catch (e) {
-      print('Error en getDepartments: ${e.message}');
-      print('Datos de error: ${e.response?.data}');
 
       String errorMessage = 'Error al obtener los departamentos';
 
@@ -213,7 +206,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
 
       throw ServerException(errorMessage);
     } catch (e) {
-      print('Error inesperado en getDepartments: $e');
       throw ServerException('Error inesperado al obtener los departamentos');
     }
   }
@@ -221,7 +213,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
   @override
   Future<List<Map<String, dynamic>>> getCitiesByDepartment(
       String token, String department) async {
-    final url = '$baseUrlMaster/getListCities';
+    const url = '$baseUrlMaster/getListCities';
     final options = Options(headers: {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
@@ -231,18 +223,12 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     final data = jsonEncode({'nomdpto': department});
 
     try {
-      print('Solicitando ciudades para departamento: $department');
-      print('URL: $url');
-      print('Headers: ${options.headers}');
-      print('Body: $data');
 
       final response = await dio.post(
         url,
         data: data,
         options: options,
       );
-
-      print('Respuesta de ciudades: ${response.data}');
 
       if (response.statusCode == 200) {
         // Verificar si la respuesta tiene la estructura esperada
@@ -282,10 +268,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
         throw ServerException(errorMessage.toString());
       }
     } on DioException catch (e) {
-      print('Error en getCitiesByDepartment: ${e.message}');
-      print('Datos de error: ${e.response?.data}');
-      print('Request: ${e.requestOptions.data}');
-      print('Headers: ${e.requestOptions.headers}');
 
       String errorMessage = 'Error al obtener las ciudades';
       if (e.response?.data != null) {
@@ -301,7 +283,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
 
       throw ServerException(errorMessage);
     } catch (e) {
-      print('Error inesperado en getCitiesByDepartment: $e');
       throw ServerException('Error inesperado al obtener las ciudades: $e');
     }
   }

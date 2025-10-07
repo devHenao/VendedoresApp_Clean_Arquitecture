@@ -4,7 +4,6 @@ import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/repositories/client_repository.dart';
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
 
-/// Caso de uso para obtener todos los clientes
 class GetClientsUseCase {
   final ClientRepository repository;
 
@@ -15,7 +14,6 @@ class GetClientsUseCase {
   }
 }
 
-/// Caso de uso para buscar clientes por un término de búsqueda
 class SearchClientsUseCase {
   final ClientRepository repository;
 
@@ -26,7 +24,6 @@ class SearchClientsUseCase {
   }
 }
 
-/// Caso de uso para actualizar la información de un cliente
 class UpdateClientUseCase {
   final ClientRepository repository;
 
@@ -37,7 +34,6 @@ class UpdateClientUseCase {
   }
 }
 
-/// Caso de uso para obtener la lista de departamentos
 class GetDepartmentsUseCase {
   final ClientRepository repository;
 
@@ -48,7 +44,6 @@ class GetDepartmentsUseCase {
   }
 }
 
-/// Caso de uso para obtener las ciudades de un departamento
 class GetCitiesByDepartmentUseCase {
   final ClientRepository repository;
 
@@ -59,7 +54,6 @@ class GetCitiesByDepartmentUseCase {
   }
 }
 
-/// Caso de uso para descargar un archivo de un cliente
 class DownloadClientFileUseCase {
   final ClientRepository repository;
 
