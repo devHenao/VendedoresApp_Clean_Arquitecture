@@ -52,16 +52,29 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = GlobalTheme.of(context);
     return BlocConsumer<UpdateClientBloc, UpdateClientState>(
       listener: (context, state) {
-        if (state is UpdateClientLoaded && state.isSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cliente actualizado con éxito')),
-          );
-          Navigator.of(context).pop(true);
+        if (state is UpdateClientLoaded) {
+          if (state.isSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Cliente actualizado con éxito')),
+            );
+            Navigator.of(context).pop(true);
+          } else if (state.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage ?? 'Error al actualizar el cliente'),
+                backgroundColor: theme.error,
+              ),
+            );
+          }
         } else if (state is UpdateClientError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: theme.error,
+            ),
           );
         }
       },

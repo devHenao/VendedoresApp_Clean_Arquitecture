@@ -3,7 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'client_model.g.dart';
 
-// Usa fieldRename para mapear automáticamente camelCase a snake_case (o lowercase en este caso)
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ClientModel extends Client {
   const ClientModel({

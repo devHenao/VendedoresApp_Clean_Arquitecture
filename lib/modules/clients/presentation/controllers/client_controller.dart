@@ -40,7 +40,7 @@ class ClientController {
   }
 
   void resetDateRange() {
-    clientBloc.add(UpdateDateRange(startDate: null, endDate: null));
+    clientBloc.add(const UpdateDateRange(startDate: null, endDate: null));
   }
 
   void showClientDetails(Client client) {

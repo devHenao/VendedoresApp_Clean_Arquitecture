@@ -9,13 +9,13 @@ class ClientCard extends StatelessWidget {
   final VoidCallback? onViewSales;
 
   const ClientCard({
-    Key? key,
+    super.key,
     required this.client,
     this.onViewDetails,
     this.onViewWallet,
     this.onViewPending,
     this.onViewSales,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -122,7 +122,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
 
   @override
   Future<ClientModel> updateClient(String token, ClientModel client) async {
-    final url = '$baseUrl/clients/${client.nit}';
+    const url = '$baseUrl/clients/updateClientByNit';
     final options = Options(headers: _getHeaders(token));
     final data = client.toJson();
 
@@ -149,17 +149,14 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       final response = await dio.get(url, options: options);
 
       if (response.statusCode == 200) {
-        // Verificar si la respuesta tiene la estructura esperada
         if (response.data is! Map<String, dynamic>) {
           throw const FormatException('Formato de respuesta inválido');
         }
 
-        // Verificar si hay un error en la respuesta
         if (response.data['error'] != null) {
           throw ServerException(response.data['error'].toString());
         }
 
-        // Verificar si existe la propiedad 'data' y es una lista
         if (response.data['data'] == null) {
           throw const FormatException(
               'No se encontraron datos de departamentos');
@@ -170,7 +167,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
               'Formato de datos de departamentos inválido');
         }
 
-        // Convertir la respuesta a una lista de mapas
         final List<dynamic> departmentsData = response.data['data'];
 
         final result = departmentsData.map<Map<String, dynamic>>((dept) {
@@ -219,7 +215,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       'Content-Type': 'application/json',
     });
 
-    // Usando el mismo formato que en la versión que funcionaba
     final data = jsonEncode({'nomdpto': department});
 
     try {
@@ -231,17 +226,14 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        // Verificar si la respuesta tiene la estructura esperada
         if (response.data is! Map<String, dynamic>) {
           throw const FormatException('Formato de respuesta inválido');
         }
 
-        // Verificar si hay un error en la respuesta
         if (response.data['error'] != null) {
           throw ServerException(response.data['error'].toString());
         }
 
-        // Verificar si existe la propiedad 'data' y es una lista
         if (response.data['data'] == null) {
           throw const FormatException('No se encontraron datos de ciudades');
         }
@@ -250,7 +242,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
           throw const FormatException('Formato de datos de ciudades inválido');
         }
 
-        // Convertir la respuesta a una lista de mapas
         final List<dynamic> citiesData = response.data['data'];
 
         return citiesData.map<Map<String, dynamic>>((city) {
@@ -343,8 +334,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       final bytes = response.data as List<int>;
 
       if (response.statusCode == 200) {
-        // Determinar la extensión basada en el tipo de contenido de la respuesta
-        String extension = 'pdf'; // Por defecto PDF
+        String extension = 'pdf'; 
         final contentType =
             response.headers.value('content-type')?.toLowerCase() ?? '';
 
@@ -359,7 +349,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
           const methodChannel =
               MethodChannel('com.mycompany.appvendedores/media_store');
           try {
-            // Determinar el mimeType basado en la extensión
             final mimeType = extension == 'pdf'
                 ? 'application/pdf'
                 : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -380,7 +369,6 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
             throw ServerException('Error al guardar el archivo: $e');
           }
         } else if (Platform.isIOS) {
-          // Para iOS, guardar en documentos
           final directory = await getApplicationDocumentsDirectory();
           final filePath = '${directory.path}/$fileName';
           await File(filePath).writeAsBytes(bytes);

@@ -9,9 +9,9 @@ class UpdateClientLoading extends UpdateClientState {}
 class UpdateClientLoaded extends UpdateClientState {
   final Client client;
   final List<String> departments;
-  final List<Map<String, String>> cities; // Store both name and code
+  final List<Map<String, String>> cities;
   final String? selectedDepartment;
-  final String? selectedCityCode; // Store the selected city code
+  final String? selectedCityCode;
   final bool isSubmitting;
   final bool isSuccess;
   final String? errorMessage;
@@ -27,7 +27,6 @@ class UpdateClientLoaded extends UpdateClientState {
     this.errorMessage,
   });
 
-  // Helper getter to get the selected city name
   String? get selectedCityName {
     if (selectedCityCode == null) return null;
     try {
@@ -40,7 +39,6 @@ class UpdateClientLoaded extends UpdateClientState {
     }
   }
 
-  @override
   List<Object?> get props => [
         client,
         departments,

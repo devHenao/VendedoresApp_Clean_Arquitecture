@@ -10,17 +10,17 @@ abstract class UpdateClientEvent extends Equatable {
 
 class LoadClientEvent extends UpdateClientEvent {
   final String clientId;
-  LoadClientEvent(this.clientId);
+  const LoadClientEvent(this.clientId);
 }
 
 class UpdateClientSubmittedEvent extends UpdateClientEvent {
   final Client client;
-  UpdateClientSubmittedEvent(this.client);
+  const UpdateClientSubmittedEvent(this.client);
 }
 
 class DepartmentChangedEvent extends UpdateClientEvent {
   final String department;
-  DepartmentChangedEvent(this.department);
+  const DepartmentChangedEvent(this.department);
 }
 
 class CityChangedEvent extends UpdateClientEvent {
@@ -34,5 +34,5 @@ class CityChangedEvent extends UpdateClientEvent {
 
 class SetClientEvent extends UpdateClientEvent {
   final Client client;
-  SetClientEvent(this.client);
+  const SetClientEvent(this.client);
 }
