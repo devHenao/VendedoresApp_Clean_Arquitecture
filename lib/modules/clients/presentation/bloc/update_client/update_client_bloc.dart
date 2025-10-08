@@ -50,8 +50,14 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     if (state is! UpdateClientLoaded) return;
 
     final currentState = state as UpdateClientLoaded;
+    
+    final updatedClient = currentState.client.copyWith(
+      nomdpto: event.department,
+      nomciud: null, 
+    );
 
     emit(currentState.copyWith(
+      client: updatedClient,
       selectedDepartment: event.department,
       cities: [],
       selectedCityCode: null,
@@ -64,6 +70,10 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
       citiesResult.fold(
         (failure) {
           emit(currentState.copyWith(
+            client: updatedClient,
+            selectedDepartment: event.department,
+            cities: [],
+            selectedCityCode: null,
             errorMessage: 'Error al cargar las ciudades: $failure',
             isLoadingCities: false,
           ));
@@ -77,6 +87,8 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
               .toList();
 
           emit(currentState.copyWith(
+            client: updatedClient,
+            selectedDepartment: event.department,
             cities: cities,
             isLoadingCities: false,
           ));
@@ -84,6 +96,8 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
       );
     } catch (e) {
       emit(currentState.copyWith(
+        client: updatedClient,
+        selectedDepartment: event.department,
         errorMessage: 'Error inesperado al cargar las ciudades: $e',
         isLoadingCities: false,
       ));
@@ -97,8 +111,20 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     if (state is! UpdateClientLoaded) return;
 
     final currentState = state as UpdateClientLoaded;
+    
+    // Find the selected city name from the cities list
+    final selectedCity = currentState.cities.firstWhere(
+      (city) => city['code'] == event.cityCode,
+      orElse: () => {'name': ''},
+    );
+    
+    // Update the client with the new city
+    final updatedClient = currentState.client.copyWith(
+      nomciud: selectedCity['name'],
+    );
 
     emit(currentState.copyWith(
+      client: updatedClient,
       selectedCityCode: event.cityCode,
     ));
   }
