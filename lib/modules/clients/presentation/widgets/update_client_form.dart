@@ -417,15 +417,27 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   Widget _buildCityDropdown(UpdateClientLoaded state) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
+    
+    // Check if the selectedCityCode exists in the current cities list
+    final bool isSelectedCityValid = state.selectedCityCode != null &&
+        state.cities.any((city) => city['code'] == state.selectedCityCode);
+    
+    // Only use the value if it exists in the current cities list
+    final String? dropdownValue = isSelectedCityValid ? state.selectedCityCode : null;
 
     return DropdownButtonFormField<String>(
-      initialValue: state.selectedCityCode,
+      value: dropdownValue,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Ciudad *',
-        suffixIcon: const Icon(Icons.map_outlined, size: 20),
-        labelStyle:
-            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        suffixIcon: state.isLoadingCities
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.map_outlined, size: 20),
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -440,23 +452,29 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: state.cities
           .map((city) => DropdownMenuItem<String>(
-                value: city['code'] ?? '',
+                value: city['code'],
                 child: Text(city['name'] ?? ''),
               ))
           .toList(),
-      onChanged: (value) {
-        if (value != null) {
-          context
-              .read<UpdateClientBloc>()
-              .add(CityChangedEvent(cityCode: value));
+      onChanged: state.isLoadingCities
+          ? null // Disable dropdown while loading
+          : (value) {
+              if (value != null) {
+                context
+                    .read<UpdateClientBloc>()
+                    .add(CityChangedEvent(cityCode: value));
+              }
+            },
+      validator: (value) {
+        if (state.isLoadingCities) {
+          return 'Cargando ciudades...';
         }
+        return AppValidators.validateCity(value);
       },
-      validator: AppValidators.validateCity,
     );
   }
 

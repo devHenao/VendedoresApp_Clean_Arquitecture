@@ -55,32 +55,39 @@ Future<void> _onDepartmentChanged(
     selectedDepartment: event.department,
     cities: [], // Clear cities when department changes
     selectedCityCode: null, // Reset selected city
-    isSubmitting: true, // Show loading indicator
+    isLoadingCities: true, // Show loading state for cities
   ));
 
   // Load cities for the selected department
-  final citiesResult = await getCitiesByDepartmentUseCase(event.department);
-  
-  citiesResult.fold(
-    (failure) {
-      emit(currentState.copyWith(
-        errorMessage: 'Error al cargar las ciudades: $failure',
-        isSubmitting: false,
-      ));
-    },
-    (citiesMap) {
-      // Convert API response to list of city maps with both name and code
-      final cities = citiesMap.map<Map<String, String>>((city) => {
-        'name': city['nomciud'].toString().toUpperCase(),
-        'code': city['codigo'].toString(),
-      }).toList();
-      
-      emit(currentState.copyWith(
-        cities: cities,
-        isSubmitting: false,
-      ));
-    },
-  );
+  try {
+    final citiesResult = await getCitiesByDepartmentUseCase(event.department);
+    
+    citiesResult.fold(
+      (failure) {
+        emit(currentState.copyWith(
+          errorMessage: 'Error al cargar las ciudades: $failure',
+          isLoadingCities: false,
+        ));
+      },
+      (citiesMap) {
+        // Convert API response to list of city maps with both name and code
+        final cities = citiesMap.map<Map<String, String>>((city) => {
+          'name': city['nomciud'].toString().toUpperCase(),
+          'code': city['codigo'].toString(),
+        }).toList();
+        
+        emit(currentState.copyWith(
+          cities: cities,
+          isLoadingCities: false,
+        ));
+      },
+    );
+  } catch (e) {
+    emit(currentState.copyWith(
+      errorMessage: 'Error inesperado al cargar las ciudades: $e',
+      isLoadingCities: false,
+    ));
+  }
 }
   void _onCityChanged(
     CityChangedEvent event,

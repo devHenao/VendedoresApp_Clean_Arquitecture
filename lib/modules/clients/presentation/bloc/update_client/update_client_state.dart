@@ -14,6 +14,7 @@ class UpdateClientLoaded extends UpdateClientState {
   final String? selectedCityCode;
   final bool isSubmitting;
   final bool isSuccess;
+  final bool isLoadingCities;
   final String? errorMessage;
 
   UpdateClientLoaded({
@@ -24,6 +25,7 @@ class UpdateClientLoaded extends UpdateClientState {
     this.selectedCityCode,
     this.isSubmitting = false,
     this.isSuccess = false,
+    this.isLoadingCities = false,
     this.errorMessage,
   });
 
@@ -47,6 +49,7 @@ class UpdateClientLoaded extends UpdateClientState {
         selectedCityCode,
         isSubmitting,
         isSuccess,
+        isLoadingCities,
         errorMessage,
       ];
 
@@ -58,6 +61,7 @@ class UpdateClientLoaded extends UpdateClientState {
     String? selectedCityCode,
     bool? isSubmitting,
     bool? isSuccess,
+    bool? isLoadingCities,
     String? errorMessage,
   }) {
     return UpdateClientLoaded(
@@ -68,6 +72,7 @@ class UpdateClientLoaded extends UpdateClientState {
       selectedCityCode: selectedCityCode ?? this.selectedCityCode,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isSuccess: isSuccess ?? this.isSuccess,
+      isLoadingCities: isLoadingCities ?? this.isLoadingCities,
       errorMessage: errorMessage,
     );
   }
