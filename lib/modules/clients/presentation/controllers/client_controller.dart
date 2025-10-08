@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 import 'package:app_vendedores/modules/clients/domain/enums/download_type.dart';
@@ -10,8 +9,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/client_event.da
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_bloc.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_bloc.dart';
-import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_state.dart';
-import 'package:app_vendedores/modules/clients/presentation/widgets/update_client_form.dart';
+import 'package:app_vendedores/modules/clients/presentation/widgets/update_client_dialog.dart';
 
 class ClientController {
   final BuildContext context;
@@ -50,27 +48,11 @@ class ClientController {
     try {
       showDialog(
         context: context,
-        builder: (dialogContext) {
-          return BlocListener<UpdateClientBloc, UpdateClientState>(
-            bloc: updateClientBloc,
-            listenWhen: (previous, current) => current is UpdateClientSuccess,
-            listener: (context, state) {
-              Navigator.of(dialogContext).pop(true);
-            },
-            child: AlertDialog(
-              title: const Text('Editar Cliente'),
-              content: SingleChildScrollView(
-                child: SizedBox(
-                  width: MediaQuery.of(dialogContext).size.width * 0.9,
-                  child: BlocProvider.value(
-                    value: updateClientBloc,
-                    child: UpdateClientForm(client: client),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
+        builder: (dialogContext) => UpdateClientDialog(
+          client: client,
+          updateClientBloc: updateClientBloc,
+          onSuccess: () => Navigator.of(dialogContext).pop(true),
+        ),
       ).then((changesMade) {
         clientService.clearSelectedClient();
         if (changesMade == true && context.mounted) {
