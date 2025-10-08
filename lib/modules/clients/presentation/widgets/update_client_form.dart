@@ -418,15 +418,13 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
     
-    // Check if the selectedCityCode exists in the current cities list
     final bool isSelectedCityValid = state.selectedCityCode != null &&
         state.cities.any((city) => city['code'] == state.selectedCityCode);
     
-    // Only use the value if it exists in the current cities list
     final String? dropdownValue = isSelectedCityValid ? state.selectedCityCode : null;
 
     return DropdownButtonFormField<String>(
-      value: dropdownValue,
+      initialValue: dropdownValue,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Ciudad *',
@@ -461,7 +459,7 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
               ))
           .toList(),
       onChanged: state.isLoadingCities
-          ? null // Disable dropdown while loading
+          ? null 
           : (value) {
               if (value != null) {
                 context

@@ -43,58 +43,61 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     );
   }
 
-Future<void> _onDepartmentChanged(
-  DepartmentChangedEvent event,
-  Emitter<UpdateClientState> emit,
-) async {
-  if (state is! UpdateClientLoaded) return;
-  
-  final currentState = state as UpdateClientLoaded;
+  Future<void> _onDepartmentChanged(
+    DepartmentChangedEvent event,
+    Emitter<UpdateClientState> emit,
+  ) async {
+    if (state is! UpdateClientLoaded) return;
 
-  emit(currentState.copyWith(
-    selectedDepartment: event.department,
-    cities: [],
-    selectedCityCode: null,
-    isLoadingCities: true,
-  ));
+    final currentState = state as UpdateClientLoaded;
 
-  try {
-    final citiesResult = await getCitiesByDepartmentUseCase(event.department);
-    
-    citiesResult.fold(
-      (failure) {
-        emit(currentState.copyWith(
-          errorMessage: 'Error al cargar las ciudades: $failure',
-          isLoadingCities: false,
-        ));
-      },
-      (citiesMap) {
-        final cities = citiesMap.map<Map<String, String>>((city) => {
-          'name': city['nomciud'].toString().toUpperCase(),
-          'code': city['codigo'].toString(),
-        }).toList();
-        
-        emit(currentState.copyWith(
-          cities: cities,
-          isLoadingCities: false,
-        ));
-      },
-    );
-  } catch (e) {
     emit(currentState.copyWith(
-      errorMessage: 'Error inesperado al cargar las ciudades: $e',
-      isLoadingCities: false,
+      selectedDepartment: event.department,
+      cities: [],
+      selectedCityCode: null,
+      isLoadingCities: true,
     ));
+
+    try {
+      final citiesResult = await getCitiesByDepartmentUseCase(event.department);
+
+      citiesResult.fold(
+        (failure) {
+          emit(currentState.copyWith(
+            errorMessage: 'Error al cargar las ciudades: $failure',
+            isLoadingCities: false,
+          ));
+        },
+        (citiesMap) {
+          final cities = citiesMap
+              .map<Map<String, String>>((city) => {
+                    'name': city['nomciud'].toString().toUpperCase(),
+                    'code': city['codigo'].toString(),
+                  })
+              .toList();
+
+          emit(currentState.copyWith(
+            cities: cities,
+            isLoadingCities: false,
+          ));
+        },
+      );
+    } catch (e) {
+      emit(currentState.copyWith(
+        errorMessage: 'Error inesperado al cargar las ciudades: $e',
+        isLoadingCities: false,
+      ));
+    }
   }
-}
+
   void _onCityChanged(
     CityChangedEvent event,
     Emitter<UpdateClientState> emit,
   ) {
     if (state is! UpdateClientLoaded) return;
-    
+
     final currentState = state as UpdateClientLoaded;
-    
+
     emit(currentState.copyWith(
       selectedCityCode: event.cityCode,
     ));
@@ -125,17 +128,21 @@ Future<void> _onDepartmentChanged(
     String? selectedCityCode;
 
     if (event.client.nomdpto != null && event.client.nomdpto!.isNotEmpty) {
-      final citiesResult = await getCitiesByDepartmentUseCase(event.client.nomdpto!);
-      
+      final citiesResult =
+          await getCitiesByDepartmentUseCase(event.client.nomdpto!);
+
       citiesResult.fold(
         (l) => [],
         (citiesMap) {
-          cities = citiesMap.map<Map<String, String>>((city) => ({
-                'name': city['nomciud'].toString().toUpperCase(),
-                'code': city['codigo'].toString(),
-              })).toList();
-          
-          if (event.client.nomciud != null && event.client.nomciud!.isNotEmpty) {
+          cities = citiesMap
+              .map<Map<String, String>>((city) => ({
+                    'name': city['nomciud'].toString().toUpperCase(),
+                    'code': city['codigo'].toString(),
+                  }))
+              .toList();
+
+          if (event.client.nomciud != null &&
+              event.client.nomciud!.isNotEmpty) {
             try {
               final selectedCity = cities.firstWhere(
                 (city) => city['name'] == event.client.nomciud,

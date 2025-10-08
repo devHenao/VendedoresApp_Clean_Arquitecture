@@ -32,7 +32,6 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
     DownloadFileRequested event,
     Emitter<DownloadFileState> emit,
   ) async {
-    // Verificar conexión a internet
     final isConnected = await networkInfo.isConnected;
     if (!isConnected) {
       emit(state.copyWith(
@@ -43,7 +42,6 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
       return;
     }
 
-    // Obtener token de autenticación
     final userOrFailure = await authRepository.getCurrentUser();
     await userOrFailure.fold(
       (failure) async {
@@ -88,18 +86,14 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
             },
             (filePath) async {
               try {
-                // Primero emitir éxito sin verificar la existencia del archivo
-                // ya que sabemos que se descargó correctamente
                 emit(state.copyWith(
                   status: DownloadFileStatus.success,
                   filePath: filePath,
                 ));
                 
-                // Intentar abrir el archivo en segundo plano
                 _tryOpenFile(filePath);
               } catch (e) {
                 log('Error inesperado: $e', name: 'DownloadFileBloc');
-                // No emitir error aquí para no mostrar mensaje de error al usuario
               }
             },
           );
@@ -126,7 +120,6 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
       final file = File(filePath);
       bool exists = await file.exists();
       
-      // Si el archivo no existe, esperar un momento y volver a intentar
       if (!exists) {
         await Future.delayed(const Duration(milliseconds: 500));
         exists = await file.exists();
@@ -136,7 +129,6 @@ class DownloadFileBloc extends Bloc<DownloadFileEvent, DownloadFileState> {
         final result = await OpenFile.open(filePath);
         
         if (result.type != ResultType.done) {
-          // Si no se pudo abrir, ofrecer opción de compartir
           await Share.shareXFiles([XFile(filePath)]);
         }
       }

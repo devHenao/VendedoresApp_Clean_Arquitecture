@@ -55,7 +55,7 @@ class ClientController {
             bloc: updateClientBloc,
             listenWhen: (previous, current) => current is UpdateClientSuccess,
             listener: (context, state) {
-              Navigator.of(dialogContext).pop(true); // true indicates changes were made
+              Navigator.of(dialogContext).pop(true);
             },
             child: AlertDialog(
               title: const Text('Editar Cliente'),
