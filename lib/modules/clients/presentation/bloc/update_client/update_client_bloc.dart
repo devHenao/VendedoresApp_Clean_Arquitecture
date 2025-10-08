@@ -53,12 +53,11 @@ Future<void> _onDepartmentChanged(
 
   emit(currentState.copyWith(
     selectedDepartment: event.department,
-    cities: [], // Clear cities when department changes
-    selectedCityCode: null, // Reset selected city
-    isLoadingCities: true, // Show loading state for cities
+    cities: [],
+    selectedCityCode: null,
+    isLoadingCities: true,
   ));
 
-  // Load cities for the selected department
   try {
     final citiesResult = await getCitiesByDepartmentUseCase(event.department);
     
@@ -70,7 +69,6 @@ Future<void> _onDepartmentChanged(
         ));
       },
       (citiesMap) {
-        // Convert API response to list of city maps with both name and code
         final cities = citiesMap.map<Map<String, String>>((city) => {
           'name': city['nomciud'].toString().toUpperCase(),
           'code': city['codigo'].toString(),
@@ -137,7 +135,6 @@ Future<void> _onDepartmentChanged(
                 'code': city['codigo'].toString(),
               })).toList();
           
-          // Find the selected city code if we have a city name
           if (event.client.nomciud != null && event.client.nomciud!.isNotEmpty) {
             try {
               final selectedCity = cities.firstWhere(
