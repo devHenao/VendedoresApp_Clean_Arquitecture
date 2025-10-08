@@ -2,28 +2,23 @@ import 'package:flutter/material.dart';
 import 'core/backend/schema/structs/index.dart';
 
 class FFAppState extends ChangeNotifier {
-  // Singleton pattern
   static FFAppState _instance = FFAppState._internal();
   factory FFAppState() => _instance;
   FFAppState._internal();
 
-  // Reset the singleton instance
   static void reset() => _instance = FFAppState._internal();
 
-  // Update state and notify listeners
   void update(VoidCallback callback) {
     callback();
     notifyListeners();
   }
 
-  // User session data
   String nit = '';
   String email = '';
   bool remember = false;
   DataSellerStruct infoSeller = DataSellerStruct();
-  int itemId = -1; // -1 indicates no client selected
+  int itemId = -1;
   
-  // Client data
   late DataClienteStruct dataCliente = DataClienteStruct.fromSerializableMap({
     'nombre': '',
     'nit': '',
@@ -47,31 +42,24 @@ class FFAppState extends ChangeNotifier {
     'comentarios': '',
   });
 
-  // Collections
   List<DataProductStruct> productList = [];
   List<DataProductStruct> dataProductList = [];
   List<DetailProductStruct> shoppingCart = [];
   List<DetailProductStruct> store = [];
   String password = '';
 
-  /// Resets all app state when user logs out
   void resetAppState() {
-    // Reset user session
     nit = '';
     email = '';
     remember = false;
-    // Reset infoSeller to default values
     infoSeller = DataSellerStruct();
     itemId = -1;
     
-    // Reset client data
     dataCliente = DataClienteStruct.fromSerializableMap({
       'nombre': '',
       'nit': '',
-      // ... resto de campos ...
     });
     
-    // Clear collections
     productList.clear();
     dataProductList.clear();
     shoppingCart.clear();
@@ -81,13 +69,11 @@ class FFAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Helper method for updating cliente data
   void updateDataCliente(void Function(DataClienteStruct) updateFn) {
     updateFn(dataCliente);
     notifyListeners();
   }
 
-  // Product list operations
   void addProduct(DataProductStruct product) {
     productList.add(product);
     notifyListeners();
@@ -119,7 +105,6 @@ class FFAppState extends ChangeNotifier {
     }
   }
 
-  // Shopping cart operations
   void addToCart(DetailProductStruct product) {
     shoppingCart.add(product);
     notifyListeners();
@@ -144,7 +129,6 @@ class FFAppState extends ChangeNotifier {
     }
   }
 
-  // Store operations
   void addStoreItem(DetailProductStruct item) {
     store.add(item);
     notifyListeners();

@@ -1,19 +1,15 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-// Importaciones de Flutter Flow
 import 'core/theme/theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
-// Importaciones de autenticación
 import 'modules/auth/infrastructure/services/auth_util.dart';
 import 'modules/auth/infrastructure/services/auth_user_provider.dart'
     show AppVendedoresAuthUser, appVendedoresAuthUserStream;
 
-// Importaciones de servicios
 import 'modules/clients/domain/services/client_service.dart';
 
-// Inyección de dependencias
 import 'injection_container.dart' as di;
 
 void main() async {

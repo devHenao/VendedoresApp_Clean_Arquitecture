@@ -19,19 +19,15 @@ class ConfirmationDialogController extends ChangeNotifier {
     
     try {
       model.setLoading(true);
-      // Ejecutar la acción de confirmación
       await Future.microtask(() => onConfirm());
       
-      // Cerrar el diálogo después de que la acción se complete
       if (context.mounted) {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      // Si hay un error, cerramos el diálogo
       if (context.mounted) {
         Navigator.of(context).pop(false);
       }
-      // Relanzamos la excepción para que pueda ser manejada por quien llame al diálogo
       rethrow;
     } finally {
       if (context.mounted) {

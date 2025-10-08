@@ -139,14 +139,11 @@ Future<void> configureDependencies() async {
     () => ProductRemoteDataSourceImpl(dio: getIt()),
   );
 
-  // Core
   getIt.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(getIt()));
 
-  // External - Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   
-  // Configure Dio
   getIt.registerLazySingleton(() {
     final dio = Dio();
     dio.options.connectTimeout = const Duration(milliseconds: 15000);

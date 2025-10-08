@@ -17,7 +17,7 @@ class MenuItems extends StatelessWidget {
         children: [
           const Divider(
             thickness: 2.0,
-            color: Color(0xFFE0E3E7), // Reemplazado por un color explícito
+            color: Color(0xFFE0E3E7),
           ),
           _buildMenuItem(
             context,
@@ -60,7 +60,7 @@ class MenuItems extends StatelessWidget {
           ),
           const Divider(
             thickness: 2.0,
-            color: Color(0xFFE0E3E7), // Reemplazado por un color explícito
+            color: Color(0xFFE0E3E7),
           ),
         ].divide(const SizedBox(height: 35.0)),
       ),
@@ -156,7 +156,6 @@ class MenuActions extends StatelessWidget {
             ),
           ),
         ),
-        // Botón de salir
         InkWell(
           splashColor: Colors.transparent,
           focusColor: Colors.transparent,

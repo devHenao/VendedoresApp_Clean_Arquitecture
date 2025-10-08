@@ -4,34 +4,25 @@ import 'package:intl/intl.dart';
 import 'date_range_selector_controller.dart';
 import 'date_range_selector_model.dart';
 
-/// A widget that allows users to select a date range.
-/// 
-/// This widget provides a clean and consistent way to select a date range
-/// with start and end dates, with support for theming and customization.
 class DateRangeSelectorWidget extends StatelessWidget {
-  /// The controller that manages the date range selection state.
   final DateRangeSelectorController controller;
   
-  /// The configuration model for the date range selector.
   final DateRangeSelectorModel model;
   
-  /// Called when the start date is selected.
   final ValueChanged<DateTime> onStartDateSelected;
   
-  /// Called when the end date is selected.
   final ValueChanged<DateTime> onEndDateSelected;
   
-  /// Called when the clear dates button is pressed.
   final VoidCallback onClearDates;
 
   const DateRangeSelectorWidget({
-    Key? key,
+    super.key,
     required this.controller,
     required this.model,
     required this.onStartDateSelected,
     required this.onEndDateSelected,
     required this.onClearDates,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
