@@ -22,7 +22,6 @@ class ClientRepositoryImpl implements ClientRepository {
     required this.authRepository,
   });
 
-  // Método auxiliar para manejar llamadas de red con manejo de errores común
   Future<Either<Failure, T>> _handleNetworkCall<T>(
     Future<T> Function() call, {
     bool requiresNetwork = true,
@@ -48,7 +47,6 @@ class ClientRepositoryImpl implements ClientRepository {
     }
   }
 
-  // Obtener token de autenticación
   Future<String> _getToken() async {
     final user = await authRepository.getCurrentUser();
     return user.fold(

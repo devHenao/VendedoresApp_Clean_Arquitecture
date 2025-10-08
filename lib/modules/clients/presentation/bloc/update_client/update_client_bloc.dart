@@ -27,18 +27,26 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     if (state is! UpdateClientLoaded) return;
 
     final currentState = state as UpdateClientLoaded;
+    
+    // Create a new client with the updated cdciiu from the current state
+    final clientToUpdate = event.client.copyWith(
+      cdciiu: currentState.selectedCityCode,
+      nomciud: currentState.selectedCityName,
+      nomdpto: currentState.selectedDepartment,
+    );
+    
     emit(currentState.copyWith(isSubmitting: true));
 
-    final result = await updateClientUseCase(event.client);
+    final result = await updateClientUseCase(clientToUpdate);
     result.fold(
       (failure) => emit(currentState.copyWith(
         isSubmitting: false,
         errorMessage: failure.toString(),
       )),
-      (client) => emit(currentState.copyWith(
+      (updatedClient) => emit(currentState.copyWith(
         isSubmitting: false,
         isSuccess: true,
-        client: client,
+        client: updatedClient,
       )),
     );
   }
@@ -112,15 +120,16 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
 
     final currentState = state as UpdateClientLoaded;
     
-    // Find the selected city name from the cities list
+    // Find the selected city from the cities list
     final selectedCity = currentState.cities.firstWhere(
       (city) => city['code'] == event.cityCode,
-      orElse: () => {'name': ''},
+      orElse: () => {'name': '', 'code': ''},
     );
     
-    // Update the client with the new city
+    // Update the client with the new city and cdciiu
     final updatedClient = currentState.client.copyWith(
       nomciud: selectedCity['name'],
+      cdciiu: event.cityCode, // This is the important part - set cdciiu to the city code
     );
 
     emit(currentState.copyWith(
@@ -152,13 +161,49 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
 
     List<Map<String, String>> cities = [];
     String? selectedCityCode;
+    String? selectedDepartment = event.client.nomdpto;
 
-    if (event.client.nomdpto != null && event.client.nomdpto!.isNotEmpty) {
-      final citiesResult =
-          await getCitiesByDepartmentUseCase(event.client.nomdpto!);
+    // If client has a cdciiu, use it to find the correct city and department
+    if (event.client.cdciiu != null && event.client.cdciiu!.isNotEmpty) {
+      // Load all departments to find the correct one
+      for (final dept in departments) {
+        final citiesResult = await getCitiesByDepartmentUseCase(dept);
+        
+        await citiesResult.fold(
+          (l) => null,
+          (citiesMap) async {
+            final deptCities = citiesMap
+                .map<Map<String, String>>((city) => ({
+                      'name': city['nomciud'].toString().toUpperCase(),
+                      'code': city['codigo'].toString(),
+                    }))
+                .toList();
 
-      citiesResult.fold(
-        (l) => [],
+            // Try to find the city by cdciiu
+            try {
+              final city = deptCities.firstWhere(
+                (city) => city['code'] == event.client.cdciiu,
+              );
+              
+              selectedCityCode = city['code'];
+              selectedDepartment = dept;
+              cities = deptCities;
+            } catch (e) {
+              // City not found in this department, continue to next department
+            }
+          },
+        );
+        
+        // If we found the city, no need to check other departments
+        if (selectedCityCode != null) break;
+      }
+    } 
+    // Fall back to the old method if cdciiu is not set or city not found
+    else if (selectedDepartment != null && selectedDepartment.isNotEmpty) {
+      final citiesResult = await getCitiesByDepartmentUseCase(selectedDepartment);
+
+      await citiesResult.fold(
+        (l) => null,
         (citiesMap) {
           cities = citiesMap
               .map<Map<String, String>>((city) => ({
@@ -167,8 +212,7 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
                   }))
               .toList();
 
-          if (event.client.nomciud != null &&
-              event.client.nomciud!.isNotEmpty) {
+          if (event.client.nomciud != null && event.client.nomciud!.isNotEmpty) {
             try {
               final selectedCity = cities.firstWhere(
                 (city) => city['name'] == event.client.nomciud,
@@ -187,7 +231,7 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
         client: event.client,
         departments: departments,
         cities: cities,
-        selectedDepartment: event.client.nomdpto,
+        selectedDepartment: selectedDepartment,
         selectedCityCode: selectedCityCode,
       ));
     }
