@@ -129,14 +129,26 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
     try {
       final response = await dio.put(url, data: data, options: options);
       if (response.statusCode == 200) {
+        if (response.data['success'] == false && response.data['data'] != null) {
+          throw ServerException(response.data['data'].toString());
+        }
         return ClientModel.fromJson(response.data['data']);
       } else {
-        throw ServerException(
-            response.data['message'] ?? 'Error al actualizar el cliente');
+        final errorMessage = response.data is String 
+            ? response.data 
+            : response.data['data']?.toString() ?? 
+              response.data['message'] ?? 
+              'Error al actualizar el cliente';
+        throw ServerException(errorMessage);
       }
     } on DioException catch (e) {
-      throw ServerException(
-          e.response?.data?['message'] ?? 'Error al actualizar el cliente');
+      final errorData = e.response?.data;
+      final errorMessage = errorData is String 
+          ? errorData 
+          : errorData?['data']?.toString() ?? 
+            errorData?['message'] ?? 
+            'Error al actualizar el cliente';
+      throw ServerException(errorMessage);
     }
   }
 

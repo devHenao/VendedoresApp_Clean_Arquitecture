@@ -30,10 +30,12 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     _nameController = TextEditingController(text: widget.client.nombre);
     _emailController = TextEditingController(text: widget.client.email ?? '');
     _phoneController = TextEditingController(text: widget.client.tel1 ?? '');
-    _addressController = TextEditingController(text: widget.client.direccion ?? '');
+    _addressController =
+        TextEditingController(text: widget.client.direccion ?? '');
     _documentoController = TextEditingController(text: widget.client.nit);
-    _contactoController = TextEditingController(text: widget.client.contacto ?? '');
-    
+    _contactoController =
+        TextEditingController(text: widget.client.contacto ?? '');
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UpdateClientBloc>().add(SetClientEvent(widget.client));
     });
@@ -58,13 +60,16 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         if (state is UpdateClientLoaded) {
           if (state.isSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Cliente actualizado con éxito')),
+              SnackBar(
+                  content: const Text('Cliente actualizado con éxito'),
+                  backgroundColor: theme.success),
             );
             Navigator.of(context).pop(true);
           } else if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Error al actualizar el cliente'),
+                content: Text(
+                    state.errorMessage ?? 'Error al actualizar el cliente'),
                 backgroundColor: theme.error,
               ),
             );
@@ -92,7 +97,7 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
   Widget _buildForm(UpdateClientLoaded state) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -170,7 +175,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       decoration: InputDecoration(
         labelText: 'Dirección *',
         suffixIcon: const Icon(Icons.location_on_outlined, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -185,16 +191,17 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       validator: AppValidators.validateAddress,
     );
   }
-  
+
   Widget _buildDocumentoField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return TextFormField(
       controller: _documentoController,
       enabled: false,
@@ -202,7 +209,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       decoration: InputDecoration(
         labelText: 'Documento',
         suffixIcon: const Icon(Icons.credit_card_outlined, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -217,22 +225,24 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground.withValues(alpha: 0.7),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }
-  
+
   Widget _buildNameField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return TextFormField(
       controller: _nameController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Nombre *',
         suffixIcon: const Icon(Icons.person_outline, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -247,23 +257,25 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       validator: AppValidators.validateName,
     );
   }
-  
+
   Widget _buildContactoField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return TextFormField(
       controller: _contactoController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Contacto *',
         suffixIcon: const Icon(Icons.person_outline, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -278,16 +290,17 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       validator: AppValidators.validateContact,
     );
   }
-  
+
   Widget _buildEmailField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return TextFormField(
       controller: _emailController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
@@ -295,7 +308,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       decoration: InputDecoration(
         labelText: 'Correo Electrónico *',
         suffixIcon: const Icon(Icons.email_outlined, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -310,16 +324,17 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       validator: AppValidators.validateEmail,
     );
   }
-  
+
   Widget _buildPhoneField() {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return TextFormField(
       controller: _phoneController,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
@@ -327,7 +342,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       decoration: InputDecoration(
         labelText: 'Teléfono *',
         suffixIcon: const Icon(Icons.phone_outlined, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -342,23 +358,25 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       validator: AppValidators.validatePhone,
     );
   }
-  
+
   Widget _buildDepartmentDropdown(UpdateClientLoaded state) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return DropdownButtonFormField<String>(
       initialValue: state.selectedDepartment,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Departamento *',
         suffixIcon: const Icon(Icons.location_city_outlined, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -373,7 +391,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: state.departments
           .map<DropdownMenuItem<String>>((dept) => DropdownMenuItem<String>(
@@ -394,18 +413,19 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       },
     );
   }
-  
+
   Widget _buildCityDropdown(UpdateClientLoaded state) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-    
+
     return DropdownButtonFormField<String>(
       initialValue: state.selectedCityCode,
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Ciudad *',
         suffixIcon: const Icon(Icons.map_outlined, size: 20),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle:
+            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -420,7 +440,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         ),
         filled: true,
         fillColor: colors.secondaryBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: state.cities
           .map((city) => DropdownMenuItem<String>(
@@ -430,7 +451,9 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           .toList(),
       onChanged: (value) {
         if (value != null) {
-          context.read<UpdateClientBloc>().add(CityChangedEvent(cityCode: value));
+          context
+              .read<UpdateClientBloc>()
+              .add(CityChangedEvent(cityCode: value));
         }
       },
       validator: AppValidators.validateCity,

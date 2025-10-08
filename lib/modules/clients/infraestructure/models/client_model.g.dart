@@ -32,7 +32,7 @@ Map<String, dynamic> _$ClientModelToJson(ClientModel instance) =>
       'direccion': instance.direccion,
       'cdciiu': instance.cdciiu,
       'contacto': instance.contacto,
-      'tel1': instance.tel1,
+      'TEL1': instance.tel1,
       'email': instance.email,
       'codprecio': instance.codprecio,
       'nomciud': instance.nomciud,
