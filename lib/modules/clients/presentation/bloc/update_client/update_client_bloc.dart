@@ -28,7 +28,6 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
 
     final currentState = state as UpdateClientLoaded;
     
-    // Create a new client with the updated cdciiu from the current state
     final clientToUpdate = event.client.copyWith(
       cdciiu: currentState.selectedCityCode,
       nomciud: currentState.selectedCityName,
@@ -120,16 +119,14 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
 
     final currentState = state as UpdateClientLoaded;
     
-    // Find the selected city from the cities list
     final selectedCity = currentState.cities.firstWhere(
       (city) => city['code'] == event.cityCode,
       orElse: () => {'name': '', 'code': ''},
     );
     
-    // Update the client with the new city and cdciiu
     final updatedClient = currentState.client.copyWith(
       nomciud: selectedCity['name'],
-      cdciiu: event.cityCode, // This is the important part - set cdciiu to the city code
+      cdciiu: event.cityCode,
     );
 
     emit(currentState.copyWith(
@@ -163,9 +160,7 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
     String? selectedCityCode;
     String? selectedDepartment = event.client.nomdpto;
 
-    // If client has a cdciiu, use it to find the correct city and department
     if (event.client.cdciiu != null && event.client.cdciiu!.isNotEmpty) {
-      // Load all departments to find the correct one
       for (final dept in departments) {
         final citiesResult = await getCitiesByDepartmentUseCase(dept);
         
@@ -179,7 +174,6 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
                     }))
                 .toList();
 
-            // Try to find the city by cdciiu
             try {
               final city = deptCities.firstWhere(
                 (city) => city['code'] == event.client.cdciiu,
@@ -189,16 +183,13 @@ class UpdateClientBloc extends Bloc<UpdateClientEvent, UpdateClientState> {
               selectedDepartment = dept;
               cities = deptCities;
             } catch (e) {
-              // City not found in this department, continue to next department
             }
           },
         );
         
-        // If we found the city, no need to check other departments
         if (selectedCityCode != null) break;
       }
     } 
-    // Fall back to the old method if cdciiu is not set or city not found
     else if (selectedDepartment != null && selectedDepartment.isNotEmpty) {
       final citiesResult = await getCitiesByDepartmentUseCase(selectedDepartment);
 

@@ -10,11 +10,9 @@ const _kTokenExpirationKey = '_auth_token_expiration_';
 const _kUidKey = '_auth_uid_';
 
 class AuthManager {
-  // Auth session attributes
   String? authenticationToken;
   String? refreshToken;
   DateTime? tokenExpiration;
-  // User attributes
   String? uid;
 
   Future signOut() async {
@@ -23,7 +21,6 @@ class AuthManager {
     tokenExpiration = null;
     uid = null;
 
-    // Update the current user.
     appVendedoresAuthUserSubject.add(
       AppVendedoresAuthUser(loggedIn: false),
     );

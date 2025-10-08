@@ -31,13 +31,11 @@ class AuthRepositoryImpl implements AuthRepository {
         localDataSource.cacheUser(remoteUser);
         await authManager.signIn(
           authenticationToken: remoteUser.token,
-          uid: remoteUser.email, // O usa otro identificador único si lo prefieres
+          uid: remoteUser.email, 
         );
-        // Actualizar el FFAppState con la información del vendedor
         FFAppState().infoSeller = DataSellerStruct(
           nameVenden: remoteUser.name,
           emailVenden: remoteUser.email,
-          // Asegúrate de mapear otros campos si son necesarios
         );
         return Right(remoteUser);
       } on ServerException catch (e) {

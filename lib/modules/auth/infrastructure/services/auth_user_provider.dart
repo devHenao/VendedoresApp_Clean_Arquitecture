@@ -9,14 +9,11 @@ class AppVendedoresAuthUser {
   String? uid;
 }
 
-/// Current user instance
 AppVendedoresAuthUser? currentUser;
 
-/// Generates a stream of the authenticated user.
 final BehaviorSubject<AppVendedoresAuthUser> appVendedoresAuthUserSubject =
     BehaviorSubject.seeded(AppVendedoresAuthUser(loggedIn: false));
 
-/// Stream of authentication state changes
 Stream<AppVendedoresAuthUser> appVendedoresAuthUserStream() =>
     appVendedoresAuthUserSubject
         .asBroadcastStream()

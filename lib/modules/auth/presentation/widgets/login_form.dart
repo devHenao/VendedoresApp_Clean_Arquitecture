@@ -369,7 +369,6 @@ class _LoginFormState extends State<LoginForm> {
           ],
         ),
 
-        // Olvidé mi contraseña
         TextButton(
           onPressed: () {
             showDialog(
@@ -419,7 +418,6 @@ class _LoginFormState extends State<LoginForm> {
 
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      // Save credentials if remember me is checked
       if (_rememberMe) {
         _saveCredentials();
       } else {

@@ -10,13 +10,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInUseCase signInUseCase;
   final SharedPreferences prefs;
 
-  // Keys for SharedPreferences
   static const String _keyEmail = 'remembered_email';
   static const String _keyPassword = 'remembered_password';
   static const String _keyRememberMe = 'remember_me';
 
   AuthBloc({required this.signInUseCase, required this.prefs}) : super(AuthInitial()) {
-    // Check for saved credentials when the bloc is created
     _checkSavedCredentials();
     
     on<LoginButtonPressed>((event, emit) async {
@@ -32,7 +30,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return result.fold(
           (failure) => emit(AuthFailure(message: failure.props.first.toString())),
           (user) async {
-            // Save credentials if remember me is checked
             if (event.rememberMe) {
               await prefs.setString(_keyEmail, event.email);
               await prefs.setString(_keyPassword, event.password);
@@ -51,7 +48,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  // Check for saved credentials
   Future<void> _checkSavedCredentials() async {
     final rememberMe = prefs.getBool(_keyRememberMe) ?? false;
     if (rememberMe) {
@@ -59,13 +55,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final password = prefs.getString(_keyPassword) ?? '';
       
       if (email.isNotEmpty && password.isNotEmpty) {
-        // You can add logic here to auto-login or pre-fill the form
-        // For example, you could add an event to handle auto-login
       }
     }
   }
   
-  // Clear saved credentials
   Future<void> clearCredentials() async {
     await prefs.remove(_keyEmail);
     await prefs.remove(_keyPassword);
