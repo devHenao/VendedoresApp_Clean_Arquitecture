@@ -94,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
               if (isLoading)
                 Container(
-                  color: Colors.black54, // Semi-transparent black overlay
+                  color: globalTheme.accent4, // Semi-transparent overlay
                   child: Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(globalTheme.primary),
@@ -343,21 +343,16 @@ class _LoginFormState extends State<LoginForm> {
         // Recordarme
         Row(
           children: [
-            Theme(
-              data: Theme.of(context).copyWith(
-                unselectedWidgetColor: globalTheme.secondaryText,
+            Checkbox(
+              value: _rememberMe,
+              onChanged: (value) =>
+                  setState(() => _rememberMe = value ?? false),
+              fillColor: WidgetStateProperty.resolveWith<Color>(
+                (states) => states.contains(WidgetState.selected)
+                    ? globalTheme.primary
+                    : globalTheme.secondaryBackground,
               ),
-              child: Checkbox(
-                value: _rememberMe,
-                onChanged: (value) =>
-                    setState(() => _rememberMe = value ?? false),
-                fillColor: WidgetStateProperty.resolveWith<Color>(
-                  (states) => states.contains(WidgetState.selected)
-                      ? globalTheme.primary
-                      : globalTheme.secondaryBackground,
-                ),
-                side: BorderSide(color: globalTheme.secondaryText),
-              ),
+              side: BorderSide(color: globalTheme.secondaryText),
             ),
             Text(
               'Recordarme',

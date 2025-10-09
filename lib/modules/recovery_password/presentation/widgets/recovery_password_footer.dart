@@ -21,7 +21,6 @@ class RecoveryPasswordFooter extends StatelessWidget {
           Text(
             '¿Recuerdas tu contraseña?',
             style: theme.bodySmall.copyWith(
-              fontFamily: 'Manrope',
               color: theme.secondaryText,
             ),
           ),
@@ -31,7 +30,6 @@ class RecoveryPasswordFooter extends StatelessWidget {
             child: Text(
               'Iniciar sesión',
               style: theme.bodySmall.copyWith(
-                fontFamily: 'Manrope',
                 color: theme.primary,
                 fontWeight: FontWeight.w600,
                 decoration: TextDecoration.underline,

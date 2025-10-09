@@ -73,16 +73,23 @@ class _RecoveryPasswordViewState extends State<_RecoveryPasswordView> {
         } else if (state.status == RecoveryPasswordStatus.error) {
           showDialog(
             context: context,
-            builder: (alertDialogContext) => AlertDialog(
-              title: const Text('Error'),
-              content: Text(state.errorMessage ?? 'Ocurrió un error desconocido.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(alertDialogContext),
-                  child: const Text('Ok'),
+            builder: (alertDialogContext) {
+              final colors = GlobalTheme.of(alertDialogContext);
+              return AlertDialog(
+                backgroundColor: colors.secondaryBackground,
+                title: Text('Error', style: colors.headlineSmall),
+                content: Text(
+                  state.errorMessage ?? 'Ocurrió un error desconocido.',
+                  style: colors.bodyMedium,
                 ),
-              ],
-            ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(alertDialogContext),
+                    child: Text('Ok', style: colors.bodyMedium.copyWith(color: colors.primary)),
+                  ),
+                ],
+              );
+            },
           );
         }
       },

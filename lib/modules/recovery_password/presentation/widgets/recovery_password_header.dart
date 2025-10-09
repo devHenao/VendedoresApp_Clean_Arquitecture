@@ -14,7 +14,6 @@ class RecoveryPasswordHeader extends StatelessWidget {
         Text(
           '¿Has olvidado tu contraseña?',
           style: theme.titleLarge.copyWith(
-            fontFamily: 'Outfit',
             fontWeight: FontWeight.w600,
             color: theme.primaryText,
             fontSize: 30.0,
@@ -24,7 +23,6 @@ class RecoveryPasswordHeader extends StatelessWidget {
         Text(
           'Ingrese su NIT y dirección de correo electrónico para restablecer su contraseña.',
           style: theme.bodyLarge.copyWith(
-            fontFamily: 'Manrope',
             color: theme.secondaryText,
           ),
         ),

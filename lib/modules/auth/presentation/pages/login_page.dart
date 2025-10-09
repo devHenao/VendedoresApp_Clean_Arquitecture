@@ -1,10 +1,11 @@
+import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_vendedores/modules/auth/presentation/bloc/auth_state.dart';
 import 'package:app_vendedores/modules/auth/presentation/widgets/login_form.dart';
-import 'package:go_router/go_router.dart';
 import 'package:app_vendedores/injection_container.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -22,7 +23,15 @@ class LoginPage extends StatelessWidget {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  SnackBar(content: Text(state.message)),
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                      style: GlobalTheme.of(context).bodyMedium.copyWith(
+                            color: GlobalTheme.of(context).info,
+                          ),
+                    ),
+                    backgroundColor: GlobalTheme.of(context).error,
+                  ),
                 );
             }
           },
