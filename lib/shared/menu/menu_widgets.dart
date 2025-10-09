@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app_vendedores/shared/confirmDialog/confirmation_dialog.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/theme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -162,7 +163,19 @@ class MenuActions extends StatelessWidget {
           focusColor: Colors.transparent,
           hoverColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          onTap: onSignOut,
+          onTap: () async {
+            final confirmed = await ConfirmationDialog.show(
+              context: context,
+              title: 'Cerrar Sesión',
+              content: '¿Estás seguro de que deseas cerrar la sesión?',
+              confirmText: 'Sí, Salir',
+              icon: Icons.logout_rounded,
+              iconColor: GlobalTheme.of(context).error,
+            );
+            if (confirmed == true) {
+              onSignOut();
+            }
+          },
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 16.0, 8.0),
             child: Row(
