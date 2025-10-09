@@ -42,10 +42,10 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF4F4),
+          color: GlobalTheme.of(context).secondaryBackground,
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
-            color: const Color(0xFC39D2C0),
+            color: GlobalTheme.of(context).success,
             width: 1.0,
           ),
         ),
@@ -64,9 +64,9 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.mark_email_unread,
-                          color: Color(0xFC39D2C0),
+                          color: GlobalTheme.of(context).success,
                           size: 30.0,
                         ),
                         Expanded(
@@ -82,13 +82,8 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                                   children: [
                                     Text(
                                       '¡Te enviamos un correo!',
-                                      style: GlobalTheme.of(context)
-                                          .headlineMedium
-                                          .override(
-                                            fontFamily: 'Outfit',
-                                            color: const Color(0xFC39D2C0),
-                                            fontSize: 18.0,
-                                            letterSpacing: 0.0,
+                                      style: GlobalTheme.of(context).headlineSmall.copyWith(
+                                            color: GlobalTheme.of(context).success,
                                           ),
                                     ),
                                   ].divide( const SizedBox(width: 5.0)),
@@ -99,14 +94,7 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                                     Expanded(
                                       child: Text(
                                         'Hemos enviado un correo para restablecer tu contraseña. Por favor, revisa tu bandeja de entrada.',
-                                        style: GlobalTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Manrope',
-                                              fontSize: 14.0,
-                                              letterSpacing: 0.0,
-                                              fontWeight: FontWeight.normal,
-                                            ),
+                                        style: GlobalTheme.of(context).bodyMedium,
                                       ),
                                     ),
                                   ].divide(const SizedBox(width: 5.0)),
@@ -128,13 +116,8 @@ class _OkPasswordWidgetState extends State<OkPasswordWidget> {
                               },
                               child: Text(
                                 'Ok',
-                                style: GlobalTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Manrope',
-                                      color: const  Color(0xFC39D2C0),
-                                      fontSize: 18.0,
-                                      letterSpacing: 0.0,
+                                style: GlobalTheme.of(context).bodyMedium.copyWith(
+                                      color: GlobalTheme.of(context).success,
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),

@@ -1,3 +1,4 @@
+import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmationDialog extends StatelessWidget {
@@ -44,35 +45,47 @@ class ConfirmationDialog extends StatelessWidget {
     
     return StatefulBuilder(
       builder: (context, setState) {
+        final colors = GlobalTheme.of(context);
         return AlertDialog(
-          title: Text(title),
+          backgroundColor: colors.secondaryBackground,
+          title: Text(title, style: colors.headlineSmall),
           content: SingleChildScrollView(
-            child: Text(content),
+            child: Text(content, style: colors.bodyMedium),
           ),
           actions: [
             TextButton(
               onPressed: isLoading
                   ? null
                   : () => Navigator.of(context).pop(false),
-              child: Text(cancelText),
+              child: Text(
+                cancelText,
+                style: colors.bodyMedium.copyWith(color: colors.secondaryText),
+              ),
             ),
             TextButton(
               onPressed: isLoading
                   ? null
                   : () async {
                       setState(() => isLoading = true);
+                      // Simulate async operation
                       await Future.delayed(Duration.zero);
                       if (context.mounted) {
                         Navigator.of(context).pop(true);
                       }
                     },
               child: isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
+                      ),
                     )
-                  : Text(confirmText),
+                  : Text(
+                      confirmText,
+                      style: colors.bodyMedium.copyWith(color: colors.primary),
+                    ),
             ),
           ],
         );

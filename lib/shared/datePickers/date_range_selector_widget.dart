@@ -1,3 +1,4 @@
+import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -37,13 +38,14 @@ class DateRangeSelectorWidget extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
+    final colors = GlobalTheme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
       child: Text(
         model.title!,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).hintColor,
-            ),
+        style: colors.bodySmall.copyWith(
+          color: colors.secondaryText,
+        ),
       ),
     );
   }
@@ -71,7 +73,7 @@ class DateRangeSelectorWidget extends StatelessWidget {
         if (controller.startDate != null || controller.endDate != null) ...[
           const SizedBox(width: 8.0),
           IconButton(
-            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.error),
+            icon: Icon(Icons.clear, color: GlobalTheme.of(context).error),
             onPressed: onClearDates,
             tooltip: 'Limpiar fechas',
           ),
@@ -88,10 +90,7 @@ class DateRangeSelectorWidget extends StatelessWidget {
     required String helpText,
     required bool isStartDate,
   }) {
-    final theme = Theme.of(context);
-    final primary = model.primaryColor ?? theme.primaryColor;
-    final text = model.textColor ?? theme.textTheme.bodyMedium?.color;
-    final border = model.borderColor ?? theme.dividerColor;
+    final colors = GlobalTheme.of(context);
 
     return Expanded(
       child: InkWell(
@@ -100,7 +99,7 @@ class DateRangeSelectorWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12.0),
           decoration: BoxDecoration(
-            border: Border.all(color: border),
+            border: Border.all(color: colors.alternate),
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Row(
@@ -111,7 +110,7 @@ class DateRangeSelectorWidget extends StatelessWidget {
                   selectedDate != null
                       ? DateFormat('dd/MM/yyyy').format(selectedDate)
                       : label,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: text),
+                  style: colors.bodyMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -119,7 +118,7 @@ class DateRangeSelectorWidget extends StatelessWidget {
               Icon(
                 Icons.calendar_today,
                 size: 20,
-                color: primary,
+                color: colors.primary,
               ),
             ],
           ),
@@ -129,8 +128,7 @@ class DateRangeSelectorWidget extends StatelessWidget {
   }
 
   Future<void> _selectDate(BuildContext context, {required bool isStartDate}) async {
-    final theme = Theme.of(context);
-    final primary = model.primaryColor ?? theme.primaryColor;
+    final colors = GlobalTheme.of(context);
     
     final firstDate = isStartDate 
         ? DateTime(2000)
@@ -150,13 +148,14 @@ class DateRangeSelectorWidget extends StatelessWidget {
       helpText: isStartDate ? model.startDateHint : model.endDateHint,
       builder: (context, child) {
         return Theme(
-          data: theme.copyWith(
+          data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: primary,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
+              primary: colors.primary,
+              onPrimary: colors.info,
+              surface: colors.primaryBackground,
+              onSurface: colors.primaryText,
             ),
+            dialogBackgroundColor: colors.secondaryBackground,
           ),
           child: child!,
         );

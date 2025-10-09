@@ -15,9 +15,9 @@ class MenuItems extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Divider(
+          Divider(
             thickness: 2.0,
-            color: Color(0xFFE0E3E7),
+            color: GlobalTheme.of(context).alternate,
           ),
           _buildMenuItem(
             context,
@@ -36,14 +36,18 @@ class MenuItems extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (alertDialogContext) {
+                    final colors = GlobalTheme.of(context);
                     return AlertDialog(
-                      title: const Text('¡Espera!'),
-                      content: const Text(
-                          'Por favor, selecciona un cliente para acceder a los productos.'),
+                      backgroundColor: colors.secondaryBackground,
+                      title: Text('¡Espera!', style: colors.headlineSmall),
+                      content: Text(
+                        'Por favor, selecciona un cliente para acceder a los productos.',
+                        style: colors.bodyMedium,
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(alertDialogContext),
-                          child: const Text('Ok'),
+                          child: Text('Ok', style: colors.bodyMedium.copyWith(color: colors.primary)),
                         ),
                       ],
                     );
@@ -58,9 +62,9 @@ class MenuItems extends StatelessWidget {
             text: 'Mi carrito',
             onTap: () => context.pushNamed('Carrito'),
           ),
-          const Divider(
+          Divider(
             thickness: 2.0,
-            color: Color(0xFFE0E3E7),
+            color: GlobalTheme.of(context).alternate,
           ),
         ].divide(const SizedBox(height: 35.0)),
       ),
@@ -94,10 +98,7 @@ class MenuItems extends StatelessWidget {
             const SizedBox(width: 20.0),
             Text(
               text,
-              style: GlobalTheme.of(context).bodyLarge.override(
-                    fontFamily: 'Manrope',
-                    letterSpacing: 0.0,
-                  ),
+              style: GlobalTheme.of(context).bodyLarge,
             ),
           ],
         ),
@@ -175,10 +176,8 @@ class MenuActions extends StatelessWidget {
                 const SizedBox(width: 12.0),
                 Text(
                   'Salir',
-                  style: GlobalTheme.of(context).bodyLarge.override(
-                        fontFamily: 'Manrope',
+                  style: GlobalTheme.of(context).bodyLarge.copyWith(
                         color: GlobalTheme.of(context).error,
-                        letterSpacing: 0.0,
                       ),
                 ),
               ],
@@ -203,21 +202,15 @@ class MenuFooter extends StatelessWidget {
         children: [
           Text(
             'Copyright  2024 © by Ofima S.A.S',
-            style: GlobalTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Manrope',
+            style: GlobalTheme.of(context).bodySmall.copyWith(
                   color: GlobalTheme.of(context).secondaryText,
-                  fontSize: 12.0,
-                  letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
                 ),
           ),
           Text(
             'v.1.0.0.0',
-            style: GlobalTheme.of(context).bodyMedium.override(
-                  fontFamily: 'Manrope',
+            style: GlobalTheme.of(context).bodySmall.copyWith(
                   color: GlobalTheme.of(context).secondaryText,
-                  fontSize: 12.0,
-                  letterSpacing: 0.0,
                   fontWeight: FontWeight.w600,
                 ),
           ),
@@ -281,9 +274,7 @@ class MenuHeader extends StatelessWidget {
                   children: [
                     Text(
                       'Vendedor:',
-                      style: GlobalTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Manrope',
-                            letterSpacing: 0.0,
+                      style: GlobalTheme.of(context).bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -291,10 +282,7 @@ class MenuHeader extends StatelessWidget {
                       ffAppState.infoSeller.nameVenden.isNotEmpty
                           ? ffAppState.infoSeller.nameVenden
                           : 'Cargando...',
-                      style: GlobalTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Manrope',
-                            letterSpacing: 0.0,
-                          ),
+                      style: GlobalTheme.of(context).bodyMedium,
                     ),
                   ],
                 ),

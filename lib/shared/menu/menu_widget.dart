@@ -75,12 +75,8 @@ class _MenuWidgetState extends State<MenuWidget> {
                             16.0, 0.0, 16.0, 0.0),
                         child: Text(
                           'Menu',
-                          style: GlobalTheme.of(context)
-                              .headlineSmall
-                              .override(
-                                fontFamily: 'Outfit',
+                          style: GlobalTheme.of(context).headlineSmall.copyWith(
                                 color: GlobalTheme.of(context).primary,
-                                  letterSpacing: 0.0,
                               ),
                         ),
                       ),

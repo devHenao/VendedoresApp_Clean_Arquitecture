@@ -51,10 +51,10 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF4F4),
+          color: GlobalTheme.of(context).secondaryBackground,
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
-            color: const Color(0xFC39D2C0),
+            color: GlobalTheme.of(context).success,
             width: 1.0,
           ),
         ),
@@ -73,9 +73,9 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.gpp_good_rounded,
-                          color: Color(0xFC39D2C0),
+                          color: GlobalTheme.of(context).success,
                           size: 30.0,
                         ),
                         Expanded(
@@ -91,13 +91,8 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                   children: [
                                     Text(
                                       'Actualizado',
-                                      style: GlobalTheme.of(context)
-                                          .headlineMedium
-                                          .override(
-                                            fontFamily: 'Outfit',
-                                            color: const Color(0xFC39D2C0),
-                                            fontSize: 18.0,
-                                            letterSpacing: 0.0,
+                                      style: GlobalTheme.of(context).headlineSmall.copyWith(
+                                            color: GlobalTheme.of(context).success,
                                           ),
                                     ),
                                   ].divide(const SizedBox(width: 5.0)),
@@ -108,14 +103,7 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                                     Expanded(
                                       child: Text(
                                         'La información fue actualizada correctamente.',
-                                        style: GlobalTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Manrope',
-                                              fontSize: 14.0,
-                                              letterSpacing: 0.0,
-                                              fontWeight: FontWeight.normal,
-                                            ),
+                                        style: GlobalTheme.of(context).bodyMedium,
                                       ),
                                     ),
                                   ].divide(const SizedBox(width: 5.0)),
@@ -137,13 +125,8 @@ class _OkActualizadoWidgetState extends State<OkActualizadoWidget> {
                               },
                               child: Text(
                                 'Ok',
-                                style: GlobalTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Manrope',
-                                      color: const Color(0xFC39D2C0),
-                                      fontSize: 18.0,
-                                      letterSpacing: 0.0,
+                                style: GlobalTheme.of(context).bodyMedium.copyWith(
+                                      color: GlobalTheme.of(context).success,
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),
