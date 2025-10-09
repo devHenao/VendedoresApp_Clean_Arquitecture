@@ -7,6 +7,8 @@ class ConfirmationDialog extends StatelessWidget {
   final String confirmText;
   final String cancelText;
   final bool showLoading;
+  final IconData icon;
+  final Color? iconColor;
 
   const ConfirmationDialog({
     super.key,
@@ -15,6 +17,8 @@ class ConfirmationDialog extends StatelessWidget {
     this.confirmText = 'Aceptar',
     this.cancelText = 'Cancelar',
     this.showLoading = false,
+    this.icon = Icons.help_outline,
+    this.iconColor,
   });
 
   static Future<bool?> show({
@@ -24,6 +28,8 @@ class ConfirmationDialog extends StatelessWidget {
     String confirmText = 'Aceptar',
     String cancelText = 'Cancelar',
     bool barrierDismissible = true,
+    IconData icon = Icons.help_outline,
+    Color? iconColor,
   }) {
     return showDialog<bool>(
       context: context,
@@ -34,6 +40,8 @@ class ConfirmationDialog extends StatelessWidget {
           content: content,
           confirmText: confirmText,
           cancelText: cancelText,
+          icon: icon,
+          iconColor: iconColor ?? GlobalTheme.of(context).secondaryText,
         );
       },
     );
@@ -46,48 +54,70 @@ class ConfirmationDialog extends StatelessWidget {
     return StatefulBuilder(
       builder: (context, setState) {
         final colors = GlobalTheme.of(context);
-        return AlertDialog(
+        return Dialog(
           backgroundColor: colors.secondaryBackground,
-          title: Text(title, style: colors.headlineSmall),
-          content: SingleChildScrollView(
-            child: Text(content, style: colors.bodyMedium),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
           ),
-          actions: [
-            TextButton(
-              onPressed: isLoading
-                  ? null
-                  : () => Navigator.of(context).pop(false),
-              child: Text(
-                cancelText,
-                style: colors.bodyMedium.copyWith(color: colors.secondaryText),
-              ),
-            ),
-            TextButton(
-              onPressed: isLoading
-                  ? null
-                  : () async {
-                      setState(() => isLoading = true);
-                      // Simulate async operation
-                      await Future.delayed(Duration.zero);
-                      if (context.mounted) {
-                        Navigator.of(context).pop(true);
-                      }
-                    },
-              child: isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: iconColor ?? colors.secondaryText, size: 48.0),
+                const SizedBox(height: 16.0),
+                Text(title, textAlign: TextAlign.center, style: colors.headlineSmall),
+                const SizedBox(height: 8.0),
+                Text(content, textAlign: TextAlign.center, style: colors.bodyMedium),
+                const SizedBox(height: 24.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: isLoading ? null : () => Navigator.of(context).pop(false),
+                        child: Text(
+                          cancelText,
+                          style: colors.bodyMedium.copyWith(color: colors.secondaryText),
+                        ),
                       ),
-                    )
-                  : Text(
-                      confirmText,
-                      style: colors.bodyMedium.copyWith(color: colors.primary),
                     ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                setState(() => isLoading = true);
+                                await Future.delayed(Duration.zero);
+                                if (context.mounted) {
+                                  Navigator.of(context).pop(true);
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.info,
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: isLoading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(colors.info),
+                                ),
+                              )
+                            : Text(confirmText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
