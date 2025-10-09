@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
 
 class ClientCard extends StatelessWidget {
@@ -20,10 +19,9 @@ class ClientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = GlobalTheme.of(context);
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: colors.secondaryBackground,
+      color: Theme.of(context).cardColor,
       elevation: 2.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -41,8 +39,7 @@ class ClientCard extends StatelessWidget {
                   _buildInfoRow(
                     context,
                     client.nit,
-                    style: colors.titleMedium.copyWith(
-                          color: colors.primaryText,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           fontSize: 20.0,
                         ),
@@ -95,7 +92,7 @@ class ClientCard extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: style ?? GlobalTheme.of(context).bodyMedium,
+            style: style ?? Theme.of(context).textTheme.bodyMedium,
             maxLines: maxLines,
             overflow: overflow,
           ),
@@ -116,7 +113,7 @@ class ClientCard extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: GlobalTheme.of(context).primaryBackground,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(8.0),
             boxShadow: [
               BoxShadow(
@@ -137,7 +134,8 @@ class ClientCard extends StatelessWidget {
         const SizedBox(height: 4.0),
         Text(
           label,
-          style: GlobalTheme.of(context).bodySmall.copyWith(
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontFamily: 'Manrope',
                 fontSize: 12.0,
               ),
         ),
@@ -155,28 +153,28 @@ class ClientCard extends StatelessWidget {
             context: context,
             icon: Icons.remove_red_eye_rounded,
             label: 'Detalle',
-            color: GlobalTheme.of(context).primary,
+            color: Theme.of(context).primaryColor,
             onPressed: onViewDetails,
           ),
           _buildActionButton(
             context: context,
             icon: Icons.wallet,
             label: 'Cartera',
-            color: GlobalTheme.of(context).success,
+            color: Colors.green,
             onPressed: onViewWallet,
           ),
           _buildActionButton(
             context: context,
             icon: Icons.pending_actions_rounded,
             label: 'Pendientes',
-            color: GlobalTheme.of(context).warning,
+            color: const Color(0xFFF87C23),
             onPressed: onViewPending,
           ),
           _buildActionButton(
             context: context,
             icon: Icons.content_paste_search_rounded,
             label: 'Ventas',
-            color: GlobalTheme.of(context).secondaryText,
+            color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.grey,
             onPressed: onViewSales,
           ),
         ],

@@ -1,4 +1,3 @@
-import 'package:app_vendedores/core/theme/theme.dart';
 import 'package:app_vendedores/modules/clients/presentation/bloc/update_client/update_client_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,14 +36,14 @@ class ClientView extends StatelessWidget {
             SnackBar(
               content:
                   Text(state.errorMessage ?? 'Error al descargar el archivo'),
-              backgroundColor: GlobalTheme.of(context).error,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         } else if (state.status == DownloadFileStatus.success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Archivo descargado correctamente'),
-              backgroundColor: GlobalTheme.of(context).success,
+            const SnackBar(
+              content: Text('Archivo descargado correctamente'),
+              backgroundColor: Colors.green,
             ),
           );
           downloadFileBloc.add(DownloadFileReset());
@@ -66,30 +65,15 @@ class ClientView extends StatelessWidget {
                             children: [
                               TextField(
                                 onChanged: controller.searchClients,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText:
                                       'Buscar cliente por nombre o documento',
-                                  labelStyle: GlobalTheme.of(context).labelMedium,
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: GlobalTheme.of(context).secondaryText,
-                                  ),
+                                  prefixIcon: Icon(Icons.search),
                                   border: OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-                                    borderSide: BorderSide(
-                                      color: GlobalTheme.of(context).alternate,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-                                    borderSide: BorderSide(
-                                      color: GlobalTheme.of(context).primary,
-                                      width: 2,
-                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12.0)),
                                   ),
                                 ),
-                                style: GlobalTheme.of(context).bodyMedium,
                               ),
                               const SizedBox(height: 16.0),
                               DateRangeSelectorWidget(
@@ -117,11 +101,9 @@ class ClientView extends StatelessWidget {
                   ),
                   if (downloadState.status == DownloadFileStatus.loading)
                     Container(
-                      color: GlobalTheme.of(context).accent4,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: GlobalTheme.of(context).primary,
-                        ),
+                      color: Colors.black54,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
                       ),
                     ),
                 ],
@@ -175,17 +157,17 @@ class ClientView extends StatelessWidget {
           Icon(
             Icons.search_off_rounded,
             size: 64,
-            color: GlobalTheme.of(context).secondaryText,
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             'No se encontraron clientes',
-            style: GlobalTheme.of(context).titleMedium,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Text(
             'Intenta con otro término de búsqueda',
-            style: GlobalTheme.of(context).bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ),
@@ -202,18 +184,18 @@ class ClientView extends StatelessWidget {
             Icon(
               Icons.error_outline_rounded,
               size: 64,
-              color: GlobalTheme.of(context).error,
+              color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(height: 16),
             Text(
               'Error al cargar los clientes',
-              style: GlobalTheme.of(context).titleMedium,
+              style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               message,
-              style: GlobalTheme.of(context).bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -238,12 +220,12 @@ class ClientView extends StatelessWidget {
           Icon(
             Icons.search_rounded,
             size: 64,
-            color: GlobalTheme.of(context).secondaryText,
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             'Busca clientes por nombre o documento',
-            style: GlobalTheme.of(context).titleMedium,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ],
       ),
