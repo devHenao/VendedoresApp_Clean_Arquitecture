@@ -20,45 +20,60 @@ class UpdateClientDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UpdateClientBloc, UpdateClientState>(
+    return BlocBuilder<UpdateClientBloc, UpdateClientState>(
       bloc: updateClientBloc,
-      listenWhen: (previous, current) => current is UpdateClientSuccess,
-      listener: (context, state) => onSuccess(),
-      child: Dialog(
-        backgroundColor: GlobalTheme.of(context).transparent,
-        elevation: 0,
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.all(24.0),
-          decoration: BoxDecoration(
-            color: GlobalTheme.of(context).secondaryBackground,
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.edit_square,
-                  color: GlobalTheme.of(context).primary,
-                  size: 48.0,
+      builder: (context, state) {
+        final isSubmitting = state is UpdateClientLoaded && state.isSubmitting;
+        
+        return WillPopScope(
+          onWillPop: () async => !isSubmitting,
+          child: BlocListener<UpdateClientBloc, UpdateClientState>(
+            bloc: updateClientBloc,
+            listenWhen: (previous, current) => current is UpdateClientSuccess,
+            listener: (context, state) => onSuccess(),
+            child: PopScope(
+              canPop: !isSubmitting,
+              child: Dialog(
+                backgroundColor: GlobalTheme.of(context).transparent,
+                child: WillPopScope(
+                  onWillPop: () async => !isSubmitting,
+                  child: Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    color: GlobalTheme.of(context).secondaryBackground,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.edit_square,
+                          color: GlobalTheme.of(context).primary,
+                          size: 48.0,
+                        ),
+                        const SizedBox(height: 16.0),
+                        Text(
+                          'Actualizar Cliente',
+                          textAlign: TextAlign.center,
+                          style: GlobalTheme.of(context).headlineSmall,
+                        ),
+                        const SizedBox(height: 24.0),
+                        BlocProvider.value(
+                          value: updateClientBloc,
+                          child: UpdateClientForm(client: client),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'Actualizar Cliente',
-                  textAlign: TextAlign.center,
-                  style: GlobalTheme.of(context).headlineSmall,
-                ),
-                const SizedBox(height: 24.0),
-                BlocProvider.value(
-                  value: updateClientBloc,
-                  child: UpdateClientForm(client: client),
-                ),
-              ],
+              ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

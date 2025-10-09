@@ -84,17 +84,19 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         }
       },
       builder: (context, state) {
+        final isSubmitting = state is UpdateClientLoaded && state.isSubmitting;
+        
         if (state is UpdateClientLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is UpdateClientLoaded) {
-          return _buildForm(state);
+          return _buildForm(state, isSubmitting);
         }
         return const Center(child: Text('Error al cargar el formulario'));
       },
     );
   }
 
-  Widget _buildForm(UpdateClientLoaded state) {
+  Widget _buildForm(UpdateClientLoaded state, bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
 
@@ -105,21 +107,21 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildDocumentoField(),
+            _buildDocumentoField(isSubmitting),
             const SizedBox(height: 16),
-            _buildNameField(),
+            _buildNameField(isSubmitting),
             const SizedBox(height: 16),
-            _buildContactoField(),
+            _buildContactoField(isSubmitting),
             const SizedBox(height: 16),
-            _buildEmailField(),
+            _buildEmailField(isSubmitting),
             const SizedBox(height: 16),
-            _buildPhoneField(),
+            _buildPhoneField(isSubmitting),
             const SizedBox(height: 16),
-            _buildDepartmentDropdown(state),
+            _buildDepartmentDropdown(state, isSubmitting),
             const SizedBox(height: 16),
-            _buildCityDropdown(state),
+            _buildCityDropdown(state, isSubmitting),
             const SizedBox(height: 16),
-            _buildAddressField(),
+            _buildAddressField(isSubmitting),
             const SizedBox(height: 24),
             SizedBox(
               height: 50,
@@ -165,12 +167,16 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     );
   }
 
-  Widget _buildAddressField() {
+  Widget _buildAddressField(bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
+    
     return TextFormField(
       controller: _addressController,
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
+      enabled: !isSubmitting,
+      style: theme.textTheme.bodyLarge?.copyWith(
+        color: isSubmitting ? colors.secondaryText : colors.primaryText,
+      ),
       maxLines: 2,
       decoration: InputDecoration(
         labelText: 'Dirección *',
@@ -198,19 +204,20 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     );
   }
 
-  Widget _buildDocumentoField() {
+  Widget _buildDocumentoField(bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-
+    
     return TextFormField(
       controller: _documentoController,
-      enabled: false,
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.secondaryText),
+      enabled: !isSubmitting,
+      style: theme.textTheme.bodyLarge?.copyWith(
+        color: isSubmitting ? colors.secondaryText : colors.primaryText,
+      ),
       decoration: InputDecoration(
-        labelText: 'Documento',
+        labelText: 'Documento *',
         suffixIcon: const Icon(Icons.credit_card_outlined, size: 20),
-        labelStyle:
-            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colors.alternate),
@@ -224,20 +231,61 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
           borderSide: BorderSide(color: colors.primary, width: 2),
         ),
         filled: true,
-        fillColor: colors.secondaryBackground.withValues(alpha: 0.7),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        fillColor: colors.secondaryBackground,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese el documento';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildContactoField(bool isSubmitting) {
+    final theme = Theme.of(context);
+    final colors = GlobalTheme.of(context);
+    
+    return TextFormField(
+      controller: _contactoController,
+      enabled: !isSubmitting,
+      style: theme.textTheme.bodyLarge?.copyWith(
+        color: isSubmitting ? colors.secondaryText : colors.primaryText,
+      ),
+      decoration: InputDecoration(
+        labelText: 'Contacto',
+        suffixIcon: const Icon(Icons.person_outline, size: 20),
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: colors.alternate),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: colors.alternate),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: colors.primary, width: 2),
+        ),
+        filled: true,
+        fillColor: colors.secondaryBackground,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }
 
-  Widget _buildNameField() {
+  Widget _buildNameField(bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-
+    
     return TextFormField(
       controller: _nameController,
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
+      enabled: !isSubmitting,
+      style: theme.textTheme.bodyLarge?.copyWith(
+        color: isSubmitting ? colors.secondaryText : colors.primaryText,
+      ),
       decoration: InputDecoration(
         labelText: 'Nombre *',
         suffixIcon: const Icon(Icons.person_outline, size: 20),
@@ -264,47 +312,17 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     );
   }
 
-  Widget _buildContactoField() {
+  Widget _buildEmailField(bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-
-    return TextFormField(
-      controller: _contactoController,
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
-      decoration: InputDecoration(
-        labelText: 'Contacto *',
-        suffixIcon: const Icon(Icons.person_outline, size: 20),
-        labelStyle:
-            theme.textTheme.bodyMedium?.copyWith(color: colors.secondaryText),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: colors.alternate),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: colors.alternate),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: colors.primary, width: 2),
-        ),
-        filled: true,
-        fillColor: colors.secondaryBackground,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-      validator: AppValidators.validateContact,
-    );
-  }
-
-  Widget _buildEmailField() {
-    final theme = Theme.of(context);
-    final colors = GlobalTheme.of(context);
-
+    
     return TextFormField(
       controller: _emailController,
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
+      enabled: !isSubmitting,
       keyboardType: TextInputType.emailAddress,
+      style: theme.textTheme.bodyLarge?.copyWith(
+        color: isSubmitting ? colors.secondaryText : colors.primaryText,
+      ),
       decoration: InputDecoration(
         labelText: 'Correo Electrónico *',
         suffixIcon: const Icon(Icons.email_outlined, size: 20),
@@ -331,14 +349,17 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     );
   }
 
-  Widget _buildPhoneField() {
+  Widget _buildPhoneField(bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-
+    
     return TextFormField(
       controller: _phoneController,
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
+      enabled: !isSubmitting,
       keyboardType: TextInputType.phone,
+      style: theme.textTheme.bodyLarge?.copyWith(
+        color: isSubmitting ? colors.secondaryText : colors.primaryText,
+      ),
       decoration: InputDecoration(
         labelText: 'Teléfono *',
         suffixIcon: const Icon(Icons.phone_outlined, size: 20),
@@ -365,12 +386,26 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     );
   }
 
-  Widget _buildDepartmentDropdown(UpdateClientLoaded state) {
+  Widget _buildDepartmentDropdown(UpdateClientLoaded state, bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
-
+    final isDisabled = isSubmitting || state.isSubmitting;
+    
     return DropdownButtonFormField<String>(
-      initialValue: state.selectedDepartment,
+      initialValue: state.selectedDepartment ?? widget.client.nomdpto,
+      onChanged: isDisabled 
+          ? null 
+          : (String? value) {
+              if (value != null) {
+                context.read<UpdateClientBloc>().add(DepartmentChangedEvent(value));
+              }
+            },
+      disabledHint: Text(
+        state.selectedDepartment ?? widget.client.nomdpto ?? 'Seleccione un departamento',
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: colors.secondaryText,
+        ),
+      ),
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Departamento *',
@@ -400,11 +435,6 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
                 child: Text(dept),
               ))
           .toList(),
-      onChanged: (String? value) {
-        if (value != null) {
-          context.read<UpdateClientBloc>().add(DepartmentChangedEvent(value));
-        }
-      },
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Por favor seleccione un departamento';
@@ -414,17 +444,48 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
     );
   }
 
-  Widget _buildCityDropdown(UpdateClientLoaded state) {
+  Widget _buildCityDropdown(UpdateClientLoaded state, bool isSubmitting) {
     final theme = Theme.of(context);
     final colors = GlobalTheme.of(context);
+    final isDisabled = isSubmitting || state.isSubmitting;
     
-    final bool isSelectedCityValid = state.selectedCityCode != null &&
-        state.cities.any((city) => city['code'] == state.selectedCityCode);
+    final String? initialCityCode = state.selectedCityCode ?? widget.client.nomciud;
     
-    final String? dropdownValue = isSelectedCityValid ? state.selectedCityCode : null;
-
+    final bool isCityInList = state.cities.any(
+      (city) => city['code']?.toString() == initialCityCode,
+    );
+    
+    if (initialCityCode != null && initialCityCode.isNotEmpty && !isCityInList) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<UpdateClientBloc>().add(const CityChangedEvent(cityCode: ''));
+      });
+    }
+    
+    final selectedCity = isCityInList
+        ? state.cities.firstWhere(
+            (city) => city['code']?.toString() == initialCityCode,
+          )
+        : {'code': '', 'name': 'Seleccione una ciudad'};
+    
+    final String? dropdownValue = selectedCity['code']?.toString().isNotEmpty == true
+        ? selectedCity['code']?.toString()
+        : null;
+    
     return DropdownButtonFormField<String>(
       initialValue: dropdownValue,
+      onChanged: isDisabled || state.isLoadingCities
+          ? null
+          : (String? value) {
+              if (value != null) {
+                context.read<UpdateClientBloc>().add(CityChangedEvent(cityCode: value));
+              }
+            },
+      disabledHint: Text(
+        selectedCity['name']?.toString() ?? 'Seleccione una ciudad',
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: colors.secondaryText,
+        ),
+      ),
       style: theme.textTheme.bodyLarge?.copyWith(color: colors.primaryText),
       decoration: InputDecoration(
         labelText: 'Ciudad *',
@@ -454,19 +515,10 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       ),
       items: state.cities
           .map((city) => DropdownMenuItem<String>(
-                value: city['code'],
-                child: Text(city['name'] ?? ''),
+                value: city['code']?.toString() ?? '',
+                child: Text(city['name']?.toString() ?? ''),
               ))
           .toList(),
-      onChanged: state.isLoadingCities
-          ? null 
-          : (value) {
-              if (value != null) {
-                context
-                    .read<UpdateClientBloc>()
-                    .add(CityChangedEvent(cityCode: value));
-              }
-            },
       validator: (value) {
         if (state.isLoadingCities) {
           return 'Cargando ciudades...';
@@ -484,6 +536,8 @@ class _UpdateClientFormState extends State<UpdateClientForm> {
       direccion: _addressController.text,
       nit: _documentoController.text,
       contacto: _contactoController.text,
+      nomciud: state.selectedCityName,
+      nomdpto: state.selectedDepartment,
     );
   }
 }
