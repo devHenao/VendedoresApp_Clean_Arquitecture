@@ -25,8 +25,8 @@ class UpdateClientDialog extends StatelessWidget {
       builder: (context, state) {
         final isSubmitting = state is UpdateClientLoaded && state.isSubmitting;
         
-        return WillPopScope(
-          onWillPop: () async => !isSubmitting,
+        return PopScope(
+          canPop: !isSubmitting,
           child: BlocListener<UpdateClientBloc, UpdateClientState>(
             bloc: updateClientBloc,
             listenWhen: (previous, current) => current is UpdateClientSuccess,
@@ -35,8 +35,8 @@ class UpdateClientDialog extends StatelessWidget {
               canPop: !isSubmitting,
               child: Dialog(
                 backgroundColor: GlobalTheme.of(context).transparent,
-                child: WillPopScope(
-                  onWillPop: () async => !isSubmitting,
+                child: PopScope(
+                  canPop: !isSubmitting,
                   child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   padding: const EdgeInsets.all(24.0),
