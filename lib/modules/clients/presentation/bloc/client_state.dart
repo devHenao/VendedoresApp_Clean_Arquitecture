@@ -26,7 +26,7 @@ abstract class ClientState extends Equatable {
   DateTime getEffectiveStartDate() => startDate;
   
   DateTime getEffectiveEndDate() => endDate;
-
+  
   @override
   List<Object> get props => [startDate, endDate];
 }
@@ -47,28 +47,32 @@ class ClientLoading extends ClientState {
 
 class ClientLoaded extends ClientState {
   final List<Client> clients;
+  final bool isLoading;
 
   ClientLoaded({
     required this.clients,
     DateTime? startDate,
     DateTime? endDate,
+    this.isLoading = false,
   }) : super(
     startDate: startDate ?? ClientState.firstDayOfMonth,
     endDate: endDate ?? ClientState.lastDayOfMonth,
   );
   
   @override
-  List<Object> get props => [...super.props, clients];
+  List<Object> get props => [...super.props, clients, isLoading];
   
   ClientLoaded copyWith({
     List<Client>? clients,
     DateTime? startDate,
     DateTime? endDate,
+    bool? isLoading,
   }) {
     return ClientLoaded(
       clients: clients ?? this.clients,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }
@@ -80,8 +84,9 @@ class ClientUpdated extends ClientState {
     startDate: ClientState.firstDayOfMonth,
     endDate: ClientState.lastDayOfMonth,
   );
+
   @override
-  List<Object> get props => [client];
+  List<Object> get props => [...super.props, client];
 }
 
 class DepartmentsLoaded extends ClientState {
@@ -93,11 +98,11 @@ class DepartmentsLoaded extends ClientState {
   );
 
   @override
-  List<Object> get props => [departments];
+  List<Object> get props => [...super.props, ...departments];
 }
 
 class CitiesLoaded extends ClientState {
-  final List<Map<String, dynamic>> cities;
+  final List<Map<String, String>> cities;
 
   CitiesLoaded({
     required this.cities,
@@ -109,17 +114,31 @@ class CitiesLoaded extends ClientState {
   );
 
   @override
-  List<Object> get props => [cities];
+  List<Object> get props => [...super.props, ...cities];
 }
 
 class ClientError extends ClientState {
   final String message;
+  final List<Client>? cachedClients;
 
-  ClientError({required this.message}) : super(
-    startDate: ClientState.firstDayOfMonth,
-    endDate: ClientState.lastDayOfMonth,
+  ClientError({
+    required this.message, 
+    this.cachedClients,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) : super(
+    startDate: startDate ?? ClientState.firstDayOfMonth,
+    endDate: endDate ?? ClientState.lastDayOfMonth,
   );
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [
+        message, 
+        ...?cachedClients, 
+        startDate, 
+        endDate
+      ];
+
+  @override
+  bool get stringify => true;
 }
