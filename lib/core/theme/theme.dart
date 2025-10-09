@@ -53,6 +53,7 @@ abstract class GlobalTheme {
   late Color warning;
   late Color error;
   late Color info;
+  late Color transparent;
 
   @Deprecated('Use displaySmallFamily instead')
   String get title1Family => displaySmallFamily;
@@ -141,6 +142,7 @@ class LightModeTheme extends GlobalTheme {
   late Color warning = const Color(0xFFFC964D);
   late Color error = const Color(0xFFEE4444);
   late Color info = const Color(0xFFFFFFFF);
+  late Color transparent = Colors.transparent;
 }
 
 abstract class Typography {
@@ -312,6 +314,7 @@ class DarkModeTheme extends GlobalTheme {
   late Color warning = const Color(0xFFFC964D);
   late Color error = const Color(0xFFEE4444);
   late Color info = const Color(0xFFFFFFFF);
+  late Color transparent = Colors.transparent;
 }
 
 extension TextStyleHelper on TextStyle {
