@@ -33,59 +33,73 @@ class ClientCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: InkWell(
-        onTap: onSelected != null ? () => onSelected!(client) : null,
-        borderRadius: BorderRadius.circular(12.0),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInfoRow(
-                      context,
-                      client.nit,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20.0,
+      child: Stack(
+        children: [
+          InkWell(
+            onTap: onSelected != null ? () => onSelected!(client) : null,
+            borderRadius: BorderRadius.circular(12.0),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildInfoRow(
+                          context,
+                          client.nit,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.0,
+                              ),
+                        ),
+                        _buildInfoRow(context, client.nombre),
+                        if (client.contacto?.isNotEmpty ?? false)
+                          _buildInfoRow(context, 'Contacto: ${client.contacto}'),
+                        if (client.tel1?.isNotEmpty ?? false)
+                          _buildInfoRow(context, 'Teléfono: ${client.tel1}'),
+                        if (client.email?.isNotEmpty ?? false)
+                          _buildInfoRow(
+                            context,
+                            'Email: ${client.email}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
+                        if (client.direccion?.isNotEmpty ?? false)
+                          _buildInfoRow(
+                            context,
+                            'Dirección: ${client.direccion}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        _buildActionButtons(context),
+                      ].map((e) => Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: e,
+                      )).toList(),
                     ),
-                    _buildInfoRow(context, client.nombre),
-                    if (client.contacto?.isNotEmpty ?? false)
-                      _buildInfoRow(context, 'Contacto: ${client.contacto}'),
-                    if (client.tel1?.isNotEmpty ?? false)
-                      _buildInfoRow(context, 'Teléfono: ${client.tel1}'),
-                    if (client.email?.isNotEmpty ?? false)
-                      _buildInfoRow(
-                        context,
-                        'Email: ${client.email}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    if (client.direccion?.isNotEmpty ?? false)
-                      _buildInfoRow(
-                        context,
-                        'Dirección: ${client.direccion}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    const Divider(thickness: 2.0),
-                    _buildActionButtons(context),
-                  ]
-                      .map((e) => Padding(
-                            padding: const EdgeInsets.only(bottom: 5.0),
-                            child: e,
-                          ))
-                      .toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isSelected)
+            Positioned(
+              top: 8.0,
+              right: 8.0,
+              child: Container(
+                padding: const EdgeInsets.all(6.0),
+                child: Icon(
+                  Icons.shopping_bag,
+                  color: theme.primary,
+                  size: 35.0,
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }
