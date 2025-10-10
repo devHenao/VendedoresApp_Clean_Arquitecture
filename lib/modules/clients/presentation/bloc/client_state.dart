@@ -48,31 +48,40 @@ class ClientLoading extends ClientState {
 class ClientLoaded extends ClientState {
   final List<Client> clients;
   final bool isLoading;
+  final String? selectedClientNit;
 
   ClientLoaded({
     required this.clients,
     DateTime? startDate,
     DateTime? endDate,
     this.isLoading = false,
+    this.selectedClientNit,
   }) : super(
     startDate: startDate ?? ClientState.firstDayOfMonth,
     endDate: endDate ?? ClientState.lastDayOfMonth,
   );
   
   @override
-  List<Object> get props => [...super.props, clients, isLoading];
+  List<Object> get props => [
+        ...super.props,
+        clients,
+        isLoading,
+        selectedClientNit ?? '',
+      ];
   
   ClientLoaded copyWith({
     List<Client>? clients,
     DateTime? startDate,
     DateTime? endDate,
     bool? isLoading,
+    String? selectedClientNit,
   }) {
     return ClientLoaded(
       clients: clients ?? this.clients,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       isLoading: isLoading ?? this.isLoading,
+      selectedClientNit: selectedClientNit ?? this.selectedClientNit,
     );
   }
 }

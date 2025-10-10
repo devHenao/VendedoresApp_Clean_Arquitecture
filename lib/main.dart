@@ -1,5 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import 'core/theme/theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
@@ -9,6 +11,8 @@ import 'modules/auth/infrastructure/services/auth_user_provider.dart'
     show AppVendedoresAuthUser, appVendedoresAuthUserStream;
 
 import 'modules/clients/domain/services/client_service.dart';
+import 'modules/clients/presentation/bloc/client_bloc.dart';
+import 'modules/clients/presentation/bloc/client_event.dart';
 
 import 'injection_container.dart' as di;
 
@@ -23,11 +27,17 @@ void main() async {
 
   final clientService = ClientService();
   
+  final getIt = GetIt.instance;
+  
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => appState),
         Provider<ClientService>.value(value: clientService),
+        BlocProvider(
+          create: (context) => getIt<ClientBloc>()..add(LoadClients()),
+          lazy: false, // Ensure it's created immediately
+        ),
       ],
       child: MyApp(),
     ),

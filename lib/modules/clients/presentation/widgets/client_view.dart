@@ -170,13 +170,12 @@ class _ClientViewState extends State<ClientView> {
               client: client,
               isSelected: selectedClientNit == client.nit,
               onSelected: (selectedClient) {
+                final clientBloc = context.read<ClientBloc>();
+                final newNit = selectedClientNit == selectedClient.nit ? null : selectedClient.nit;
                 setState(() {
-                  // Si el cliente ya está seleccionado, lo deseleccionamos
-                  // Si no, lo seleccionamos
-                  selectedClientNit = selectedClientNit == selectedClient.nit
-                      ? null
-                      : selectedClient.nit;
+                  selectedClientNit = newNit;
                 });
+                clientBloc.add(SelectClient(newNit));
               },
               onViewDetails: () => controller.showClientDetails(client),
               onViewWallet: () => controller.viewClientWallet(client),

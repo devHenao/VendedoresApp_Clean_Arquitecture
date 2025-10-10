@@ -9,6 +9,15 @@ abstract class ClientEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class SelectClient extends ClientEvent {
+  final String? clientNit;
+
+  const SelectClient(this.clientNit);
+
+  @override
+  List<Object> get props => [clientNit ?? ''];
+}
+
 class LoadClients extends ClientEvent {}
 
 class SearchClients extends ClientEvent {

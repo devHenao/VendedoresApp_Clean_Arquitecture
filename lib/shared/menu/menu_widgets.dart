@@ -4,6 +4,29 @@ import 'package:provider/provider.dart';
 import '../../core/theme/theme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dart';
+import 'package:app_vendedores/modules/clients/presentation/bloc/client_state.dart';
+
+void _showClientRequiredDialog(BuildContext context) {
+  final colors = GlobalTheme.of(context);
+  showDialog(
+    context: context,
+    builder: (alertDialogContext) => AlertDialog(
+      backgroundColor: colors.secondaryBackground,
+      title: Text('¡Espera!', style: colors.headlineSmall),
+      content: Text(
+        'Por favor, selecciona un cliente para acceder a los productos.',
+        style: colors.bodyMedium,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(alertDialogContext),
+          child: Text('Ok', style: colors.bodyMedium.copyWith(color: colors.primary)),
+        ),
+      ],
+    ),
+  );
+}
 
 class MenuItems extends StatelessWidget {
   const MenuItems({super.key});
@@ -26,35 +49,32 @@ class MenuItems extends StatelessWidget {
             text: 'Clientes',
             onTap: () => context.pushNamed('Clientes'),
           ),
-          _buildMenuItem(
-            context,
-            icon: Icons.inventory,
-            text: 'Productos',
-            onTap: () {
-              if (context.read<FFAppState>().dataCliente.email.isNotEmpty) {
-                context.pushNamed('Productos');
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (alertDialogContext) {
-                    final colors = GlobalTheme.of(context);
-                    return AlertDialog(
-                      backgroundColor: colors.secondaryBackground,
-                      title: Text('¡Espera!', style: colors.headlineSmall),
-                      content: Text(
-                        'Por favor, selecciona un cliente para acceder a los productos.',
-                        style: colors.bodyMedium,
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(alertDialogContext),
-                          child: Text('Ok', style: colors.bodyMedium.copyWith(color: colors.primary)),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
+          Builder(
+            builder: (context) {
+              return _buildMenuItem(
+                context,
+                icon: Icons.inventory,
+                text: 'Productos',
+                onTap: () {
+                  // Use a separate context that has access to the ClientBloc
+                  final navigatorContext = context;
+                  final clientBloc = navigatorContext.read<ClientBloc>();
+                  final clientState = clientBloc.state;
+                  
+                  if (clientState is ClientLoaded) {
+                    final hasSelectedClient = clientState.selectedClientNit != null && 
+                        clientState.selectedClientNit!.isNotEmpty;
+                    
+                    if (hasSelectedClient) {
+                      navigatorContext.pushNamed('Productos');
+                    } else {
+                      _showClientRequiredDialog(navigatorContext);
+                    }
+                  } else {
+                    _showClientRequiredDialog(navigatorContext);
+                  }
+                },
+              );
             },
           ),
           _buildMenuItem(

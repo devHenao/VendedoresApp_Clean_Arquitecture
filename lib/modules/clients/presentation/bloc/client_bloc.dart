@@ -32,6 +32,14 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     on<LoadCitiesByDepartment>(_onLoadCitiesByDepartment);
     on<UpdateDateRange>(_onUpdateDateRange);
     on<DownloadClientFile>(_onDownloadClientFile);
+    on<SelectClient>(_onSelectClient);
+  }
+
+  void _onSelectClient(SelectClient event, Emitter<ClientState> emit) {
+    if (state is ClientLoaded) {
+      final currentState = state as ClientLoaded;
+      emit(currentState.copyWith(selectedClientNit: event.clientNit));
+    }
   }
 
   Future<void> _onDownloadClientFile(
