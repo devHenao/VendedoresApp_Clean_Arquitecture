@@ -8,9 +8,9 @@ class ClientModel extends Client {
   const ClientModel({
     String? tipocar,
     String? codigocta,
-    required super.nit,
+    required String nit,
     String? vendedor,
-    required super.nombre,
+    required String nombre,
     String? direccion,
     String? cdciiu,
     String? contacto,
@@ -19,7 +19,21 @@ class ClientModel extends Client {
     String? codprecio,
     String? nomciud,
     String? nomdpto,
-  });
+  }) : super(
+          tipocar: tipocar,
+          codigocta: codigocta,
+          nit: nit,
+          vendedor: vendedor,
+          nombre: nombre,
+          direccion: direccion,
+          cdciiu: cdciiu,
+          contacto: contacto,
+          tel1: tel1,
+          email: email,
+          codprecio: codprecio,
+          nomciud: nomciud,
+          nomdpto: nomdpto,
+        );
 
   factory ClientModel.fromJson(Map<String, dynamic> json) =>
       _$ClientModelFromJson(json);
