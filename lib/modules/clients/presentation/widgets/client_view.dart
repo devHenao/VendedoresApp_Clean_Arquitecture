@@ -12,6 +12,7 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/download_file_event.dart';
 import 'package:app_vendedores/modules/clients/presentation/controllers/client_controller.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
+import 'package:app_vendedores/modules/products/presentation/pages/product_page.dart';
 
 class ClientView extends StatefulWidget {
   const ClientView({super.key});
@@ -63,6 +64,9 @@ class _ClientViewState extends State<ClientView> {
               return Stack(
                 children: [
                   Scaffold(
+                    floatingActionButton: selectedClientNit != null
+                        ? _buildButtonFloating(state)
+                        : null,
                     body: Column(
                       children: [
                         Padding(
@@ -122,6 +126,28 @@ class _ClientViewState extends State<ClientView> {
     );
   }
 
+  Widget _buildButtonFloating(state) {
+    return FloatingActionButton.extended(
+      onPressed: () {
+        // Verify client is still in the list before navigating
+        final clientExists = (state as ClientLoaded).clients.any(
+              (client) => client.nit == selectedClientNit,
+            );
+        if (clientExists) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ProductPage(),
+            ),
+          );
+        }
+      },
+      label: const Text('Ver Productos'),
+      icon: const Icon(Icons.shopping_bag),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+    );
+  }
+
   Widget _buildClientList(
     BuildContext context,
     ClientState state,
@@ -147,8 +173,8 @@ class _ClientViewState extends State<ClientView> {
                 setState(() {
                   // Si el cliente ya está seleccionado, lo deseleccionamos
                   // Si no, lo seleccionamos
-                  selectedClientNit = selectedClientNit == selectedClient.nit 
-                      ? null 
+                  selectedClientNit = selectedClientNit == selectedClient.nit
+                      ? null
                       : selectedClient.nit;
                 });
               },
