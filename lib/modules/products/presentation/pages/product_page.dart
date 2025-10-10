@@ -10,7 +10,12 @@ import 'package:app_vendedores/shared/menu/menu_widgets.dart';
 import 'package:app_vendedores/injection_container.dart';
 
 class ProductPage extends StatelessWidget {
-  const ProductPage({super.key});
+  final String codprecio;
+  
+  const ProductPage({
+    super.key, 
+    this.codprecio = '',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,7 @@ class ProductPage extends StatelessWidget {
         ),
       ),
       body: BlocProvider(
-        create: (_) => getIt<ProductBloc>()..add(const LoadProducts(codprecio: '')),
+        create: (_) => getIt<ProductBloc>()..add(LoadProducts(codprecio: codprecio)),
         child: const ProductView(),
       ),
     );
