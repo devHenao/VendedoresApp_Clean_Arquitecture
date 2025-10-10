@@ -14,25 +14,54 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<List<ProductModel>> getProducts(String token, String codprecio, int pageNumber, int pageSize, String filter) async {
-    final url = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller/products/postListProductByCodPrecio/$codprecio';
-    final headers = {'Authorization': 'Bearer $token'};
-    final body = {
-      'codprecio': codprecio,
+    const baseUrl = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller';
+    final url = '$baseUrl/products/getListProductByCodPrecio/$codprecio';
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final requestBody = {
       'pageNumber': pageNumber,
       'pageSize': pageSize,
-      'filter': filter,
+      'filters': [
+        {
+          'type': 'like',
+          'field': 'descripcio',
+          'valueFilter': filter,
+        },
+        {
+          'type': 'like',
+          'field': 'codproduc',
+          'valueFilter': filter,
+        },
+        {
+          'type': '==',
+          'field': 'codbarras',
+          'valueFilter': filter,
+        },
+      ],
     };
 
     try {
-      final response = await dio.post(url, data: body, options: Options(headers: headers));
+      final response = await dio.post(
+        url,
+        data: requestBody,
+        options: Options(
+          headers: headers,
+          responseType: ResponseType.json,
+        ),
+      );
+
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data']['data'];
+        final List<dynamic> data = response.data['data'];
         return data.map((json) => ProductModel.fromJson(json)).toList();
       } else {
-        throw ServerException(response.data['data'] ?? 'Error al obtener los productos');
+        throw ServerException(response.data['message'] ?? 'Error al obtener los productos');
       }
     } catch (e) {
-      throw ServerException('Error al conectar con el servidor');
+      throw ServerException('Error al conectar con el servidor: $e');
     }
   }
 }
