@@ -1,77 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:app_vendedores/modules/clients/domain/entities/client.dart';
+import 'package:app_vendedores/core/theme/theme.dart';
 
 class ClientCard extends StatelessWidget {
   final Client client;
+  final bool isSelected;
   final VoidCallback? onViewDetails;
   final VoidCallback? onViewWallet;
   final VoidCallback? onViewPending;
   final VoidCallback? onViewSales;
+  final ValueChanged<Client>? onSelected;
 
   const ClientCard({
     super.key,
     required this.client,
+    this.isSelected = false,
     this.onViewDetails,
     this.onViewWallet,
     this.onViewPending,
     this.onViewSales,
+    this.onSelected,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = GlobalTheme.of(context);
+
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: Theme.of(context).cardColor,
+      color: isSelected ? theme.alternate : theme.secondaryBackground,
       elevation: 2.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInfoRow(
-                    context,
-                    client.nit,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20.0,
-                        ),
-                  ),
-                  _buildInfoRow(context, client.nombre),
-                  if (client.contacto?.isNotEmpty ?? false)
-                    _buildInfoRow(context, 'Contacto: ${client.contacto}'),
-                  if (client.tel1?.isNotEmpty ?? false)
-                    _buildInfoRow(context, 'Teléfono: ${client.tel1}'),
-                  if (client.email?.isNotEmpty ?? false)
+      child: InkWell(
+        onTap: onSelected != null ? () => onSelected!(client) : null,
+        borderRadius: BorderRadius.circular(12.0),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     _buildInfoRow(
                       context,
-                      'Email: ${client.email}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      client.nit,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20.0,
+                          ),
                     ),
-                  if (client.direccion?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      context,
-                      'Dirección: ${client.direccion}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  const Divider(thickness: 2.0),
-                  _buildActionButtons(context),
-                ].map((e) => Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
-                  child: e,
-                )).toList(),
+                    _buildInfoRow(context, client.nombre),
+                    if (client.contacto?.isNotEmpty ?? false)
+                      _buildInfoRow(context, 'Contacto: ${client.contacto}'),
+                    if (client.tel1?.isNotEmpty ?? false)
+                      _buildInfoRow(context, 'Teléfono: ${client.tel1}'),
+                    if (client.email?.isNotEmpty ?? false)
+                      _buildInfoRow(
+                        context,
+                        'Email: ${client.email}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    if (client.direccion?.isNotEmpty ?? false)
+                      _buildInfoRow(
+                        context,
+                        'Dirección: ${client.direccion}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    const Divider(thickness: 2.0),
+                    _buildActionButtons(context),
+                  ]
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.only(bottom: 5.0),
+                            child: e,
+                          ))
+                      .toList(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -85,7 +98,7 @@ class ClientCard extends StatelessWidget {
     TextOverflow overflow = TextOverflow.clip,
   }) {
     if (text.isEmpty) return const SizedBox.shrink();
-    
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -144,6 +157,7 @@ class ClientCard extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context) {
+    final theme = GlobalTheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -153,28 +167,28 @@ class ClientCard extends StatelessWidget {
             context: context,
             icon: Icons.remove_red_eye_rounded,
             label: 'Detalle',
-            color: Theme.of(context).primaryColor,
+            color: theme.primary,
             onPressed: onViewDetails,
           ),
           _buildActionButton(
             context: context,
             icon: Icons.wallet,
             label: 'Cartera',
-            color: Colors.green,
+            color: theme.success,
             onPressed: onViewWallet,
           ),
           _buildActionButton(
             context: context,
             icon: Icons.pending_actions_rounded,
             label: 'Pendientes',
-            color: const Color(0xFFF87C23),
+            color: theme.warning,
             onPressed: onViewPending,
           ),
           _buildActionButton(
             context: context,
             icon: Icons.content_paste_search_rounded,
             label: 'Ventas',
-            color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.grey,
+            color: theme.primaryText,
             onPressed: onViewSales,
           ),
         ],

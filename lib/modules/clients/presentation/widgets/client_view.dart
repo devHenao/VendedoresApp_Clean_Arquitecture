@@ -13,8 +13,15 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/download_file/d
 import 'package:app_vendedores/modules/clients/presentation/controllers/client_controller.dart';
 import 'package:app_vendedores/modules/clients/presentation/widgets/client_card.dart';
 
-class ClientView extends StatelessWidget {
+class ClientView extends StatefulWidget {
   const ClientView({super.key});
+
+  @override
+  State<ClientView> createState() => _ClientViewState();
+}
+
+class _ClientViewState extends State<ClientView> {
+  String? selectedClientNit;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +142,16 @@ class ClientView extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12.0),
             child: ClientCard(
               client: client,
+              isSelected: selectedClientNit == client.nit,
+              onSelected: (selectedClient) {
+                setState(() {
+                  // Si el cliente ya está seleccionado, lo deseleccionamos
+                  // Si no, lo seleccionamos
+                  selectedClientNit = selectedClientNit == selectedClient.nit 
+                      ? null 
+                      : selectedClient.nit;
+                });
+              },
               onViewDetails: () => controller.showClientDetails(client),
               onViewWallet: () => controller.viewClientWallet(client),
               onViewPending: () => controller.viewClientPending(client),
