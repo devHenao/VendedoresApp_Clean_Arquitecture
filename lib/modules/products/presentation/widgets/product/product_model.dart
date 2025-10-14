@@ -22,7 +22,10 @@ class ProductModel extends FlutterFlowModel<ProductWidget> {
   ApiCallResponse? apiResultDetailProduct;
 
   @override
-  void initState(BuildContext context) {}
+  void initState(BuildContext context) {
+    amountFocusNode ??= FocusNode();
+    amountTextController ??= TextEditingController();
+  }
 
   @override
   void dispose() {

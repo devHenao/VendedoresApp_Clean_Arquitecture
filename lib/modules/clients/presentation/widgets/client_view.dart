@@ -129,18 +129,16 @@ class _ClientViewState extends State<ClientView> {
   Widget _buildButtonFloating(state) {
     return FloatingActionButton.extended(
       onPressed: () {
-        // Verificar que el cliente aún está en la lista antes de navegar
         final selectedClient = (state as ClientLoaded).clients.firstWhere(
           (client) => client.nit == selectedClientNit,
           orElse: () => throw Exception('Cliente no encontrado'),
         );
         
-        // Navegar a la página de productos con el código del vendedor
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProductPage(
-              codprecio: selectedClient.vendedor ?? '',
+              codprecio: selectedClient.codprecio ?? '',
             ),
           ),
         );

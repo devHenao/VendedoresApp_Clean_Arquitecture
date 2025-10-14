@@ -129,8 +129,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                     contador: _controller.contador,
                     saldoBodegaVendedor: _controller.saldoBodegaVendedor,
                     textController: _textController,
-                    focusNode: _model.amountFocusNode!, // Re-using from old model for now
-                    validator: _model.amountTextControllerValidator.asValidator(context),
+                    focusNode: _model.amountFocusNode ??= FocusNode(), // Ensure non-null
+                    validator: _model.amountTextControllerValidator?.asValidator(context),
                     onAdd: _controller.addToCart,
                     onRemove: _controller.removeFromCart,
                     onSubtract: _controller.decrement,
