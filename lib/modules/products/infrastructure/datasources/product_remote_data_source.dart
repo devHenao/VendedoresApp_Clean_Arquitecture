@@ -55,8 +55,14 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => ProductModel.fromJson(json)).toList();
+        // Accedemos a la lista de productos que está en response.data['data']['data']
+        final responseData = response.data['data'];
+        if (responseData is Map && responseData.containsKey('data')) {
+          final List<dynamic> productsList = responseData['data'];
+          return productsList.map((json) => ProductModel.fromJson(json)).toList();
+        } else {
+          throw ServerException('Formato de respuesta inesperado del servidor');
+        }
       } else {
         throw ServerException(response.data['message'] ?? 'Error al obtener los productos');
       }
