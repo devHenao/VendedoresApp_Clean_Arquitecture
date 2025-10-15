@@ -1,15 +1,15 @@
+import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
+
+import '/flutter_flow/flutter_flow_util.dart';
 import 'package:app_vendedores/core/theme/theme.dart';
-import 'package:easy_debounce/easy_debounce.dart';
 import 'package:app_vendedores/core/backend/schema/structs/index.dart';
 import 'package:app_vendedores/modules/products/presentation/widgets/product/product_widget.dart';
-import '/flutter_flow/flutter_flow_util.dart';
 import 'package:app_vendedores/modules/products/presentation/controllers/product_view_controller.dart';
 import 'package:app_vendedores/modules/products/domain/usecases/get_products_use_case.dart';
-import 'package:dio/dio.dart';
 import 'package:app_vendedores/modules/products/infrastructure/datasources/product_remote_data_source.dart';
 import 'package:app_vendedores/modules/products/infrastructure/repositories/product_repository_impl.dart';
 
@@ -26,6 +26,7 @@ class _ProductViewState extends State<ProductView> {
   late ProductViewController _viewController;
   bool _isLoadingInitial = false;
   bool _isScanning = false;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -90,7 +91,12 @@ class _ProductViewState extends State<ProductView> {
       final code = result.rawContent;
       if (code.isNotEmpty) {
         _searchController.text = code;
-        await _viewController.searchProducts(context, code, widget.vendedor ?? '');
+        setState(() => _isSearching = true);
+        try {
+          await _viewController.searchProducts(context, code, widget.vendedor ?? '');
+        } finally {
+          setState(() => _isSearching = false);
+        }
         setState(() {});
       }
     } catch (_) {
@@ -133,13 +139,15 @@ class _ProductViewState extends State<ProductView> {
             focusNode: _searchFocusNode,
             onChanged: (_) {
               setState(() {});
-              EasyDebounce.debounce(
-                'search-products',
-                const Duration(milliseconds: 450),
-                () => _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? ''),
-              );
             },
-            onFieldSubmitted: (_) async => _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? ''),
+            onFieldSubmitted: (_) async {
+              setState(() => _isSearching = true);
+              try {
+                await _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? '');
+              } finally {
+                setState(() => _isSearching = false);
+              }
+            },
             decoration: InputDecoration(
               isDense: true,
               hintText: 'Buscar por nombre o código',
@@ -148,8 +156,12 @@ class _ProductViewState extends State<ProductView> {
                       icon: Icon(Icons.clear, color: GlobalTheme.of(context).secondaryText, size: 20),
                       onPressed: () async {
                         _searchController.clear();
-                        setState(() {});
-                        await _viewController.searchProducts(context, '', widget.vendedor ?? '');
+                        setState(() => _isSearching = true);
+                        try {
+                          await _viewController.searchProducts(context, '', widget.vendedor ?? '');
+                        } finally {
+                          setState(() => _isSearching = false);
+                        }
                         _searchFocusNode.requestFocus();
                       },
                     )
@@ -184,7 +196,14 @@ class _ProductViewState extends State<ProductView> {
             color: GlobalTheme.of(context).primary,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
-              onTap: () async => _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? ''),
+              onTap: () async {
+                setState(() => _isSearching = true);
+                try {
+                  await _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? '');
+                } finally {
+                  setState(() => _isSearching = false);
+                }
+              },
               child: Icon(Icons.search_rounded, color: GlobalTheme.of(context).info, size: 24),
             ),
           ),
@@ -404,7 +423,7 @@ class _ProductViewState extends State<ProductView> {
     final products = List<DataProductStruct>.from(appState.productList)
       ..sort((a, b) => a.descripcio.toLowerCase().compareTo(b.descripcio.toLowerCase()));
 
-    if (_isLoadingInitial && products.isEmpty) {
+    if (_isLoadingInitial && products.isEmpty || _isSearching) {
       return const Center(child: CircularProgressIndicator());
     }
 
