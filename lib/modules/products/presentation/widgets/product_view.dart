@@ -20,7 +20,8 @@ class _ProductViewState extends State<ProductView> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   late ProductViewController _viewController;
-  bool _isLoadingInitial = false; 
+  bool _isLoadingInitial = false;
+  bool _isScanning = false; // Estado de carga del scanner 
 
   @override
   void initState() {
@@ -71,6 +72,7 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Future<void> _scanBarcode() async {
+    setState(() => _isScanning = true);
     try {
       final result = await BarcodeScanner.scan();
       final code = result.rawContent;
@@ -79,7 +81,10 @@ class _ProductViewState extends State<ProductView> {
         await _viewController.searchProducts(context, code, widget.codprecio ?? '');
         setState(() {});
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      setState(() => _isScanning = false);
+    }
   }
 
   Widget _buildHeader() {
@@ -177,11 +182,22 @@ class _ProductViewState extends State<ProductView> {
           height: 40,
           width: 40,
           child: Material(
-            color: GlobalTheme.of(context).secondaryBackground,
+            color: _isScanning
+                ? GlobalTheme.of(context).secondaryBackground
+                : GlobalTheme.of(context).secondaryBackground,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
-              onTap: _scanBarcode,
-              child: Icon(Icons.qr_code_scanner_outlined, color: GlobalTheme.of(context).primary, size: 24),
+              onTap: _isScanning ? null : _scanBarcode,
+              child: _isScanning
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(GlobalTheme.of(context).primary),
+                      ),
+                    )
+                  : Icon(Icons.qr_code_scanner_outlined, color: GlobalTheme.of(context).primary, size: 24),
             ),
           ),
         ),
