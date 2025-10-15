@@ -33,3 +33,7 @@ class FileDownloadFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure([super.message = 'Error desconocido']);
 }
+
+class UnexpectedFailure extends Failure {
+  const UnexpectedFailure([super.message = 'Error inesperado']);
+}

@@ -138,7 +138,7 @@ class _ClientViewState extends State<ClientView> {
           context,
           MaterialPageRoute(
             builder: (context) => ProductPage(
-              codprecio: selectedClient.codprecio ?? '',
+              vendedor: selectedClient.vendedor ?? '',
             ),
           ),
         );

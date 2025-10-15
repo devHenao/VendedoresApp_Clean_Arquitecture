@@ -9,24 +9,24 @@ import 'package:app_vendedores/modules/clients/presentation/bloc/client_bloc.dar
 import 'package:app_vendedores/modules/clients/presentation/bloc/client_state.dart';
 
 class ProductPage extends StatelessWidget {
-  final String codprecio;
-  
+  final String vendedor;
+
   const ProductPage({
-    super.key, 
-    this.codprecio = '',
+    super.key,
+    this.vendedor = '',
   });
 
   @override
   Widget build(BuildContext context) {
-    String effectiveCodPrecio = codprecio;
+    String effectiveVendedor = vendedor;
     try {
-      if (effectiveCodPrecio.isEmpty) {
+      if (effectiveVendedor.isEmpty) {
         final state = context.read<ClientBloc>().state;
         if (state is ClientLoaded && state.selectedClientNit != null && state.selectedClientNit!.isNotEmpty) {
           final selectedNit = state.selectedClientNit!;
           final selectedList = state.clients.where((c) => c.nit == selectedNit);
           if (selectedList.isNotEmpty) {
-            effectiveCodPrecio = selectedList.first.codprecio ?? '';
+            effectiveVendedor = selectedList.first.vendedor ?? '';
           }
         }
       }
@@ -53,7 +53,7 @@ class ProductPage extends StatelessWidget {
           ],
         ),
       ),
-      body: ProductView(codprecio: effectiveCodPrecio),
+      body: ProductView(vendedor: effectiveVendedor),
     );
   }
 }

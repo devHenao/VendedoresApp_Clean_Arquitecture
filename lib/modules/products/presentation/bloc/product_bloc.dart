@@ -14,7 +14,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   Future<void> _onLoadProducts(LoadProducts event, Emitter<ProductState> emit) async {
     emit(ProductLoading());
     final failureOrProducts = await getProductsUseCase(Params(
-      codprecio: event.codprecio,
+      vendedor: event.vendedor,
       pageNumber: event.pageNumber,
       pageSize: event.pageSize,
       filter: event.filter,

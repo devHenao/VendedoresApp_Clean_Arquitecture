@@ -8,10 +8,14 @@ import 'package:app_vendedores/core/backend/schema/structs/index.dart';
 import 'package:app_vendedores/modules/products/presentation/widgets/product/product_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:app_vendedores/modules/products/presentation/controllers/product_view_controller.dart';
+import 'package:app_vendedores/modules/products/domain/usecases/get_products_use_case.dart';
+import 'package:dio/dio.dart';
+import 'package:app_vendedores/modules/products/infrastructure/datasources/product_remote_data_source.dart';
+import 'package:app_vendedores/modules/products/infrastructure/repositories/product_repository_impl.dart';
 
 class ProductView extends StatefulWidget {
-  const ProductView({super.key, this.codprecio});
-  final String? codprecio;
+  const ProductView({super.key, this.vendedor});
+  final String? vendedor;
   @override
   State<ProductView> createState() => _ProductViewState();
 }
@@ -21,12 +25,21 @@ class _ProductViewState extends State<ProductView> {
   final FocusNode _searchFocusNode = FocusNode();
   late ProductViewController _viewController;
   bool _isLoadingInitial = false;
-  bool _isScanning = false; // Estado de carga del scanner 
+  bool _isScanning = false;
 
   @override
   void initState() {
     super.initState();
-    _viewController = ProductViewController(FFAppState());
+    // Crear dependencias directamente (versión simplificada)
+    final dio = Dio();
+    final remoteDataSource = ProductRemoteDataSourceImpl(dio: dio);
+    final repository = ProductRepositoryImpl(remoteDataSource: remoteDataSource);
+    final getProductsUseCase = GetProductsUseCase(repository);
+
+    _viewController = ProductViewController(
+      appState: FFAppState(),
+      getProductsUseCase: getProductsUseCase,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadInitialProducts());
   }
 
@@ -41,7 +54,7 @@ class _ProductViewState extends State<ProductView> {
     setState(() => _isLoadingInitial = true);
     final result = await _viewController.loadProducts(
       context: context,
-      codprecioOverride: widget.codprecio,
+      vendedorOverride: widget.vendedor,
     );
     setState(() => _isLoadingInitial = false);
     if (result.success) {
@@ -56,7 +69,7 @@ class _ProductViewState extends State<ProductView> {
   Future<void> _loadPrevPage() async {
     setState(() => _viewController.isLoadingPrevPage = true);
     try {
-      await _viewController.loadPreviousPage(context, widget.codprecio ?? '');
+      await _viewController.loadPreviousPage(context, widget.vendedor ?? '');
     } finally {
       setState(() => _viewController.isLoadingPrevPage = false);
     }
@@ -65,7 +78,7 @@ class _ProductViewState extends State<ProductView> {
   Future<void> _loadNextPage() async {
     setState(() => _viewController.isLoadingNextPage = true);
     try {
-      await _viewController.loadNextPage(context, widget.codprecio ?? '');
+      await _viewController.loadNextPage(context, widget.vendedor ?? '');
     } finally {
       setState(() => _viewController.isLoadingNextPage = false);
     }
@@ -78,7 +91,7 @@ class _ProductViewState extends State<ProductView> {
       final code = result.rawContent;
       if (code.isNotEmpty) {
         _searchController.text = code;
-        await _viewController.searchProducts(context, code, widget.codprecio ?? '');
+        await _viewController.searchProducts(context, code, widget.vendedor ?? '');
         setState(() {});
       }
     } catch (_) {
@@ -124,10 +137,10 @@ class _ProductViewState extends State<ProductView> {
               EasyDebounce.debounce(
                 'search-products',
                 const Duration(milliseconds: 450),
-                () => _viewController.searchProducts(context, _searchController.text, widget.codprecio ?? ''),
+                () => _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? ''),
               );
             },
-            onFieldSubmitted: (_) async => _viewController.searchProducts(context, _searchController.text, widget.codprecio ?? ''),
+            onFieldSubmitted: (_) async => _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? ''),
             decoration: InputDecoration(
               isDense: true,
               hintText: 'Buscar por nombre o código',
@@ -137,7 +150,7 @@ class _ProductViewState extends State<ProductView> {
                       onPressed: () async {
                         _searchController.clear();
                         setState(() {});
-                        await _viewController.searchProducts(context, '', widget.codprecio ?? '');
+                        await _viewController.searchProducts(context, '', widget.vendedor ?? '');
                         _searchFocusNode.requestFocus();
                       },
                     )
@@ -172,7 +185,7 @@ class _ProductViewState extends State<ProductView> {
             color: GlobalTheme.of(context).primary,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
-              onTap: () async => _viewController.searchProducts(context, _searchController.text, widget.codprecio ?? ''),
+              onTap: () async => _viewController.searchProducts(context, _searchController.text, widget.vendedor ?? ''),
               child: Icon(Icons.search_rounded, color: GlobalTheme.of(context).info, size: 24),
             ),
           ),

@@ -4,7 +4,7 @@ import 'package:app_vendedores/core/errors/exceptions.dart';
 import 'package:app_vendedores/modules/products/infrastructure/models/product_model.dart';
 
 abstract class ProductRemoteDataSource {
-  Future<List<ProductModel>> getProducts(String token, String codprecio, int pageNumber, int pageSize, String filter);
+  Future<List<ProductModel>> getProducts(String token, String vendedor, int pageNumber, int pageSize, String filter);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -13,9 +13,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   ProductRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<ProductModel>> getProducts(String token, String codprecio, int pageNumber, int pageSize, String filter) async {
+  Future<List<ProductModel>> getProducts(String token, String vendedor, int pageNumber, int pageSize, String filter) async {
     const baseUrl = 'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appSeller';
-    final url = '$baseUrl/products/getListProductByCodPrecio/$codprecio';
+    final url = '$baseUrl/products/getListProductByCodPrecio/$vendedor';
 
     final headers = {
       'Authorization': 'Bearer $token',

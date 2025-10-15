@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'package:app_vendedores/core/backend/api_requests/api_calls.dart';
 import 'package:app_vendedores/core/backend/schema/structs/index.dart';
 import '/custom_code/actions/index.dart' as actions;
 import 'package:app_vendedores/modules/auth/infrastructure/services/auth_util.dart';
+import 'package:app_vendedores/modules/products/domain/usecases/get_products_use_case.dart';
 
 class LoadResult {
   final bool success;
@@ -14,20 +14,25 @@ class LoadResult {
 
 class ProductViewController {
   final FFAppState appState;
+  final GetProductsUseCase? getProductsUseCase;
 
+  // Estado de paginación y búsqueda
   DataPageStruct? pages;
   bool isLoadingNextPage = false;
   bool isLoadingPrevPage = false;
   bool isLoadingProducts = false;
   String searchFilter = '';
 
-  ProductViewController(this.appState);
+  ProductViewController({
+    required this.appState,
+    this.getProductsUseCase,
+  });
 
   Future<LoadResult> loadProducts({
     required BuildContext context,
     String? filter,
     int? page,
-    String? codprecioOverride,
+    String? vendedorOverride,
   }) async {
     isLoadingProducts = true;
     final currentFilter = filter ?? searchFilter;
@@ -35,83 +40,113 @@ class ProductViewController {
     final token = (appState.infoSeller.token.isNotEmpty)
         ? appState.infoSeller.token
         : (currentAuthenticationToken ?? '');
-    final codprecio = (codprecioOverride != null && codprecioOverride.isNotEmpty)
-        ? codprecioOverride
-        : appState.dataCliente.codprecio;
+    final vendedor = (vendedorOverride != null && vendedorOverride.isNotEmpty)
+        ? vendedorOverride
+        : appState.dataCliente.vendedor;
 
-    if (codprecio.isEmpty) {
+    if (vendedor.isEmpty) {
       isLoadingProducts = false;
-      return const LoadResult(success: false, message: 'Selecciona un cliente para ver productos (codprecio vacío).');
+      return const LoadResult(success: false, message: 'Selecciona un cliente para ver productos (vendedor vacío).');
     }
     if (token.isEmpty) {
       isLoadingProducts = false;
       return const LoadResult(success: false, message: 'No hay token de autenticación. Inicia sesión nuevamente.');
     }
 
-    final apiResult = await ProductsGroup.postListProductByCodPrecioCall.call(
-      token: token,
-      codprecio: codprecio,
-      pageNumber: page ?? 1,
-      pageSize: 10,
-      filter: currentFilter,
-    );
+    try {
+      if (getProductsUseCase != null) {
+        // Usar Clean Architecture: llamar al caso de uso
+        final result = await getProductsUseCase!.call(
+          Params(
+            vendedor: vendedor,
+            pageNumber: page ?? 1,
+            pageSize: 10,
+            filter: currentFilter,
+          ),
+        );
 
-    if (apiResult.succeeded) {
-      final dataList = (getJsonField(apiResult.jsonBody, r'$.data.data', true) as List?)
-              ?.map((e) => DataProductStruct.maybeFromMap(e)!)
-              .toList() ??
-          [];
-      final merged = await actions.actualizarListaProductosCache(
-        dataList,
-        appState.shoppingCart.toList(),
-        currentFilter,
-      );
-      appState.productList = merged;
-      final updatedStore = await actions.updateStoreQuantity(appState.shoppingCart.toList());
-      appState.store = updatedStore;
-      pages = DataPageStruct.maybeFromMap(getJsonField(apiResult.jsonBody, r'$.data'));
+        return result.fold(
+          (failure) {
+            isLoadingProducts = false;
+            return LoadResult(success: false, message: failure.message);
+          },
+          (products) async {
+            // Convertir productos del dominio a DataProductStruct para FlutterFlow
+            final dataList = products.map((product) => DataProductStruct(
+              codproduc: product.codproduc,
+              descripcio: product.descripcio,
+              codbarras: product.codbarras,
+              precio: product.precio,
+              saldo: product.saldo,
+              selected: product.selected,
+              cantidad: product.cantidad,
+            )).toList();
 
-      isLoadingProducts = false;
-      appState.update(() {});
+            final merged = await actions.actualizarListaProductosCache(
+              dataList,
+              appState.shoppingCart.toList(),
+              currentFilter,
+            );
+            appState.productList = merged;
+            final updatedStore = await actions.updateStoreQuantity(appState.shoppingCart.toList());
+            appState.store = updatedStore;
 
-      if (merged.isEmpty) {
-        return LoadResult(success: true, pages: pages, message: 'No se encontraron productos para el filtro actual.');
+            // Crear páginas basadas en la respuesta
+            pages = DataPageStruct.maybeFromMap({
+              'currentPage': page ?? 1,
+              'totalPages': (products.length / 10).ceil(),
+              'totalCount': products.length,
+              'hasNextPage': products.length >= 10,
+            });
+
+            isLoadingProducts = false;
+            appState.update(() {});
+
+            if (merged.isEmpty) {
+              return LoadResult(success: true, pages: pages, message: 'No se encontraron productos para el filtro actual.');
+            }
+            return LoadResult(success: true, pages: pages);
+          },
+        );
+      } else {
+        // Fallback: usar implementación anterior con FlutterFlow
+        // TODO: Implementar fallback o lanzar error
+        isLoadingProducts = false;
+        return const LoadResult(success: false, message: 'Servicio no disponible');
       }
-      return LoadResult(success: true, pages: pages);
-    } else {
+    } catch (e) {
       isLoadingProducts = false;
-      final message = getJsonField(apiResult.jsonBody, r'$.message')?.toString() ?? 'Error al cargar productos';
-      return LoadResult(success: false, message: message);
+      return LoadResult(success: false, message: 'Error al cargar productos: $e');
     }
   }
 
-  Future<void> loadPreviousPage(BuildContext context, String codprecioOverride) async {
+  Future<void> loadPreviousPage(BuildContext context, String vendedorOverride) async {
     if ((pages?.currentPage ?? 1) <= 1) return;
 
     await loadProducts(
       context: context,
       page: (pages?.currentPage ?? 1) - 1,
-      codprecioOverride: codprecioOverride,
+      vendedorOverride: vendedorOverride,
     );
   }
 
-  Future<void> loadNextPage(BuildContext context, String codprecioOverride) async {
+  Future<void> loadNextPage(BuildContext context, String vendedorOverride) async {
     if (pages?.hasNextPage == false) return;
 
     await loadProducts(
       context: context,
       page: (pages!.currentPage + 1),
-      codprecioOverride: codprecioOverride,
+      vendedorOverride: vendedorOverride,
     );
   }
 
-  Future<void> searchProducts(BuildContext context, String filter, String codprecioOverride) async {
+  Future<void> searchProducts(BuildContext context, String filter, String vendedorOverride) async {
     searchFilter = filter;
     await loadProducts(
       context: context,
       filter: filter,
       page: 1,
-      codprecioOverride: codprecioOverride,
+      vendedorOverride: vendedorOverride,
     );
   }
 

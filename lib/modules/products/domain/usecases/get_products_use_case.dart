@@ -10,23 +10,23 @@ class GetProductsUseCase {
   GetProductsUseCase(this.repository);
 
   Future<Either<Failure, List<Product>>> call(Params params) async {
-    return await repository.getProducts(params.codprecio, params.pageNumber, params.pageSize, params.filter);
+    return await repository.getProducts(params.vendedor, params.pageNumber, params.pageSize, params.filter);
   }
 }
 
 class Params extends Equatable {
-  final String codprecio;
+  final String vendedor;
   final int pageNumber;
   final int pageSize;
   final String filter;
 
   const Params({
-    required this.codprecio,
+    required this.vendedor,
     required this.pageNumber,
     required this.pageSize,
     required this.filter,
   });
 
   @override
-  List<Object?> get props => [codprecio, pageNumber, pageSize, filter];
+  List<Object?> get props => [vendedor, pageNumber, pageSize, filter];
 }

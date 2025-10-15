@@ -109,8 +109,6 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<ProductRepository>(
     () => ProductRepositoryImpl(
       remoteDataSource: getIt(),
-      networkInfo: getIt(),
-      authRepository: getIt(),
     ),
   );
 
