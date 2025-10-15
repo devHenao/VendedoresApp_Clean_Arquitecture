@@ -1,5 +1,5 @@
 import '../../../../../core/backend/schema/structs/index.dart';
-import 'package:app_vendedores/modules/products/presentation/widgets/product_detail/product_detail_widget.dart';
+import 'package:app_vendedores/modules/products/presentation/widgets/product_detail/product_detail_helper.dart';
 import '../../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
@@ -168,24 +168,11 @@ class _ProductWidgetState extends State<ProductWidget> {
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               onTap: () async {
-                                final result = await showDialog<double>(
+                                final result = await ProductDetailHelper.showProductDetailDialog(
                                   context: context,
-                                  builder: (dialogContext) {
-                                    return Dialog(
-                                      elevation: 0,
-                                      insetPadding: EdgeInsets.zero,
-                                      backgroundColor: Colors.transparent,
-                                      alignment: const AlignmentDirectional(0.0, 0.0)
-                                          .resolve(Directionality.of(context)),
-                                      child: ProductDetailWidget(
-                                        codprecio:
-                                            FFAppState().dataCliente.codprecio,
-                                        codproduc:
-                                            widget.productItem!.codproduc,
-                                        cantidad: _model.contador!,
-                                      ),
-                                    );
-                                  },
+                                  codprecio: FFAppState().dataCliente.codprecio,
+                                  codproduc: widget.productItem!.codproduc,
+                                  cantidad: _model.contador,
                                 );
 
                                 if (result != null) {

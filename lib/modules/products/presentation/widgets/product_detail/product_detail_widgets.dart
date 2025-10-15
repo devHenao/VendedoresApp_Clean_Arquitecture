@@ -1,18 +1,17 @@
-import 'package:app_vendedores/modules/products/presentation/widgets/item_product_detail/item_product_detail_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/backend/schema/structs/index.dart';
 import '../../../../../core/theme/theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'product_detail_model.dart';
+import 'package:app_vendedores/modules/products/presentation/widgets/item_product_detail/item_product_detail_widget.dart';
 
 class ProductDetailHeader extends StatelessWidget {
+  final List<DetailProductStruct> productDetails;
+
   const ProductDetailHeader({
     super.key,
     required this.productDetails,
   });
-
-  final List<DetailProductStruct> productDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -87,14 +86,12 @@ class WarehouseList extends StatelessWidget {
   const WarehouseList({
     super.key,
     required this.warehouses,
-    required this.itemProductDetailModels,
     required this.onQuantityChanged,
     required this.onRemoveFromWarehouse,
     required this.onSelectFromWarehouse,
   });
 
   final List<DetailProductStruct> warehouses;
-  final ProductDetailModel itemProductDetailModels;
   final Future<void> Function(DetailProductStruct, double?) onQuantityChanged;
   final Future<void> Function(DetailProductStruct) onRemoveFromWarehouse;
   final Future<void> Function(DetailProductStruct, bool) onSelectFromWarehouse;
@@ -118,18 +115,15 @@ class WarehouseList extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 10.0),
       itemBuilder: (context, index) {
         final warehouseItem = warehouses[index];
-        return wrapWithModel(
-          model: itemProductDetailModels.itemProductDetailModels.getModel(index.toString(), index),
-          updateCallback: () {},
-          updateOnChange: true,
-          child: ItemProductDetailWidget(
-            key: Key('item_${index.toString()}'),
-            pCantidad: warehouseItem.cantidad,
-            itemList: warehouseItem,
-            callbackCantidad: (pCantidad) => onQuantityChanged(warehouseItem, pCantidad),
-            callbackEliminarBodega: () => onRemoveFromWarehouse(warehouseItem),
-            callbackSeleccionadoBodega: (state) => onSelectFromWarehouse(warehouseItem, state),
-          ),
+        return ItemProductDetailWidget(
+          key: Key('item_${index.toString()}'),
+          pCantidad: warehouseItem.cantidad,
+          itemList: warehouseItem,
+          callbackCantidad: (pCantidad) =>
+              onQuantityChanged(warehouseItem, pCantidad),
+          callbackEliminarBodega: () => onRemoveFromWarehouse(warehouseItem),
+          callbackSeleccionadoBodega: (state) =>
+              onSelectFromWarehouse(warehouseItem, state),
         );
       },
     );
@@ -161,8 +155,10 @@ class ProductDetailActions extends StatelessWidget {
             ),
             options: FFButtonOptions(
               height: 40.0,
-              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-              iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+              iconPadding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
               color: GlobalTheme.of(context).primaryBackground,
               textStyle: GlobalTheme.of(context).titleSmall.override(
                     fontFamily: 'Manrope',
