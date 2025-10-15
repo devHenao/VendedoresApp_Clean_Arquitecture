@@ -114,7 +114,6 @@ class ProductController extends ChangeNotifier {
       await onQuantityUpdated(_contador);
       notifyListeners();
     } else {
-      // Si el contador llega a 0, se elimina el producto
       await removeFromCart();
     }
   }
