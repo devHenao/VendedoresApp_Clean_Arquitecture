@@ -16,7 +16,6 @@ class ProductViewController {
   final FFAppState appState;
   final GetProductsUseCase? getProductsUseCase;
 
-  // Estado de paginación y búsqueda
   DataPageStruct? pages;
   bool isLoadingNextPage = false;
   bool isLoadingPrevPage = false;
@@ -55,9 +54,9 @@ class ProductViewController {
 
     try {
       if (getProductsUseCase != null) {
-        // Usar Clean Architecture: llamar al caso de uso
         final result = await getProductsUseCase!.call(
           Params(
+            token: token,
             vendedor: vendedor,
             pageNumber: page ?? 1,
             pageSize: 10,
@@ -71,7 +70,6 @@ class ProductViewController {
             return LoadResult(success: false, message: failure.message);
           },
           (products) async {
-            // Convertir productos del dominio a DataProductStruct para FlutterFlow
             final dataList = products.map((product) => DataProductStruct(
               codproduc: product.codproduc,
               descripcio: product.descripcio,
@@ -91,7 +89,6 @@ class ProductViewController {
             final updatedStore = await actions.updateStoreQuantity(appState.shoppingCart.toList());
             appState.store = updatedStore;
 
-            // Crear páginas basadas en la respuesta
             pages = DataPageStruct.maybeFromMap({
               'currentPage': page ?? 1,
               'totalPages': (products.length / 10).ceil(),
@@ -109,8 +106,6 @@ class ProductViewController {
           },
         );
       } else {
-        // Fallback: usar implementación anterior con FlutterFlow
-        // TODO: Implementar fallback o lanzar error
         isLoadingProducts = false;
         return const LoadResult(success: false, message: 'Servicio no disponible');
       }

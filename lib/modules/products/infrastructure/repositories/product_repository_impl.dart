@@ -14,11 +14,8 @@ class ProductRepositoryImpl implements ProductRepository {
   });
 
   @override
-  Future<Either<Failure, List<Product>>> getProducts(String vendedor, int pageNumber, int pageSize, String filter) async {
+  Future<Either<Failure, List<Product>>> getProducts(String token, String vendedor, int pageNumber, int pageSize, String filter) async {
     try {
-      // Obtener token - por ahora usamos vacío, en producción vendría de auth
-      const token = '';
-
       final productModels = await remoteDataSource.getProducts(token, vendedor, pageNumber, pageSize, filter);
       final products = productModels.map((model) => Product(
         codproduc: model.codproduc,

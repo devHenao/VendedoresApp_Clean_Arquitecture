@@ -55,7 +55,6 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        // Accedemos a la lista de productos que está en response.data['data']['data']
         final responseData = response.data['data'];
         if (responseData is Map && responseData.containsKey('data')) {
           final List<dynamic> productsList = responseData['data'];

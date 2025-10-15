@@ -30,7 +30,6 @@ class _ProductViewState extends State<ProductView> {
   @override
   void initState() {
     super.initState();
-    // Crear dependencias directamente (versión simplificada)
     final dio = Dio();
     final remoteDataSource = ProductRemoteDataSourceImpl(dio: dio);
     final repository = ProductRepositoryImpl(remoteDataSource: remoteDataSource);
