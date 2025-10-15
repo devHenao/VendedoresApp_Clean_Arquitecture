@@ -214,30 +214,6 @@ class _ProductViewState extends State<ProductView> {
     );
   }
 
-  Widget _buildLoadingSection() {
-    if (!_viewController.isLoadingProducts && !_viewController.isLoadingNextPage && !_viewController.isLoadingPrevPage) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(GlobalTheme.of(context).primary)),
-          const SizedBox(height: 16),
-          Text(
-            _viewController.isLoadingNextPage ? 'Cargando más productos...' : 'Buscando productos...',
-            style: GlobalTheme.of(context).titleSmall.override(
-                  fontFamily: 'Manrope',
-                  color: GlobalTheme.of(context).primary,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildEmptyState() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -420,7 +396,6 @@ class _ProductViewState extends State<ProductView> {
         ),
         if (_viewController.pages != null && products.isNotEmpty)
           _buildPaginationInfo(),
-        _buildLoadingSection(),
         if (!_viewController.isLoadingProducts && products.isEmpty) _buildEmptyState(),
         if (products.isNotEmpty)
           Expanded(
