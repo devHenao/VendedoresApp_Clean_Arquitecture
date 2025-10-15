@@ -13,18 +13,15 @@ class ProductDetailController extends ChangeNotifier {
     _loadProductDetails();
   }
 
-  // Dependencies
   final String codprecio;
   final String codproduc;
   final FFAppState appState;
 
-  // Internal State
   List<DetailProductStruct> _warehouses = [];
   bool _isLoading = true;
   String? _errorMessage;
   double? _quantityForCallback;
 
-  // Getters for the UI
   List<DetailProductStruct> get warehouses => _warehouses;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;

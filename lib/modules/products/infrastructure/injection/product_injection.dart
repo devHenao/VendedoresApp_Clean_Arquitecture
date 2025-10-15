@@ -7,17 +7,14 @@ import 'package:app_vendedores/modules/products/domain/usecases/get_products_use
 final sl = GetIt.instance;
 
 void initProductsDependencies() {
-  // Data sources
   sl.registerLazySingleton<ProductRemoteDataSource>(
     () => ProductRemoteDataSourceImpl(dio: sl()),
   );
 
-  // Repositories
   sl.registerLazySingleton<ProductRepository>(
     () => ProductRepositoryImpl(remoteDataSource: sl()),
   );
 
-  // Use cases
   sl.registerLazySingleton<GetProductsUseCase>(
     () => GetProductsUseCase(sl()),
   );
