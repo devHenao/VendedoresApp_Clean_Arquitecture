@@ -77,7 +77,6 @@ class QuantityControls extends StatelessWidget {
               onChanged: onQuantityChanged,
               textAlign: TextAlign.center,
               decoration: _buildInputDecoration(context),
-              // ... otros parámetros del TextFormField ...
             ),
           ),
         ),
@@ -87,6 +86,7 @@ class QuantityControls extends StatelessWidget {
       ],
     );
   }
+
   Widget _buildIconButton(BuildContext context, IconData icon, VoidCallback? onPressed) {
     return FlutterFlowIconButton(
       borderRadius: 15.0,
@@ -105,7 +105,6 @@ class QuantityControls extends StatelessWidget {
         borderSide: BorderSide(color: GlobalTheme.of(context).secondaryText, width: 1.0),
         borderRadius: BorderRadius.circular(0.0),
       ),
-      // ... otras decoraciones ...
     );
   }
 }
@@ -115,8 +114,7 @@ class ProductActions extends StatelessWidget {
     super.key,
     required this.selecionado,
     required this.saldo,
-    required this.onAdd, // Callback for the simple add button
-    // Callbacks and controllers for the detailed quantity controls
+    required this.onAdd,
     required this.onRemove,
     required this.onSubtract,
     required this.onIncrement,
@@ -144,7 +142,6 @@ class ProductActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (selecionado == true) {
-      // --- VISTA CUANDO EL PRODUCTO ESTÁ SELECCIONADO ---
       return QuantityControls(
         onRemove: onRemove,
         onSubtract: onSubtract,
@@ -157,7 +154,6 @@ class ProductActions extends StatelessWidget {
         isAddDisabled: (contador ?? 0) >= (saldoBodegaVendedor ?? double.infinity),
       );
     } else {
-      // --- VISTA CUANDO EL PRODUCTO NO ESTÁ SELECCIONADO ---
       if (saldo <= 0) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),

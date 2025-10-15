@@ -198,7 +198,7 @@ class _ProductsHeader extends StatelessWidget {
         InkWell(
           onTap: onCartTap,
           child: FaIcon(
-            FontAwesomeIcons.shoppingCart,
+            FontAwesomeIcons.cartShopping,
             color: GlobalTheme.of(context).primary,
             size: 30.0,
           ),
@@ -309,7 +309,7 @@ class _PaginationInfo extends StatelessWidget {
     final start = (currentPage - 1) * pageSize + 1;
     final end = (currentPage * pageSize) < totalCount ? (currentPage * pageSize) : totalCount;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 12),
+      padding: const EdgeInsets.fromLTRB(12, 5, 0, 12),
       child: Row(
         children: [
           Text('Productos:', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 18)),
@@ -443,7 +443,7 @@ class _PaginationControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+      padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
       child: Row(
         children: [
           Expanded(

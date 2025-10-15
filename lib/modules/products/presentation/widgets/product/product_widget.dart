@@ -42,7 +42,7 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   late ProductController _controller;
   late TextEditingController _textController;
-  late ProductModel _model; // Still needed for validator
+  late ProductModel _model;
 
   @override
   void initState() {
@@ -129,7 +129,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                     contador: _controller.contador,
                     saldoBodegaVendedor: _controller.saldoBodegaVendedor,
                     textController: _textController,
-                    focusNode: _model.amountFocusNode ??= FocusNode(), // Ensure non-null
+                    focusNode: _model.amountFocusNode ??= FocusNode(),
                     validator: _model.amountTextControllerValidator?.asValidator(context),
                     onAdd: _controller.addToCart,
                     onRemove: _controller.removeFromCart,
@@ -190,12 +190,9 @@ class _ProductWidgetState extends State<ProductWidget> {
 
                                 if (result != null) {
                                   if (result > 0) {
-                                    // If the product was not selected before, mark it as selected now.
                                     if (widget.selecionado != true) {
                                       await widget.callBackSeleccionado?.call(true);
                                     }
-
-                                    // Update quantity and UI
                                     _model.contador = result;
                                     _model.updatePage(() {});
                                     safeSetState(() {
@@ -203,7 +200,6 @@ class _ProductWidgetState extends State<ProductWidget> {
                                     });
                                     await widget.callbackCantidad?.call(_model.contador);
                                   } else {
-                                    // If result is 0, deselect the product.
                                     await widget.callBackSeleccionado?.call(false);
                                     await widget.callbackCantidad?.call(0.0);
                                     await widget.callbackEliminar?.call();
