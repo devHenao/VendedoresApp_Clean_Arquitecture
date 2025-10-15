@@ -14,14 +14,24 @@ class LoadResult {
 
 class ProductViewController {
   final FFAppState appState;
-  const ProductViewController(this.appState);
+
+  DataPageStruct? pages;
+  bool isLoadingNextPage = false;
+  bool isLoadingPrevPage = false;
+  bool isLoadingProducts = false;
+  String searchFilter = '';
+
+  ProductViewController(this.appState);
 
   Future<LoadResult> loadProducts({
     required BuildContext context,
-    required String filter,
+    String? filter,
     int? page,
     String? codprecioOverride,
   }) async {
+    isLoadingProducts = true;
+    final currentFilter = filter ?? searchFilter;
+
     final token = (appState.infoSeller.token.isNotEmpty)
         ? appState.infoSeller.token
         : (currentAuthenticationToken ?? '');
@@ -30,9 +40,11 @@ class ProductViewController {
         : appState.dataCliente.codprecio;
 
     if (codprecio.isEmpty) {
+      isLoadingProducts = false;
       return const LoadResult(success: false, message: 'Selecciona un cliente para ver productos (codprecio vacío).');
     }
     if (token.isEmpty) {
+      isLoadingProducts = false;
       return const LoadResult(success: false, message: 'No hay token de autenticación. Inicia sesión nuevamente.');
     }
 
@@ -41,7 +53,7 @@ class ProductViewController {
       codprecio: codprecio,
       pageNumber: page ?? 1,
       pageSize: 10,
-      filter: filter,
+      filter: currentFilter,
     );
 
     if (apiResult.succeeded) {
@@ -52,20 +64,55 @@ class ProductViewController {
       final merged = await actions.actualizarListaProductosCache(
         dataList,
         appState.shoppingCart.toList(),
-        filter,
+        currentFilter,
       );
       appState.productList = merged;
       final updatedStore = await actions.updateStoreQuantity(appState.shoppingCart.toList());
       appState.store = updatedStore;
-      final pages = DataPageStruct.maybeFromMap(getJsonField(apiResult.jsonBody, r'$.data'));
+      pages = DataPageStruct.maybeFromMap(getJsonField(apiResult.jsonBody, r'$.data'));
+
+      isLoadingProducts = false;
+      appState.update(() {});
+
       if (merged.isEmpty) {
         return LoadResult(success: true, pages: pages, message: 'No se encontraron productos para el filtro actual.');
       }
       return LoadResult(success: true, pages: pages);
     } else {
+      isLoadingProducts = false;
       final message = getJsonField(apiResult.jsonBody, r'$.message')?.toString() ?? 'Error al cargar productos';
       return LoadResult(success: false, message: message);
     }
+  }
+
+  Future<void> loadPreviousPage(BuildContext context, String codprecioOverride) async {
+    if ((pages?.currentPage ?? 1) <= 1) return;
+
+    await loadProducts(
+      context: context,
+      page: (pages?.currentPage ?? 1) - 1,
+      codprecioOverride: codprecioOverride,
+    );
+  }
+
+  Future<void> loadNextPage(BuildContext context, String codprecioOverride) async {
+    if (pages?.hasNextPage == false) return;
+
+    await loadProducts(
+      context: context,
+      page: (pages!.currentPage + 1),
+      codprecioOverride: codprecioOverride,
+    );
+  }
+
+  Future<void> searchProducts(BuildContext context, String filter, String codprecioOverride) async {
+    searchFilter = filter;
+    await loadProducts(
+      context: context,
+      filter: filter,
+      page: 1,
+      codprecioOverride: codprecioOverride,
+    );
   }
 
   Future<void> onSelectedChanged(BuildContext context, DataProductStruct item, bool? state) async {

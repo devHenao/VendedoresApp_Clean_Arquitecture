@@ -19,18 +19,14 @@ class ProductView extends StatefulWidget {
 class _ProductViewState extends State<ProductView> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  DataPageStruct? _pages;
-  bool _hasProduct = false;
-  bool _isLoadingNextPage = false;
-  bool _isLoadingPrevPage = false;
-  String _buscar = '';
   late ProductViewController _viewController;
+  bool _isLoadingInitial = false; 
 
   @override
   void initState() {
     super.initState();
     _viewController = ProductViewController(FFAppState());
-    WidgetsBinding.instance.addPostFrameCallback((_) => _refreshProductList());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadInitialProducts());
   }
 
   @override
@@ -40,47 +36,37 @@ class _ProductViewState extends State<ProductView> {
     super.dispose();
   }
 
-  Future<void> _refreshProductList({int? page}) async {
-    _buscar = _searchController.text;
-    setState(() => _hasProduct = true);
+  Future<void> _loadInitialProducts() async {
+    setState(() => _isLoadingInitial = true);
     final result = await _viewController.loadProducts(
       context: context,
-      filter: _buscar,
-      page: page ?? (_pages?.currentPage ?? 1),
       codprecioOverride: widget.codprecio,
     );
+    setState(() => _isLoadingInitial = false);
     if (result.success) {
-      _pages = result.pages;
-      _hasProduct = false;
       if (result.message != null) {
         showSnackbar(context, result.message!);
       }
-      FFAppState().update(() {});
-      safeSetState(() {});
     } else {
-      _hasProduct = false;
       showSnackbar(context, result.message ?? 'Error al cargar productos');
-      safeSetState(() {});
     }
   }
 
   Future<void> _loadPrevPage() async {
-    if (_isLoadingPrevPage || (_pages?.currentPage ?? 1) <= 1) return;
-    setState(() => _isLoadingPrevPage = true);
+    setState(() => _viewController.isLoadingPrevPage = true);
     try {
-      await _refreshProductList(page: (_pages?.currentPage ?? 1) - 1);
+      await _viewController.loadPreviousPage(context, widget.codprecio ?? '');
     } finally {
-      if (mounted) setState(() => _isLoadingPrevPage = false);
+      setState(() => _viewController.isLoadingPrevPage = false);
     }
   }
 
   Future<void> _loadNextPage() async {
-    if (_isLoadingNextPage || (_pages?.hasNextPage == false)) return;
-    setState(() => _isLoadingNextPage = true);
+    setState(() => _viewController.isLoadingNextPage = true);
     try {
-      await _refreshProductList(page: (_pages!.currentPage + 1));
+      await _viewController.loadNextPage(context, widget.codprecio ?? '');
     } finally {
-      if (mounted) setState(() => _isLoadingNextPage = false);
+      setState(() => _viewController.isLoadingNextPage = false);
     }
   }
 
@@ -90,99 +76,13 @@ class _ProductViewState extends State<ProductView> {
       final code = result.rawContent;
       if (code.isNotEmpty) {
         _searchController.text = code;
-        _buscar = code;
-        await _refreshProductList(page: 1);
+        await _viewController.searchProducts(context, code, widget.codprecio ?? '');
+        setState(() {});
       }
     } catch (_) {}
   }
 
-  @override
-  Widget build(BuildContext context) {
-    context.watch<FFAppState>();
-    final appState = FFAppState();
-    final products = List<DataProductStruct>.from(appState.productList)
-      ..sort((a, b) => a.descripcio.toLowerCase().compareTo(b.descripcio.toLowerCase()));
-
-    // Extracted UI into smaller widgets
-    final onSelectedChanged = (DataProductStruct item, bool? state) async {
-      await _viewController.onSelectedChanged(context, item, state);
-      safeSetState(() {});
-    };
-    final onQuantityChanged = (DataProductStruct item, double? pCantidad) async {
-      await _viewController.onQuantityChanged(context, item, pCantidad);
-      safeSetState(() {});
-    };
-    final onDelete = (DataProductStruct item) async {
-      await _viewController.onDelete(context, item);
-      safeSetState(() {});
-    };
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: Column(
-            children: [
-              _ProductsHeader(onCartTap: () => context.pushNamed('Carrito')),
-              const SizedBox(height: 8),
-              _SearchRow(
-                controller: _searchController,
-                focusNode: _searchFocusNode,
-                onChanged: () {
-                  setState(() {});
-                  EasyDebounce.debounce(
-                    'search-products',
-                    const Duration(milliseconds: 450),
-                    () => _refreshProductList(page: 1),
-                  );
-                },
-                onSubmitted: () async => _refreshProductList(page: 1),
-                onSearchTap: () async => _refreshProductList(page: 1),
-                onScanTap: _scanBarcode,
-                onClear: () async {
-                  _searchController.clear();
-                  setState(() {});
-                  await _refreshProductList(page: 1);
-                  _searchFocusNode.requestFocus();
-                },
-              ),
-              const SizedBox(height: 5),
-              Divider(thickness: 2.0, color: GlobalTheme.of(context).alternate),
-            ],
-          ),
-        ),
-        if (_pages != null && products.isNotEmpty)
-          _PaginationInfo(pages: _pages, pageSize: 10),
-        _LoadingSection(
-          show: _hasProduct || _isLoadingNextPage || _isLoadingPrevPage,
-          isNextPage: _isLoadingNextPage,
-        ),
-        if (!_hasProduct && products.isEmpty) const _EmptyState(),
-        if (products.isNotEmpty)
-          Expanded(
-            child: _ProductsList(
-              products: products,
-              onSelectedChanged: onSelectedChanged,
-              onQuantityChanged: onQuantityChanged,
-              onDelete: onDelete,
-            ),
-          ),
-        if (products.isNotEmpty && _pages != null)
-          _PaginationControls(
-            pages: _pages!,
-            onPrev: _loadPrevPage,
-            onNext: _loadNextPage,
-          ),
-      ],
-    );
-  }
-}
-
-class _ProductsHeader extends StatelessWidget {
-  const _ProductsHeader({required this.onCartTap});
-  final VoidCallback onCartTap;
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -196,7 +96,7 @@ class _ProductsHeader extends StatelessWidget {
               ),
         ),
         InkWell(
-          onTap: onCartTap,
+          onTap: () => context.pushNamed('Carrito'),
           child: FaIcon(
             FontAwesomeIcons.cartShopping,
             color: GlobalTheme.of(context).primary,
@@ -206,43 +106,35 @@ class _ProductsHeader extends StatelessWidget {
       ],
     );
   }
-}
 
-class _SearchRow extends StatelessWidget {
-  const _SearchRow({
-    required this.controller,
-    required this.focusNode,
-    required this.onChanged,
-    required this.onSubmitted,
-    required this.onSearchTap,
-    required this.onScanTap,
-    required this.onClear,
-  });
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final VoidCallback onChanged;
-  final Future<void> Function() onSubmitted;
-  final VoidCallback onSearchTap;
-  final VoidCallback onScanTap;
-  final Future<void> Function() onClear;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildSearchRow() {
     return Row(
       children: [
         Expanded(
           child: TextFormField(
-            controller: controller,
-            focusNode: focusNode,
-            onChanged: (_) => onChanged(),
-            onFieldSubmitted: (_) async => onSubmitted(),
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+            onChanged: (_) {
+              setState(() {});
+              EasyDebounce.debounce(
+                'search-products',
+                const Duration(milliseconds: 450),
+                () => _viewController.searchProducts(context, _searchController.text, widget.codprecio ?? ''),
+              );
+            },
+            onFieldSubmitted: (_) async => _viewController.searchProducts(context, _searchController.text, widget.codprecio ?? ''),
             decoration: InputDecoration(
               isDense: true,
               hintText: 'Buscar por nombre o código',
-              suffixIcon: controller.text.isNotEmpty && focusNode.hasFocus
+              suffixIcon: _searchController.text.isNotEmpty && _searchFocusNode.hasFocus
                   ? IconButton(
                       icon: Icon(Icons.clear, color: GlobalTheme.of(context).secondaryText, size: 20),
-                      onPressed: () async => onClear(),
+                      onPressed: () async {
+                        _searchController.clear();
+                        setState(() {});
+                        await _viewController.searchProducts(context, '', widget.codprecio ?? '');
+                        _searchFocusNode.requestFocus();
+                      },
                     )
                   : null,
               enabledBorder: OutlineInputBorder(
@@ -275,7 +167,7 @@ class _SearchRow extends StatelessWidget {
             color: GlobalTheme.of(context).primary,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
-              onTap: onSearchTap,
+              onTap: () async => _viewController.searchProducts(context, _searchController.text, widget.codprecio ?? ''),
               child: Icon(Icons.search_rounded, color: GlobalTheme.of(context).info, size: 24),
             ),
           ),
@@ -288,7 +180,7 @@ class _SearchRow extends StatelessWidget {
             color: GlobalTheme.of(context).secondaryBackground,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
-              onTap: onScanTap,
+              onTap: _scanBarcode,
               child: Icon(Icons.qr_code_scanner_outlined, color: GlobalTheme.of(context).primary, size: 24),
             ),
           ),
@@ -296,18 +188,12 @@ class _SearchRow extends StatelessWidget {
       ],
     );
   }
-}
 
-class _PaginationInfo extends StatelessWidget {
-  const _PaginationInfo({required this.pages, required this.pageSize});
-  final DataPageStruct? pages;
-  final int pageSize;
-  @override
-  Widget build(BuildContext context) {
-    final currentPage = pages?.currentPage ?? 1;
-    final totalCount = pages?.totalCount ?? 0;
-    final start = (currentPage - 1) * pageSize + 1;
-    final end = (currentPage * pageSize) < totalCount ? (currentPage * pageSize) : totalCount;
+  Widget _buildPaginationInfo() {
+    final currentPage = _viewController.pages?.currentPage ?? 1;
+    final totalCount = _viewController.pages?.totalCount ?? 0;
+    final start = (currentPage - 1) * 10 + 1;
+    final end = (currentPage * 10) < totalCount ? (currentPage * 10) : totalCount;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 5, 0, 12),
       child: Row(
@@ -327,15 +213,9 @@ class _PaginationInfo extends StatelessWidget {
       ),
     );
   }
-}
 
-class _LoadingSection extends StatelessWidget {
-  const _LoadingSection({required this.show, required this.isNextPage});
-  final bool show;
-  final bool isNextPage;
-  @override
-  Widget build(BuildContext context) {
-    if (!show) return const SizedBox.shrink();
+  Widget _buildLoadingSection() {
+    if (!_viewController.isLoadingProducts && !_viewController.isLoadingNextPage && !_viewController.isLoadingPrevPage) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -345,7 +225,7 @@ class _LoadingSection extends StatelessWidget {
           CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(GlobalTheme.of(context).primary)),
           const SizedBox(height: 16),
           Text(
-            isNextPage ? 'Cargando más productos...' : 'Buscando productos...',
+            _viewController.isLoadingNextPage ? 'Cargando más productos...' : 'Buscando productos...',
             style: GlobalTheme.of(context).titleSmall.override(
                   fontFamily: 'Manrope',
                   color: GlobalTheme.of(context).primary,
@@ -357,12 +237,8 @@ class _LoadingSection extends StatelessWidget {
       ),
     );
   }
-}
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildEmptyState() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -386,21 +262,8 @@ class _EmptyState extends StatelessWidget {
       ],
     );
   }
-}
 
-class _ProductsList extends StatelessWidget {
-  const _ProductsList({
-    required this.products,
-    required this.onSelectedChanged,
-    required this.onQuantityChanged,
-    required this.onDelete,
-  });
-  final List<DataProductStruct> products;
-  final Future<void> Function(DataProductStruct, bool?) onSelectedChanged;
-  final Future<void> Function(DataProductStruct, double?) onQuantityChanged;
-  final Future<void> Function(DataProductStruct) onDelete;
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildProductsList(List<DataProductStruct> products) {
     return SingleChildScrollView(
       primary: false,
       child: SizedBox(
@@ -420,28 +283,26 @@ class _ProductsList extends StatelessWidget {
               productItem: item,
               precio: item.precio,
               saldo: item.saldo,
-              callBackSeleccionado: (state) async => onSelectedChanged(item, state),
-              callbackCantidad: (pCantidad) async => onQuantityChanged(item, pCantidad),
-              callbackEliminar: () async => onDelete(item),
+              callBackSeleccionado: (state) async {
+                await _viewController.onSelectedChanged(context, item, state);
+                safeSetState(() {});
+              },
+              callbackCantidad: (pCantidad) async {
+                await _viewController.onQuantityChanged(context, item, pCantidad);
+                safeSetState(() {});
+              },
+              callbackEliminar: () async {
+                await _viewController.onDelete(context, item);
+                safeSetState(() {});
+              },
             );
           },
         ),
       ),
     );
   }
-}
 
-class _PaginationControls extends StatelessWidget {
-  const _PaginationControls({
-    required this.pages,
-    required this.onPrev,
-    required this.onNext,
-  });
-  final DataPageStruct pages;
-  final VoidCallback onPrev;
-  final VoidCallback onNext;
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPaginationControls() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
       child: Row(
@@ -453,11 +314,22 @@ class _PaginationControls extends StatelessWidget {
                 height: 35,
                 width: 35,
                 child: Material(
-                  color: GlobalTheme.of(context).primary,
+                  color: _viewController.isLoadingPrevPage
+                      ? GlobalTheme.of(context).secondaryBackground
+                      : GlobalTheme.of(context).primary,
                   borderRadius: BorderRadius.circular(8),
                   child: InkWell(
-                    onTap: onPrev,
-                    child: Icon(Icons.navigate_before_rounded, color: GlobalTheme.of(context).info, size: 20),
+                    onTap: _viewController.isLoadingPrevPage ? null : _loadPrevPage,
+                    child: _viewController.isLoadingPrevPage
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(GlobalTheme.of(context).primary),
+                            ),
+                          )
+                        : Icon(Icons.navigate_before_rounded, color: GlobalTheme.of(context).info, size: 20),
                   ),
                 ),
               ),
@@ -476,11 +348,11 @@ class _PaginationControls extends StatelessWidget {
                   children: [
                     Text('Página:', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 14)),
                     const SizedBox(width: 2),
-                    Text('${pages.currentPage}', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 14)),
+                    Text('${_viewController.pages?.currentPage ?? 1}', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 14)),
                     const SizedBox(width: 2),
                     Text('-', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 14)),
                     const SizedBox(width: 2),
-                    Text('${pages.totalPages}', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 14)),
+                    Text('${_viewController.pages?.totalPages ?? 1}', style: GlobalTheme.of(context).bodyMedium.override(fontFamily: 'Manrope', fontSize: 14)),
                   ],
                 ),
               ),
@@ -493,11 +365,24 @@ class _PaginationControls extends StatelessWidget {
                 height: 35,
                 width: 35,
                 child: Material(
-                  color: GlobalTheme.of(context).primary,
+                  color: _viewController.isLoadingNextPage
+                      ? GlobalTheme.of(context).secondaryBackground
+                      : GlobalTheme.of(context).primary,
                   borderRadius: BorderRadius.circular(8),
                   child: InkWell(
-                    onTap: pages.hasNextPage == false ? null : onNext,
-                    child: Icon(Icons.navigate_next_rounded, color: GlobalTheme.of(context).info, size: 20),
+                    onTap: (_viewController.isLoadingNextPage || _viewController.pages?.hasNextPage == false)
+                        ? null
+                        : _loadNextPage,
+                    child: _viewController.isLoadingNextPage
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(GlobalTheme.of(context).primary),
+                            ),
+                          )
+                        : Icon(Icons.navigate_next_rounded, color: GlobalTheme.of(context).info, size: 20),
                   ),
                 ),
               ),
@@ -505,6 +390,45 @@ class _PaginationControls extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+    final appState = FFAppState();
+    final products = List<DataProductStruct>.from(appState.productList)
+      ..sort((a, b) => a.descripcio.toLowerCase().compareTo(b.descripcio.toLowerCase()));
+
+    if (_isLoadingInitial && products.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: Column(
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 8),
+              _buildSearchRow(),
+              const SizedBox(height: 5),
+              Divider(thickness: 2.0, color: GlobalTheme.of(context).alternate),
+            ],
+          ),
+        ),
+        if (_viewController.pages != null && products.isNotEmpty)
+          _buildPaginationInfo(),
+        _buildLoadingSection(),
+        if (!_viewController.isLoadingProducts && products.isEmpty) _buildEmptyState(),
+        if (products.isNotEmpty)
+          Expanded(
+            child: _buildProductsList(products),
+          ),
+        if (products.isNotEmpty && _viewController.pages != null)
+          _buildPaginationControls(),
+      ],
     );
   }
 }
