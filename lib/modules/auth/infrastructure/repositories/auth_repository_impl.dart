@@ -27,17 +27,22 @@ class AuthRepositoryImpl implements AuthRepository {
       String identification, String email, String password) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteUser = await remoteDataSource.login(identification, email, password);
-        localDataSource.cacheUser(remoteUser);
+        final loginResponse = await remoteDataSource.login(identification, email, password);
+        localDataSource.cacheUser(loginResponse.user);
         await authManager.signIn(
-          authenticationToken: remoteUser.token,
-          uid: remoteUser.email, 
+          authenticationToken: loginResponse.user.token,
+          uid: loginResponse.user.email,
         );
+
         FFAppState().infoSeller = DataSellerStruct(
-          nameVenden: remoteUser.name,
-          emailVenden: remoteUser.email,
+          nameVenden: loginResponse.sellerData['nameVenden'] ?? loginResponse.user.name,
+          codVen: loginResponse.sellerData['codVen'] ?? '',
+          emailVenden: loginResponse.sellerData['emailVenden'] ?? loginResponse.user.email,
+          storageDefault: loginResponse.sellerData['storageDefault'] ?? '',
+          idEnterprise: loginResponse.sellerData['idEnterprise'] ?? '',
+          token: loginResponse.sellerData['token'] ?? loginResponse.user.token,
         );
-        return Right(remoteUser);
+        return Right(loginResponse.user);
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message));
       }

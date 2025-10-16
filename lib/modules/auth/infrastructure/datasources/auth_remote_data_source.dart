@@ -2,8 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:app_vendedores/modules/auth/infrastructure/models/user_model.dart';
 import 'package:app_vendedores/core/errors/exceptions.dart';
 
+class LoginResponse {
+  final UserModel user;
+  final Map<String, dynamic> sellerData;
+
+  const LoginResponse({
+    required this.user,
+    required this.sellerData,
+  });
+}
+
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login(String identification, String email, String password);
+  Future<LoginResponse> login(String identification, String email, String password);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -12,7 +22,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<UserModel> login(String identification, String email, String password) async {
+  Future<LoginResponse> login(String identification, String email, String password) async {
     try {
       final response = await dio.post(
         'https://us-central1-prod-appseller-ofima.cloudfunctions.net/appAuthSeller/loginSeller',
@@ -24,7 +34,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200 && response.data['success']) {
-        return UserModel.fromJson(response.data['data']);
+        final userModel = UserModel.fromJson(response.data['data']);
+        return LoginResponse(
+          user: userModel,
+          sellerData: response.data['data'] as Map<String, dynamic>,
+        );
       } else {
         throw ServerException(response.data['data'] ?? 'Error de servidor');
       }
