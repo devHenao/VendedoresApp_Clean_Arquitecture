@@ -223,7 +223,6 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
           return widget.options.elevation;
         },
       ),
-      // Removed shadowColor and surfaceTintColor as they're not part of FFButtonOptions
     );
 
     final hasIcon = widget.icon != null || widget.iconData != null;
@@ -243,7 +242,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
             children: [
               if (iconWidget != null) iconWidget,
               if (iconWidget != null && text != null)
-                const SizedBox(width: 8), // Space between icon and text
+                const SizedBox(width: 8), 
               if (text != null) Expanded(child: textWidget),
             ],
           )
@@ -286,14 +285,10 @@ extension _WithoutColorExtension on TextStyle {
         debugLabel: debugLabel,
         fontFamily: fontFamily,
         fontFamilyFallback: fontFamilyFallback,
-        // The _package field is private so unfortunately we can't set it here,
-        // but it's almost always unset anyway.
-        // package: _package,
         overflow: overflow,
       );
 }
 
-// Slightly hacky method of getting the layout width of the provided text.
 double? _getTextWidth(String? text, TextStyle? style, int maxLines) =>
     text != null
         ? (TextPainter(
